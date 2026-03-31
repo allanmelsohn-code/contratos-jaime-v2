@@ -123,7 +123,7 @@ export default function TenantApp({ params }: { params: { tenant: string } }) {
 
       <main className="j-main">
         <div className={`j-page${step === 0 ? ' active' : ''}`}>
-          <StepUpload docs={docs} setDocs={setDocs} onNext={next} />
+          <StepUpload docs={docs} setDocs={setDocs} form={form} setForm={setForm} onNext={next} />
         </div>
         <div className={`j-page${step === 1 ? ' active' : ''}`}>
           <StepReview docs={docs} setDocs={setDocs} form={form} setForm={setForm} onNext={next} onPrev={prev} />

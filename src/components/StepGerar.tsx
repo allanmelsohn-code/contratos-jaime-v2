@@ -13,6 +13,7 @@ export default function StepGerar({ form, onPrev, tenantId }: Props) {
   const [dsStatus, setDsStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
   const [dsResult, setDsResult] = useState<any>(null)
   const [generating, setGenerating] = useState(false)
+  const [formato, setFormato] = useState<'docx' | 'pdf'>('docx')
   const [dsAccount, setDsAccount] = useState('')
   const [dsMsg, setDsMsg] = useState('Prezado(a), encaminhamos para sua assinatura o Contrato de Locação intermediado pela Jaime Imobiliária. Por gentileza, assine digitalmente dentro do prazo estipulado.')
 
@@ -28,6 +29,42 @@ export default function StepGerar({ form, onPrev, tenantId }: Props) {
     ...form.testemunhas.map(t => ({ nome: t.nome || 'TESTEMUNHA', email: t.email || '', role: 'TESTEMUNHA' })),
     { nome: 'JAIMERX IMOBILIÁRIA LTDA', email: 'juridico@jaimeimobiliaria.com.br', role: 'Intermediadora' },
   ]
+
+  function gerarPdf() {
+    const f = form
+    const loc = (f.locadores || []).map((l: any) => l.nome || '').filter(Boolean).join(', ')
+    const loc_t = (f.locatarios || []).map((l: any) => l.nome || '').filter(Boolean).join(', ')
+    const imovel = f.imovel || {}
+    const valor = f.valor || {}
+    const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+<title>Contrato de Locação</title>
+<style>
+  body { font-family: Arial, sans-serif; font-size: 12pt; color: #111; margin: 40px; line-height: 1.6; }
+  h1 { text-align: center; font-size: 14pt; text-transform: uppercase; margin-bottom: 4px; }
+  h2 { font-size: 12pt; text-transform: uppercase; margin-top: 24px; margin-bottom: 4px; }
+  .resumo { border: 1px solid #ccc; border-collapse: collapse; width: 100%; margin: 16px 0; }
+  .resumo td { border: 1px solid #ccc; padding: 6px 10px; font-size: 11pt; }
+  .resumo td:first-child { font-weight: bold; width: 30%; background: #f5f5f5; }
+  p { text-align: justify; margin: 8px 0; }
+  @media print { body { margin: 20px; } }
+</style></head><body>
+<h1>Contrato de Locação Residencial</h1>
+<table class="resumo">
+  <tr><td>Locador(es)</td><td>${loc || '—'}</td></tr>
+  <tr><td>Locatário(s)</td><td>${loc_t || '—'}</td></tr>
+  <tr><td>Imóvel</td><td>${imovel.endereco || '—'}${imovel.numero ? ', ' + imovel.numero : ''}${imovel.complemento ? ' — ' + imovel.complemento : ''}, ${imovel.bairro || ''}, ${imovel.cidade || ''} - ${imovel.uf || ''}</td></tr>
+  <tr><td>Valor do aluguel</td><td>R$ ${valor.aluguel || '—'}</td></tr>
+  <tr><td>Vigência</td><td>${valor.prazo || '—'} meses</td></tr>
+  <tr><td>Vencimento</td><td>Dia ${valor.vencimento || '—'} de cada mês</td></tr>
+  <tr><td>Índice de reajuste</td><td>${valor.indice || '—'}, ${valor.reajuste || '—'}</td></tr>
+  <tr><td>Garantia</td><td>${f.gnt ? f.gnt.toUpperCase() : '—'}</td></tr>
+</table>
+<p><em>Este documento foi gerado pelo sistema Papaia. Para o contrato completo em formato Word com todas as cláusulas, use a opção de download .docx.</em></p>
+<script>window.onload = function(){ window.print(); }</script>
+</body></html>`
+    const w = window.open('', '_blank')
+    if (w) { w.document.write(html); w.document.close() }
+  }
 
   async function downloadDocx() {
     setGenerating(true)
@@ -146,18 +183,33 @@ export default function StepGerar({ form, onPrev, tenantId }: Props) {
         </div>
       </div>
 
-      {/* Download .docx */}
+      {/* Download */}
       <div className="bg-white border border-black/10 rounded-xl p-5 shadow-sm mb-4">
         <div className="font-serif text-base font-semibold text-[#1A1612] mb-3 pb-3 border-b border-black/8 flex items-center gap-2">
-          <span>📄</span> Gerar Arquivo Word (.docx)
+          <span>📄</span> Gerar Contrato
         </div>
-        <p className="text-sm text-[#4A3F35] mb-4">
-          Gera o contrato completo em formato Word (.docx), fiel aos modelos Jaime, com Quadro Resumo, todas as cláusulas e blocos de assinatura.
-        </p>
-        <button onClick={downloadDocx} disabled={generating}
-          className="px-6 py-2.5 bg-[#1A1612] text-[#F5F0E8] rounded-lg text-sm font-semibold hover:bg-[#2D2520] disabled:opacity-50 transition-all flex items-center gap-2">
-          {generating ? <><span className="animate-spin">⚙️</span> Gerando...</> : <>📥 Baixar .docx</>}
-        </button>
+        <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
+          <span style={{ fontSize:13, color:'var(--ink-m)', fontWeight:500 }}>Formato:</span>
+          <label style={{ display:'flex', alignItems:'center', gap:5, fontSize:13, cursor:'pointer' }}>
+            <input type="radio" value="docx" checked={formato==='docx'} onChange={() => setFormato('docx')} />
+            Word (.docx)
+          </label>
+          <label style={{ display:'flex', alignItems:'center', gap:5, fontSize:13, cursor:'pointer' }}>
+            <input type="radio" value="pdf" checked={formato==='pdf'} onChange={() => setFormato('pdf')} />
+            PDF (via impressão)
+          </label>
+        </div>
+        {formato === 'docx' ? (
+          <button onClick={downloadDocx} disabled={generating}
+            className="px-6 py-2.5 bg-[#1A1612] text-[#F5F0E8] rounded-lg text-sm font-semibold hover:bg-[#2D2520] disabled:opacity-50 transition-all flex items-center gap-2">
+            {generating ? <><span className="animate-spin">⚙️</span> Gerando...</> : <>📥 Baixar .docx</>}
+          </button>
+        ) : (
+          <button onClick={gerarPdf}
+            className="px-6 py-2.5 bg-[#1A1612] text-[#F5F0E8] rounded-lg text-sm font-semibold hover:bg-[#2D2520] transition-all flex items-center gap-2">
+            🖨️ Abrir para imprimir / salvar PDF
+          </button>
+        )}
       </div>
 
       {/* DocuSign */}

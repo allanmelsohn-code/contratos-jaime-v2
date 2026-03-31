@@ -189,13 +189,20 @@ function classifyDocument(filename: string): {
 
 export async function POST(request: Request) {
   const body = await request.json()
-  const { filename, imageBase64, mimeType, downloadUrl } = body
+  const { filename, imageBase64, mimeType, downloadUrl, explicitRole, explicitDocType, extractFields } = body
 
   if (!filename) {
     return Response.json({ error: 'Missing filename' }, { status: 400 })
   }
 
-  const classification = classifyDocument(filename)
+  const classification = explicitRole
+    ? {
+        type: explicitDocType ?? 'Documento',
+        role: explicitRole,
+        index: 1,
+        extractFields: extractFields ?? [],
+      }
+    : classifyDocument(filename)
   const fieldsJson = classification.extractFields.join('", "')
 
   const systemPrompt = `Você é um sistema OCR especializado em documentos brasileiros. 
