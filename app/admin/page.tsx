@@ -85,7 +85,15 @@ export default function AdminPage() {
       {/* Header */}
       <header className="p-admin-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <img src="/papaia-logo.svg" alt="" style={{ width: 30, height: 30, borderRadius: 8 }} />
+          <svg style={{ width: 30, height: 30, borderRadius: 8, flexShrink: 0 }} viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="200" height="200" rx="44" fill="#FAF6F1"/>
+              <ellipse cx="70" cy="80" rx="80" ry="75" fill="#E8735A" opacity="0.92"/>
+              <ellipse cx="145" cy="130" rx="70" ry="65" fill="#8BAD8B" opacity="0.85"/>
+              <ellipse cx="160" cy="55" rx="45" ry="40" fill="#F0A030" opacity="0.55"/>
+              <polygon points="100,57 148,92 52,92" fill="white" opacity="0.95"/>
+              <rect x="70" y="92" width="60" height="44" fill="white" opacity="0.95"/>
+              <rect x="89" y="108" width="22" height="28" rx="3" fill="#E8735A" opacity="0.5"/>
+            </svg>
           <span style={{ color: 'white', fontWeight: 700, fontSize: 16, letterSpacing: '-.01em' }}>
             Papaia <span style={{ color: 'rgba(255,255,255,.5)', fontWeight: 400, fontSize: 12 }}>· Admin</span>
           </span>

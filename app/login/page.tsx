@@ -57,7 +57,15 @@ export default function LoginPage() {
     <div className="p-login-bg">
       <div className="p-login-card">
         {/* Logo */}
-        <img src="/papaia-logo.svg" alt="Papaia" className="p-logo-mark" />
+        <svg className="p-logo-mark" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="200" height="200" rx="44" fill="#FAF6F1"/>
+          <ellipse cx="70" cy="80" rx="80" ry="75" fill="#E8735A" opacity="0.92"/>
+          <ellipse cx="145" cy="130" rx="70" ry="65" fill="#8BAD8B" opacity="0.85"/>
+          <ellipse cx="160" cy="55" rx="45" ry="40" fill="#F0A030" opacity="0.55"/>
+          <polygon points="100,57 148,92 52,92" fill="white" opacity="0.95"/>
+          <rect x="70" y="92" width="60" height="44" fill="white" opacity="0.95"/>
+          <rect x="89" y="108" width="22" height="28" rx="3" fill="#E8735A" opacity="0.5"/>
+        </svg>
 
         <h1 className="p-login-title">Papaia</h1>
         <p className="p-login-sub">A.I. made as &ldquo;mamão com açúcar&rdquo;</p>
