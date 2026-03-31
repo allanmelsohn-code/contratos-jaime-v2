@@ -20,14 +20,21 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState<Modal>(null)
   const [actionErro, setActionErro] = useState('')
+  const [actionOk, setActionOk] = useState('')
   const [isPending, startTransition] = useTransition()
 
-  function run(fn: () => Promise<{ error?: string }>) {
+  function run(fn: () => Promise<{ error?: string }>, successMsg = 'Feito!') {
     setActionErro('')
+    setActionOk('')
     startTransition(async () => {
       try {
         const result = await fn()
-        if (result?.error) setActionErro(result.error)
+        if (result?.error) {
+          setActionErro(result.error)
+        } else {
+          setActionOk(successMsg)
+          setTimeout(() => setActionOk(''), 3000)
+        }
       } catch (e: any) {
         setActionErro(e?.message || 'Erro desconhecido')
       }
@@ -99,9 +106,8 @@ export default function AdminPage() {
           </button>
         </div>
 
-        {actionErro && (
-          <div className="p-error" style={{ marginBottom: 16 }}>{actionErro}</div>
-        )}
+        {actionErro && <div className="p-error" style={{ marginBottom: 16 }}>{actionErro}</div>}
+        {actionOk && <div style={{ background: '#D4EDDA', border: '1px solid #A8D5B5', borderRadius: 8, padding: '10px 16px', fontSize: 13, color: '#2D6A4F', marginBottom: 16 }}>{actionOk}</div>}
 
         {loading ? (
           <p style={{ color: 'var(--ink-f)', fontSize: 13 }}>Carregando...</p>
@@ -161,13 +167,13 @@ export default function AdminPage() {
                           Usuário
                         </button>
                         {t.status !== 'active' && (
-                          <button className="p-action-btn" onClick={() => run(() => ativarTenant(t.id))}>
+                          <button className="p-action-btn" onClick={() => run(() => ativarTenant(t.id), `${t.nome} ativado!`)}>
                             Ativar
                           </button>
                         )}
                         {t.status !== 'suspended' && (
                           <button className="p-action-btn" style={{ color: '#C0392B', borderColor: '#F5A090' }}
-                            onClick={() => { if (confirm(`Suspender ${t.nome}?`)) run(() => suspenderTenant(t.id)) }}>
+                            onClick={() => { if (confirm(`Suspender ${t.nome}?`)) run(() => suspenderTenant(t.id), `${t.nome} suspenso.`) }}>
                             Suspender
                           </button>
                         )}
@@ -194,7 +200,7 @@ export default function AdminPage() {
             <div className="p-modal-actions">
               <button className="p-btn-cancel" onClick={() => setModal(null)}>Cancelar</button>
               <button className="p-btn-confirm" onClick={() => {
-                run(() => liberarTrial(modal.tenant.id, trialDias))
+                run(() => liberarTrial(modal.tenant.id, trialDias), `Trial de ${trialDias} dias liberado!`)
                 setModal(null)
               }}>Liberar {trialDias} dias</button>
             </div>
@@ -220,12 +226,12 @@ export default function AdminPage() {
               </div>
             </div>
             <div className="p-modal-actions">
-              <button className="p-btn-cancel" onClick={() => { run(() => resetarContador(modal.tenant.id)); setModal(null) }}>
+              <button className="p-btn-cancel" onClick={() => { run(() => resetarContador(modal.tenant.id), 'Contador zerado!'); setModal(null) }}>
                 Zerar
               </button>
               <button className="p-btn-cancel" onClick={() => setModal(null)}>Cancelar</button>
               <button className="p-btn-confirm" onClick={() => {
-                run(() => editarContador(modal.tenant.id, usados, limite))
+                run(() => editarContador(modal.tenant.id, usados, limite), 'Contador salvo!')
                 setModal(null)
               }}>Salvar</button>
             </div>
@@ -258,7 +264,7 @@ export default function AdminPage() {
             <div className="p-modal-actions">
               <button className="p-btn-cancel" onClick={() => setModal(null)}>Cancelar</button>
               <button className="p-btn-confirm" onClick={() => {
-                run(() => criarUsuario(novoEmail, novoSenha, modal.tenant.id, novoRole))
+                run(() => criarUsuario(novoEmail, novoSenha, modal.tenant.id, novoRole), `Usuário ${novoEmail} criado!`)
                 setModal(null)
               }}>Criar usuário</button>
             </div>
