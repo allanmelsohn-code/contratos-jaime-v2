@@ -1,19 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
-  <!-- Fundo rounded square -->
   <rect width="200" height="200" rx="44" fill="#FAF6F1"/>
-  <!-- Blob coral -->
   <ellipse cx="70" cy="80" rx="80" ry="75" fill="#E8735A" opacity="0.92"/>
-  <!-- Blob sage -->
   <ellipse cx="145" cy="130" rx="70" ry="65" fill="#8BAD8B" opacity="0.85"/>
-  <!-- Blob coral claro superior direito -->
   <ellipse cx="160" cy="55" rx="45" ry="40" fill="#F0A030" opacity="0.55"/>
-  <!-- Casa (house icon) -->
   <g transform="translate(100,105) scale(1,-1)">
-    <!-- Telhado -->
     <polygon points="0,-48 48,-8 -48,-8" fill="white" opacity="0.95"/>
-    <!-- Corpo -->
     <rect x="-30" y="-8" width="60" height="44" fill="white" opacity="0.95"/>
-    <!-- Porta -->
     <rect x="-11" y="8" width="22" height="36" rx="3" fill="#E8735A" opacity="0.5"/>
   </g>
 </svg>

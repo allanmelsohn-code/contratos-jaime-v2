@@ -26,17 +26,30 @@ export default function LoginPage() {
     }
 
     // Busca papel e tenant do usuário
-    const { data: papUser } = await supabase
+    const { data: papUser, error: papErr } = await supabase
       .from('papaia_users')
       .select('role, tenant:papaia_tenants(slug)')
       .eq('id', data.user.id)
       .single()
 
-    if (papUser?.role === 'superadmin') {
+    if (papErr || !papUser) {
+      setErro('Usuário sem permissão configurada. Contate o administrador.')
+      await supabase.auth.signOut()
+      setLoading(false)
+      return
+    }
+
+    if (papUser.role === 'superadmin') {
       router.push('/admin')
     } else {
-      const slug = (papUser?.tenant as any)?.slug
-      router.push(slug ? `/${slug}` : '/login')
+      const slug = (papUser.tenant as any)?.slug
+      if (!slug) {
+        setErro('Usuário sem imobiliária associada. Contate o administrador.')
+        await supabase.auth.signOut()
+        setLoading(false)
+        return
+      }
+      router.push(`/${slug}`)
     }
   }
 
