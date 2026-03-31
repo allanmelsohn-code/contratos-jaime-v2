@@ -22,11 +22,15 @@ export default function AdminPage() {
   const [actionErro, setActionErro] = useState('')
   const [isPending, startTransition] = useTransition()
 
-  function run(fn: () => Promise<void>) {
+  function run(fn: () => Promise<{ error?: string }>) {
     setActionErro('')
     startTransition(async () => {
-      try { await fn() }
-      catch (e: any) { setActionErro(e?.message || 'Erro desconhecido') }
+      try {
+        const result = await fn()
+        if (result?.error) setActionErro(result.error)
+      } catch (e: any) {
+        setActionErro(e?.message || 'Erro desconhecido')
+      }
     })
   }
 
@@ -267,7 +271,7 @@ export default function AdminPage() {
         <div className="p-modal-overlay" onClick={() => setModal(null)}>
           <div className="p-modal" style={{ maxWidth: 520 }} onClick={e => e.stopPropagation()}>
             <h2 className="p-modal-title">Nova imobiliária</h2>
-            <form action={async (fd) => { run(() => criarTenant(fd)); setModal(null) }}>
+            <form action={async (fd) => { setModal(null); run(() => criarTenant(fd)) }}>
               <div className="j-grid j-grid-2" style={{ gap: 12 }}>
                 <div className="p-field j-fw">
                   <label className="p-label">Nome da imobiliária *</label>
