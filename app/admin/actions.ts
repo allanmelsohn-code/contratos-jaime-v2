@@ -82,14 +82,17 @@ export async function resetarContador(tenantId: string) {
 // ── Associar usuário a tenant (após criar no Supabase Auth) ─
 export async function associarUsuario(email: string, tenantId: string, role: 'admin' | 'user' = 'user') {
   const supabase = createAdminClient()
-  // Busca o auth.user pelo email via listUsers
-  const { data: listData } = await supabase.auth.admin.listUsers()
-  const user = listData?.users?.find((u: any) => u.email === email)
-  if (!user) throw new Error('Usuário não encontrado no Auth')
+  // Busca na papaia_users pelo email (usuário deve ter feito login ao menos uma vez)
+  const { data: papUser, error: findError } = await supabase
+    .from('papaia_users')
+    .select('id')
+    .eq('email', email.toLowerCase().trim())
+    .single()
+  if (findError || !papUser) throw new Error('Usuário não encontrado. Ele deve fazer login ao menos uma vez antes de ser associado.')
   const { error } = await supabase
     .from('papaia_users')
     .update({ tenant_id: tenantId, role })
-    .eq('id', user.id)
+    .eq('id', papUser.id)
   if (error) throw new Error(error.message)
   revalidatePath('/admin')
 }
