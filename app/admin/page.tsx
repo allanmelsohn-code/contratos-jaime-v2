@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition } from 'react'
 import { createClient } from '@/../../lib/supabase/client'
 import {
   liberarTrial, ativarTenant, suspenderTenant,
-  editarContador, resetarContador, criarTenant, associarUsuario
+  editarContador, resetarContador, criarTenant, criarUsuario
 } from './actions'
 import type { TenantConfig } from '@/lib/types'
 
@@ -35,6 +35,7 @@ export default function AdminPage() {
   const [usados, setUsados] = useState(0)
   const [limite, setLimite] = useState(10)
   const [novoEmail, setNovoEmail] = useState('')
+  const [novoSenha, setNovoSenha] = useState('')
   const [novoRole, setNovoRole] = useState<'admin' | 'user'>('user')
 
   useEffect(() => {
@@ -152,7 +153,7 @@ export default function AdminPage() {
                         <button className="p-action-btn" onClick={() => { setUsados(t.contratos_usados); setLimite(t.contratos_limite); setModal({ tipo: 'contador', tenant: t }) }}>
                           Contador
                         </button>
-                        <button className="p-action-btn" onClick={() => { setNovoEmail(''); setModal({ tipo: 'usuario', tenant: t }) }}>
+                        <button className="p-action-btn" onClick={() => { setNovoEmail(''); setNovoSenha(''); setModal({ tipo: 'usuario', tenant: t }) }}>
                           Usuário
                         </button>
                         {t.status !== 'active' && (
@@ -232,14 +233,16 @@ export default function AdminPage() {
       {modal?.tipo === 'usuario' && (
         <div className="p-modal-overlay" onClick={() => setModal(null)}>
           <div className="p-modal" onClick={e => e.stopPropagation()}>
-            <h2 className="p-modal-title">Associar usuário — {modal.tenant.nome}</h2>
-            <p style={{ fontSize: 12, color: 'var(--ink-f)', marginBottom: 16 }}>
-              O usuário deve primeiro fazer login para ser criado no sistema.
-            </p>
+            <h2 className="p-modal-title">Criar usuário — {modal.tenant.nome}</h2>
             <div className="p-field">
-              <label className="p-label">Email do usuário</label>
+              <label className="p-label">Email</label>
               <input className="p-input" type="email" placeholder="corretor@imob.com.br"
                 value={novoEmail} onChange={e => setNovoEmail(e.target.value)} />
+            </div>
+            <div className="p-field">
+              <label className="p-label">Senha inicial</label>
+              <input className="p-input" type="text" placeholder="mínimo 6 caracteres"
+                value={novoSenha} onChange={e => setNovoSenha(e.target.value)} />
             </div>
             <div className="p-field">
               <label className="p-label">Papel</label>
@@ -251,9 +254,9 @@ export default function AdminPage() {
             <div className="p-modal-actions">
               <button className="p-btn-cancel" onClick={() => setModal(null)}>Cancelar</button>
               <button className="p-btn-confirm" onClick={() => {
-                run(() => associarUsuario(novoEmail, modal.tenant.id, novoRole))
+                run(() => criarUsuario(novoEmail, novoSenha, modal.tenant.id, novoRole))
                 setModal(null)
-              }}>Associar</button>
+              }}>Criar usuário</button>
             </div>
           </div>
         </div>

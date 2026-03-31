@@ -79,20 +79,29 @@ export async function resetarContador(tenantId: string) {
   revalidatePath('/admin')
 }
 
-// ── Associar usuário a tenant (após criar no Supabase Auth) ─
-export async function associarUsuario(email: string, tenantId: string, role: 'admin' | 'user' = 'user') {
+// ── Criar usuário e associar a tenant ────────────────────────
+export async function criarUsuario(email: string, senha: string, tenantId: string, role: 'admin' | 'user' = 'user') {
   const supabase = createAdminClient()
-  // Busca na papaia_users pelo email (usuário deve ter feito login ao menos uma vez)
-  const { data: papUser, error: findError } = await supabase
-    .from('papaia_users')
-    .select('id')
-    .eq('email', email.toLowerCase().trim())
-    .single()
-  if (findError || !papUser) throw new Error('Usuário não encontrado. Ele deve fazer login ao menos uma vez antes de ser associado.')
+
+  // Cria no Supabase Auth (o trigger papaia_on_auth_user_created cria a linha em papaia_users)
+  const { data: created, error: createError } = await supabase.auth.admin.createUser({
+    email: email.toLowerCase().trim(),
+    password: senha,
+    email_confirm: true,
+  })
+  if (createError) throw new Error(createError.message)
+
+  const userId = created.user.id
+
+  // Garante que a linha existe em papaia_users (caso o trigger demore)
+  await supabase.from('papaia_users').upsert({ id: userId, email: email.toLowerCase().trim() }, { onConflict: 'id' })
+
+  // Associa ao tenant e define papel
   const { error } = await supabase
     .from('papaia_users')
     .update({ tenant_id: tenantId, role })
-    .eq('id', papUser.id)
+    .eq('id', userId)
   if (error) throw new Error(error.message)
+
   revalidatePath('/admin')
 }
