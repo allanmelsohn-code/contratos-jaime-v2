@@ -26,6 +26,9 @@ export default function StepGerar({ form, onPrev, tenantId }: Props) {
       if (f.conjuge?.nome) s.push({ nome: f.conjuge.nome, email: f.conjuge.email || '', role: 'CÔNJUGE/OUTORGANTE' })
       return s
     }) : []),
+    ...(form.gnt === 'imovel-cau' ? (form.garantia?.caucionantes || []).map((c: any) => ({
+      nome: c.nome || 'CAUCIONANTE', email: c.email || '', role: 'CAUCIONANTE'
+    })) : []),
     ...form.testemunhas.map(t => ({ nome: t.nome || 'TESTEMUNHA', email: t.email || '', role: 'TESTEMUNHA' })),
     { nome: 'JAIMERX IMOBILIÁRIA LTDA', email: 'juridico@jaimeimobiliaria.com.br', role: 'Intermediadora' },
   ]

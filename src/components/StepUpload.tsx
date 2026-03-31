@@ -260,10 +260,11 @@ function SlotRow({ label, state, onUpload, onManualSave, manualFields }: {
 // ── Main component ────────────────────────────────────────────────────────────
 
 const GNT_OPTIONS = [
-  { id: 'fiador',  icon: '🤝', label: 'Fiador',                desc: 'Pessoa física garantidora' },
-  { id: 'seguro',  icon: '🛡️', label: 'Seguro Fiança',         desc: 'Apólice de seguro' },
-  { id: 'caucao',  icon: '💰', label: 'Caução',                desc: 'Depósito em dinheiro' },
-  { id: 'titulo',  icon: '📜', label: 'Título Capitalização',  desc: 'Título em garantia' },
+  { id: 'fiador',     icon: '🤝', label: 'Fiador',               desc: 'Pessoa física garantidora' },
+  { id: 'seguro',     icon: '🛡️', label: 'Seguro Fiança',        desc: 'Apólice de seguro' },
+  { id: 'caucao',     icon: '💰', label: 'Caução',               desc: 'Depósito em dinheiro' },
+  { id: 'titulo',     icon: '📜', label: 'Título Capitalização', desc: 'Título em garantia' },
+  { id: 'imovel-cau', icon: '🏠', label: 'Imóvel Caucionado',   desc: 'Garantia real em imóvel · art. 38 §1º' },
 ]
 
 const ROLE_META = {

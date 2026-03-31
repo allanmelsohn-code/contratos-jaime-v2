@@ -9,8 +9,9 @@ export type ExtractedDoc = {
 }
 
 export type FormState = {
+  modalidade: 'locacao' | 'compra-venda' | 'escritura' | null
   admJaime: boolean
-  gnt: 'fiador' | 'seguro' | 'caucao' | 'titulo' | null
+  gnt: 'fiador' | 'seguro' | 'caucao' | 'titulo' | 'imovel-cau' | null
   locadores: any[]
   locatarios: any[]
   fiadores: any[]
@@ -20,6 +21,9 @@ export type FormState = {
   comissao: any
   clausulas: any
   testemunhas: any[]
+  vendedores: any[]
+  compradores: any[]
+  negocio: any
 }
 
 export type FileInfo = {

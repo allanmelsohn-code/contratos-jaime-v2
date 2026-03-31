@@ -75,21 +75,26 @@ function quadroResumo(data: any): Table {
 
   const gntStr = formatGarantia(gnt, garantia)
 
+  const hasFiadorRow = gnt === 'fiador' && fiadores?.length
+  const hasImovelCauRow = gnt === 'imovel-cau' && garantia?.caucionantes?.length
   const rows = [
     ['I — Locador(a):', locNomes || '###'],
-    ...(gnt === 'fiador' && fiadores?.length
+    ['II — Locatário(a):', ltNomes || '###'],
+    ...(hasFiadorRow
       ? [['III — Fiador(es):', fiadores.map((f: any) => qualificarPessoa(f)).join('; e, ')]]
       : []),
-    ['II — Locatário(a):', ltNomes || '###'],
-    ['III — Imóvel:', imStr],
-    ['IV — Garantia:', gntStr],
-    ['V — Finalidade:', `Exclusivamente para fins ${imovel.finalidade === 'comerciais' ? 'comerciais' : 'RESIDENCIAIS dos Locatários'}`],
-    ['VI — Prazo:', `De ${prazoExt} (${prazoMeses}) meses a partir de ${inicio} e término em ${termino}`],
-    ['VII — Aluguel:', `R$ ${valor.aluguel} MENSAL`],
-    ['VIII — Vencimento:', `Todo dia ${valor.vencimento} de cada mês`],
-    ['IX — Multa por atraso:', valor.multa || '10% (dez por cento)'],
-    ['X — Reajuste:', valor.reajuste || 'a cada 12 meses'],
-    ['XI — Índice de correção:', valor.indice || 'IGP-M da FGV'],
+    ...(hasImovelCauRow
+      ? [['III — Caucionante(s):', garantia.caucionantes.map((c: any) => c.nome || '###').join('; e, ')]]
+      : []),
+    [`${hasFiadorRow || hasImovelCauRow ? 'IV' : 'III'} — Imóvel:`, imStr],
+    [`${hasFiadorRow || hasImovelCauRow ? 'V' : 'IV'} — Garantia:`, gntStr],
+    [`${hasFiadorRow || hasImovelCauRow ? 'VI' : 'V'} — Finalidade:`, `Exclusivamente para fins ${imovel.finalidade === 'comerciais' ? 'comerciais' : 'RESIDENCIAIS dos Locatários'}`],
+    [`${hasFiadorRow || hasImovelCauRow ? 'VII' : 'VI'} — Prazo:`, `De ${prazoExt} (${prazoMeses}) meses a partir de ${inicio} e término em ${termino}`],
+    [`${hasFiadorRow || hasImovelCauRow ? 'VIII' : 'VII'} — Aluguel:`, `R$ ${valor.aluguel} MENSAL`],
+    [`${hasFiadorRow || hasImovelCauRow ? 'IX' : 'VIII'} — Vencimento:`, `Todo dia ${valor.vencimento} de cada mês`],
+    [`${hasFiadorRow || hasImovelCauRow ? 'X' : 'IX'} — Multa por atraso:`, valor.multa || '10% (dez por cento)'],
+    [`${hasFiadorRow || hasImovelCauRow ? 'XI' : 'X'} — Reajuste:`, valor.reajuste || 'a cada 12 meses'],
+    [`${hasFiadorRow || hasImovelCauRow ? 'XII' : 'XI'} — Índice de correção:`, valor.indice || 'IGP-M da FGV'],
   ]
 
   return new Table({
@@ -141,12 +146,18 @@ function formatGarantia(gnt: string, garantia: any): string {
   switch (gnt) {
     case 'caucao':
       return `CAUÇÃO no valor de R$ ${garantia.valor}, creditados na conta bancária indicada pelo(a) LOCADOR(A) – Banco ${garantia.banco} – Agência ${garantia.agencia} – C/C ${garantia.conta} – PIX (${garantia.pixTipo}): ${garantia.pix}`
-    case 'titulo':
-      return `TÍTULO DE CAPITALIZAÇÃO no valor nominal de R$ ${garantia.valor} subscrito(s) pela ${garantia.instituicao}, proposta/formulário nº ${garantia.numero}`
+    case 'titulo': {
+      const inst = garantia.instituicao === 'Outra' ? (garantia.outraInstituicao || '###') : (garantia.instituicao || 'Porto Seguro Capitalização S.A')
+      return `TÍTULO DE CAPITALIZAÇÃO no valor nominal de R$ ${garantia.valor} subscrito(s) pela ${inst}, proposta/formulário nº ${garantia.numero}`
+    }
     case 'seguro':
       return `SEGURO FIANÇA – ${garantia.seguradora}, Apólice nº ${garantia.apolice}${garantia.pac ? `, PAC: ${garantia.pac}` : ''}`
     case 'fiador':
       return 'Conforme qualificação no item III do Quadro Resumo'
+    case 'imovel-cau': {
+      const cNomes = (garantia.caucionantes || []).map((c: any) => c.nome).filter(Boolean).join('; e, ') || '###'
+      return `CAUÇÃO DE IMÓVEL – Matrícula nº ${garantia.matricula || '###'} do ${garantia.cartorio || '###'} – Caucionantes: ${cNomes}`
+    }
     default:
       return '###'
   }
@@ -177,23 +188,38 @@ function garantiaClause(gnt: string, garantia: any, fiadores: any[]): Paragraph[
     const fNomes = fiadores.map((f: any) => f.nome || '###').join('; e, ')
     clauses.push(
       p(`O(s) FIADOR(ES) — ${fNomes} — assinam o presente contrato como principal(is) pagador(es) solidário(s) com o(a) LOCATÁRIO(A) pelas obrigações aqui assumidas, tanto pelos aluguéis e encargos locatícios, inclusive pela multa contratual e eventuais danos causados ao imóvel locado, como também pela majoração e revisão de aluguéis decorrentes inclusive de acordos judiciais e extrajudiciais e pela exatidão das qualificações deste constantes, cuja responsabilidade subsistirá até a entrega real e efetiva das chaves do imóvel, dando quitação plena, mesmo que isso venha a ocorrer após o término do prazo da locação.`),
-      p(`O(s) FIADOR(ES) renuncia(m) expressamente ao direito de exoneração previsto nos artigos 835, 836, 837, 838 e seguintes do Código Civil Brasileiro (Lei 10.406/02), bem como, ao benefício de ordem previsto no artigo 827 e seguintes do mesmo diploma legal.`),
-      p(`A garantia ora prestada pelo(s) FIADOR(ES) permanecerá válida e efetiva até a data em que o(a) LOCADOR(A), ou seu procurador(a) ou ainda seu representante legal, passar recibo das chaves, dando quitação plena ao(à) LOCATÁRIO(A), mesmo que isso venha a ocorrer após o término do prazo de locação.`)
+      p(`12.1 — O(s) FIADOR(ES) renuncia(m) expressamente ao direito de exoneração previsto nos artigos 835, 836, 837, 838 e seguintes do Código Civil Brasileiro (Lei 10.406/02), bem como, ao benefício de ordem previsto no artigo 827 e seguintes do mesmo diploma legal.`),
+      p(`12.2 — A garantia ora prestada pelo(s) FIADOR(ES) permanecerá válida e efetiva até a data em que o(a) LOCADOR(A), ou seu procurador(a) ou ainda seu representante legal, passar recibo das chaves, dando quitação plena ao(à) LOCATÁRIO(A), mesmo que isso venha a ocorrer após o término do prazo de locação.`)
     )
   } else if (gnt === 'caucao') {
     clauses.push(
-      p(`A garantia ora prestada pelo(a) LOCATÁRIO(A) é o valor constante no item IV do quadro resumo, para cobertura de alugueis, encargos e ou danos ao imóvel, será depositado em conta corrente do(a) LOCADOR(A) e permanecerá válida e efetiva até a data em que o(a) LOCADOR(A) passar recibo das chaves, dando quitação plena ao(à) LOCATÁRIO(A), mesmo que isso venha a ocorrer após o término do prazo de locação.`),
-      p(`A Lei do inquilinato estabelece que o índice de correção da caução locatícia deve observar a caderneta de poupança, no entanto, as partes – por mera liberalidade – estabelecem que os valores da caução serão aplicados à 100% (cem por cento) do CDI.`)
+      p(`A garantia ora prestada pelo(a) LOCATÁRIO(A) é o valor constante no item IV do quadro resumo, para cobertura de aluguéis, encargos e/ou danos ao imóvel, depositado em conta corrente do(a) LOCADOR(A) e permanecerá válida e efetiva até a data em que o(a) LOCADOR(A) passar recibo das chaves, dando quitação plena ao(à) LOCATÁRIO(A), mesmo que isso venha a ocorrer após o término do prazo de locação.`),
+      p(`12.1 — A Lei do Inquilinato estabelece que o índice de correção da caução locatícia deve observar a caderneta de poupança; no entanto, as partes — por mera liberalidade — estabelecem que os valores da caução serão aplicados a 100% (cem por cento) do CDI.`)
     )
   } else if (gnt === 'titulo') {
+    const inst = garantia.instituicao === 'Outra' ? (garantia.outraInstituicao || '###') : (garantia.instituicao || 'Porto Seguro Capitalização S.A')
     clauses.push(
-      p(`Para garantir as obrigações assumidas neste contrato, o(a) LOCATÁRIO(a), por ser de seu interesse, dá neste ato, em Caução ao(à) LOCADOR(A), o(s) Título(s) de Capitalização no valor nominal de R$ ${garantia.valor} subscrito(s) pela ${garantia.instituicao}, representado pela proposta/formulário nº ${garantia.numero}.`),
-      p(`Ao término do prazo de vigência do(s) Título(s), autorizo a ${garantia.instituicao} a reaplicar o valor de resgate, sempre em meu nome, dando origem a um novo Título com as mesmas Condições Gerais do Título inicialmente adquirido, sendo que este permanecerá como caução à locação até a efetiva desocupação do imóvel e entrega das chaves.`),
-      p(`Se o(a) LOCATÁRIO(A) não observar quaisquer das cláusulas do presente contrato, fica, desde já, o(a) LOCADOR(A) autorizado a resgatar o(s) Título(s) caucionado(s), a qualquer momento, mesmo antes do prazo final de capitalização, a fim de quitar eventual importância devida em razão de débitos oriundos deste contrato.`)
+      p(`Para garantir as obrigações assumidas neste contrato, o(a) LOCATÁRIO(A), por ser de seu interesse, dá neste ato, em Caução ao(à) LOCADOR(A), o(s) Título(s) de Capitalização no valor nominal de R$ ${garantia.valor || '###'} subscrito(s) pela ${inst}, representado pela proposta/formulário nº ${garantia.numero || '###'}.`),
+      p(`12.1 — Ao término do prazo de vigência do(s) Título(s), o(a) LOCATÁRIO(A) autoriza a ${inst} a reaplicar o valor de resgate, sempre em seu nome, dando origem a um novo Título com as mesmas Condições Gerais do Título inicialmente adquirido, sendo que este permanecerá como caução à locação até a efetiva desocupação do imóvel e entrega das chaves.`),
+      p(`12.2 — O(A) LOCATÁRIO(A) se responsabiliza em comunicar qualquer alteração cadastral ou então se manifestar contrariamente à reaplicação do título, com no mínimo 15 (quinze) dias de antecedência da data do vencimento do título.`),
+      p(`12.3 — Se o(a) LOCATÁRIO(A) não observar quaisquer das cláusulas do presente contrato, fica, desde já, o(a) LOCADOR(A) autorizado(a) a resgatar o(s) Título(s) caucionado(s), a qualquer momento, mesmo antes do prazo final de capitalização, a fim de quitar eventual importância devida em razão de débitos oriundos deste contrato.`)
     )
   } else if (gnt === 'seguro') {
     clauses.push(
-      p(`A garantia da presente locação é o SEGURO FIANÇA junto à seguradora ${garantia.seguradora}, Apólice nº ${garantia.apolice}${garantia.pac ? `, PAC: ${garantia.pac}` : ''}, com vigência até ${garantia.vigencia || '###'}.`)
+      p(`A garantia da presente locação é o SEGURO FIANÇA junto à seguradora ${garantia.seguradora || '###'}, Apólice nº ${garantia.apolice || '###'}${garantia.pac ? `, PAC: ${garantia.pac}` : ''}, com vigência até ${garantia.vigencia ? formatDate(garantia.vigencia) : '###'}.`),
+      p(`12.1 — Os prêmios iniciais e renovações, calculados conforme normas vigentes, serão pagos pelo(a) LOCATÁRIO(A), de acordo com o inciso XI do artigo 23 da Lei do Inquilinato, sob pena de rescisão desta locação, com o consequente despejo e cancelamento da apólice.`),
+      p(`12.2 — Eventuais débitos decorrentes do presente contrato, não pagos pelo(a) LOCATÁRIO(A) após regularmente instado(a) a tanto, serão comunicados às entidades mantenedoras de bancos de dados de proteção ao crédito (Serasa, SPC, etc.), quer pelo(a) LOCADOR(A), quer pela Seguradora.`)
+    )
+  } else if (gnt === 'imovel-cau') {
+    const caucionantes: any[] = garantia.caucionantes || []
+    const cqual = caucionantes.map((c: any) =>
+      [c.nome, c.rg ? `RG nº ${c.rg}` : '', c.cpf ? `CPF nº ${c.cpf}` : ''].filter(Boolean).join(', ')
+    )
+    clauses.push(
+      p(`As partes têm entre si ajustada a caução do bem imóvel descrito na matrícula nº ${garantia.matricula || '###'} do ${garantia.cartorio || '###'}${garantia.descricao ? `, relativo a "${garantia.descricao}"` : ''}.`),
+      p(`12.1 — Os(As) CAUCIONANTE(S) — ${cqual.join('; e, ') || '###'} — oferecem ao(à) LOCADOR(A), que desde já aceita como garantia real de suas obrigações solidárias, o imóvel objeto da matrícula supra, AUTORIZANDO EXPRESSAMENTE O REGISTRO DE GRAVAME EM SEUS ASSENTAMENTOS, na modalidade de caução locatícia complementar e extraordinária, em virtude do valor considerável do aluguel, nos termos do art. 38 §1º da Lei 8.245/91.`),
+      p(`12.2 — A caução imobiliária ora prestada permanecerá válida e efetiva até a data em que o(a) LOCADOR(A) passar recibo das chaves, dando quitação plena ao(à) LOCATÁRIO(A), mesmo que isso venha a ocorrer após o término do prazo de locação.`),
+      p(`12.3 — A averbação da caução e seu cancelamento, após a quitação de todas as obrigações contratuais, são de responsabilidade e custo do(a) LOCATÁRIO(A), devendo ser providenciados no prazo de 30 (trinta) dias após a entrega das chaves.`)
     )
   }
 
@@ -270,6 +296,9 @@ export async function POST(request: Request) {
       if (f.conjuge?.nome) sigs.push({ nome: f.conjuge.nome, role: 'CÔNJUGE / OUTORGANTE' })
       return sigs
     }) : []),
+    ...(gnt === 'imovel-cau' ? (garantia?.caucionantes || []).map((c: any) => ({
+      nome: c.nome || 'CAUCIONANTE', role: 'CAUCIONANTE'
+    })) : []),
     ...testemunhas.map((t: any, i: number) => ({ nome: t.nome || `TESTEMUNHA ${i + 1}`, role: 'TESTEMUNHA' })),
     { nome: 'JAIMERX IMOBILIÁRIA LTDA', role: 'CNPJ 63.271.809/0001-78 · Intermediadora' },
   ]
@@ -337,9 +366,15 @@ export async function POST(request: Request) {
 
         heading('Do Imóvel, Conservação, Manutenção e Vistorias'),
         p(`O(A) LOCATÁRIO(A) declara receber o imóvel no estado de conservação conforme vistoria em anexo, obrigando-se a: (a) manter o imóvel no mais perfeito estado de higiene, conservação e limpeza, restituindo-o pintado na cor original, limpo e livre de pessoas e coisas; (b) efetuar todas as obras e reparos necessários, excetuados os estruturais; (c) não ceder, sublocar ou emprestar o imóvel sem prévia autorização escrita do(a) LOCADOR(A); (d) atender às exigências dos Poderes Públicos; (e) transferir as ligações de energia elétrica, água e gás para seu nome no prazo de 30 (trinta) dias.`),
+        ...((imovel.consEnergia || imovel.consGas || imovel.consAgua) ? [
+          p(`5.1 — Códigos das contas de consumo do imóvel:${imovel.consEnergia ? ` Energia elétrica: ${imovel.consEnergia}.` : ''}${imovel.consGas ? ` Gás: ${imovel.consGas}.` : ''}${imovel.consAgua ? ` Água: ${imovel.consAgua}.` : ''}`),
+        ] : []),
 
         heading('Dos Encargos e Obrigações em Relação ao Imóvel'),
-        p(`De mútuo e comum acordo, as PARTES convencionam que todos os impostos, especialmente o IPTU, taxas condominiais ordinárias, despesas de luz, gás, água, tarifas bancárias e demais encargos incidentes sobre o imóvel serão de responsabilidade integral do(a) LOCATÁRIO(A), devendo efetuar o pagamento juntamente com o aluguel até a respectiva data de vencimento.`),
+        p(clausulas.iptuLocador
+          ? `De mútuo e comum acordo, as PARTES convencionam que o IPTU (Imposto Predial e Territorial Urbano) e as taxas condominiais ordinárias serão pagos pelo(a) LOCADOR(A) durante a vigência deste contrato, permanecendo a obrigação do(a) LOCATÁRIO(A) quanto às despesas de luz, gás, água, tarifas bancárias e demais encargos incidentes sobre o imóvel.`
+          : `De mútuo e comum acordo, as PARTES convencionam que todos os impostos, especialmente o IPTU (Imposto Predial e Territorial Urbano), taxas condominiais ordinárias, despesas de luz, gás, água, tarifas bancárias e demais encargos incidentes sobre o imóvel serão de responsabilidade integral do(a) LOCATÁRIO(A), devendo efetuar o pagamento até a respectiva data de vencimento.`
+        ),
         p(`O(A) LOCADOR(A) efetuará um seguro do imóvel contra riscos de incêndio, cujo pagamento deverá ser efetuado pelo(a) LOCATÁRIO(A), com seguradora de livre escolha do(a) LOCADOR(A), com base no valor real do imóvel.`),
 
         // Garantia clause (dynamic)

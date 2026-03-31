@@ -137,12 +137,13 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
 
       {/* Garantia */}
       <Card title="Modalidade de Garantia" icon="🛡️">
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {[
             { id: 'fiador', icon: '🤝', label: 'Fiador', desc: 'Pagador solidário, arts. 835–838 CC' },
             { id: 'seguro', icon: '📄', label: 'Seguro Fiança', desc: 'Apólice com seguradora' },
             { id: 'caucao', icon: '💰', label: 'Caução', desc: 'Depósito · máx. 3 meses · 100% CDI' },
             { id: 'titulo', icon: '📊', label: 'Título de Cap.', desc: 'Porto Seguro Capitalização' },
+            { id: 'imovel-cau', icon: '🏠', label: 'Imóvel Caucionado', desc: 'Caucionantes oferecem imóvel próprio · art. 38 §1º Lei 8.245/91' },
           ].map(g => (
             <ChoiceCard key={g.id} id={g.id} selected={form.gnt} onSelect={(v: string) => up('gnt', v)}
               icon={g.icon} label={g.label} desc={g.desc} />
@@ -157,6 +158,14 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
           <Field label="Vagas de garagem" value={form.imovel?.vaga} onChange={(v: string) => up('imovel', { ...form.imovel, vaga: v })} placeholder="01 (uma) vaga" />
           <Select label="Finalidade" value={form.imovel?.finalidade} onChange={(v: string) => up('imovel', { ...form.imovel, finalidade: v })}
             options={[['RESIDENCIAIS', 'Residencial'], ['comerciais', 'Comercial']]} />
+        </div>
+        <div className="mt-4 pt-4 border-t border-black/8">
+          <div className="text-[11px] font-medium tracking-widest uppercase text-[#8A7A6A] mb-3">Códigos de Consumo (opcional)</div>
+          <div className="grid grid-cols-3 gap-3">
+            <Field label="Energia elétrica" value={form.imovel?.consEnergia} onChange={(v: string) => up('imovel', { ...form.imovel, consEnergia: v })} placeholder="Ex: 7001234567" />
+            <Field label="Gás" value={form.imovel?.consGas} onChange={(v: string) => up('imovel', { ...form.imovel, consGas: v })} placeholder="Ex: 0123456789" />
+            <Field label="Água" value={form.imovel?.consAgua} onChange={(v: string) => up('imovel', { ...form.imovel, consAgua: v })} placeholder="Ex: 012345678-9" />
+          </div>
         </div>
       </Card>
 
@@ -228,6 +237,38 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
             <Field label="PAC" value={form.garantia?.pac} onChange={(v: string) => upGnt('pac', v)} />
             <Field label="Vigência" type="date" value={form.garantia?.vigencia} onChange={(v: string) => upGnt('vigencia', v)} />
           </div>
+        </Card>
+      )}
+
+      {form.gnt === 'imovel-cau' && (
+        <Card title="Imóvel Caucionado" icon="🏠">
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <Field label="Nº da Matrícula *" value={form.garantia?.matricula} onChange={(v: string) => upGnt('matricula', v)} placeholder="12.345" />
+            <Field label="Cartório (Nº/Nome) *" value={form.garantia?.cartorio} onChange={(v: string) => upGnt('cartorio', v)} placeholder="15º RI São Paulo" />
+            <Field label="Descrição do imóvel" value={form.garantia?.descricao} onChange={(v: string) => upGnt('descricao', v)} placeholder="Ap. 12, Rua..." />
+          </div>
+          <div className="text-[11px] font-medium tracking-widest uppercase text-[#8A7A6A] mb-3">Caucionantes</div>
+          {((form.garantia?.caucionantes || []) as any[]).map((c: any, i: number) => (
+            <div key={i} className="border border-black/10 rounded-lg p-3 mb-3 bg-[#F5F0E8]">
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-xs font-semibold text-[#1A1612]">Caucionante {i + 1}</span>
+                <button onClick={() => { const arr = (form.garantia?.caucionantes || []).filter((_: any, j: number) => j !== i); up('garantia', { ...form.garantia, caucionantes: arr }) }}
+                  className="text-[11px] text-[#8A7A6A] hover:text-red-600">Remover</button>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {[['Nome completo', 'nome', 'text', ''], ['CPF', 'cpf', 'text', '000.000.000-00'], ['RG', 'rg', 'text', '']].map(([label, field, type, ph]) => (
+                  <Field key={field} label={label} type={type} placeholder={ph}
+                    value={c[field] || ''} onChange={(v: string) => {
+                      const arr = [...(form.garantia?.caucionantes || [])]
+                      arr[i] = { ...arr[i], [field]: v }
+                      up('garantia', { ...form.garantia, caucionantes: arr })
+                    }} />
+                ))}
+              </div>
+            </div>
+          ))}
+          <button onClick={() => { const arr = [...(form.garantia?.caucionantes || []), { nome: '', cpf: '', rg: '' }]; up('garantia', { ...form.garantia, caucionantes: arr }) }}
+            className="text-sm text-[#B8860B] hover:text-[#D4A017] font-medium">+ Adicionar caucionante</button>
         </Card>
       )}
 
@@ -333,6 +374,14 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
                   <Field label="Destinação" value={form.clausulas.abono.obs} onChange={(v: string) => upCla('abono', { ...form.clausulas.abono, obs: v })} placeholder="Reforma, pintura..." />
                 </div>
               )}
+            </div>
+          </label>
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" checked={!!form.clausulas?.iptuLocador} onChange={e => upCla('iptuLocador', e.target.checked)}
+              className="mt-1 accent-[#B8860B]" />
+            <div>
+              <div className="text-sm font-medium text-[#1A1612]">IPTU pago pelo locador</div>
+              <div className="text-[11px] text-[#8A7A6A]">Por padrão, todos encargos (IPTU, condomínio, luz, água, gás) são do locatário. Marque para transferir IPTU e condomínio ao locador.</div>
             </div>
           </label>
           <label className="flex items-start gap-3 cursor-pointer">
