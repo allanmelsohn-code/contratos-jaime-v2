@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Jaime · Convenção de Nomes de Arquivo</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1A1612; --gold: #B8860B; --cream: #F5F0E8; --parchment: #EDE5D0;
+    --sage: #3A5A3A; --rust: #8B3A1A; --muted: #4A3F35; --faint: #8A7A6A;
+    --border: rgba(26,22,18,.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); font-size: 11pt; }
+
+  .page { max-width: 210mm; margin: 0 auto; padding: 14mm 16mm; }
+
+  header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; border-bottom: 2px solid var(--ink); margin-bottom: 16px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-family: 'Playfair Display', serif; font-size: 16pt; }
+  .logo-sq { width: 28px; height: 28px; background: var(--gold); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--ink); }
+  .header-right { text-align: right; font-size: 9pt; color: var(--faint); }
+  .header-right strong { display: block; font-size: 10pt; color: var(--ink); }
+
+  h2 { font-family: 'Playfair Display', serif; font-size: 14pt; font-weight: 600; color: var(--ink); margin-bottom: 10px; margin-top: 18px; padding-bottom: 5px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 7px; }
+  h2 .icon { font-size: 15px; }
+
+  .intro { background: var(--parchment); border: 1px solid rgba(184,134,11,.25); border-radius: 8px; padding: 10px 14px; font-size: 10pt; color: var(--muted); line-height: 1.6; margin-bottom: 4px; }
+  .intro code { background: rgba(184,134,11,.15); color: var(--gold); padding: 1px 5px; border-radius: 3px; font-family: 'DM Mono', monospace; font-size: 9.5pt; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 4px; }
+  .grid3 { grid-template-columns: 1fr 1fr 1fr; }
+
+  .group { background: white; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .group-header { background: var(--ink); color: var(--cream); padding: 5px 10px; font-size: 9pt; font-weight: 500; letter-spacing: .04em; }
+  .group-header.gold { background: var(--gold); color: var(--ink); }
+  .group-header.sage { background: var(--sage); color: white; }
+  .group-header.rust { background: var(--rust); color: white; }
+  .group-header.gray { background: #555; color: white; }
+
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 4px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  td:first-child { font-family: 'DM Mono', monospace; font-size: 8.5pt; color: var(--gold); white-space: nowrap; width: 52%; }
+  td:last-child { font-size: 8.5pt; color: var(--muted); padding-left: 6px; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: rgba(26,22,18,.02); }
+
+  .badge { display: inline-block; padding: 1px 6px; border-radius: 10px; font-size: 7.5pt; font-weight: 500; margin-left: 4px; vertical-align: middle; }
+  .b-pf { background: rgba(59,130,246,.12); color: #1d4ed8; }
+  .b-pj { background: rgba(139,58,26,.12); color: var(--rust); }
+  .b-opt { background: rgba(26,22,18,.08); color: var(--faint); }
+
+  .note { font-size: 8pt; color: var(--faint); padding: 6px 10px; background: rgba(26,22,18,.03); border-top: 1px solid var(--border); line-height: 1.5; }
+  code { font-family: 'DM Mono', monospace; font-size: 8pt; background: rgba(26,22,18,.06); padding: 1px 4px; border-radius: 3px; }
+
+  .format-box { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; }
+  .format-rule { display: flex; align-items: center; gap: 8px; font-size: 10pt; margin-bottom: 6px; }
+  .format-rule code { background: rgba(184,134,11,.12); color: var(--ink); font-size: 11pt; padding: 3px 10px; }
+  .format-parts { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 6px; }
+  .format-part { font-size: 8.5pt; color: var(--muted); }
+  .format-part code { color: var(--gold); }
+
+  footer { margin-top: 18px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 8pt; color: var(--faint); display: flex; justify-content: space-between; }
+
+  @media print {
+    body { background: white; }
+    .page { padding: 10mm 12mm; }
+    @page { margin: 0; size: A4; }
+  }
+  @media screen { .page { box-shadow: 0 4px 40px rgba(0,0,0,.12); margin: 20px auto; border-radius: 4px; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div class="logo">
+    <div class="logo-sq">J</div>
+    Jaime Imobiliária
+  </div>
+  <div class="header-right">
+    <strong>Gerador de Contratos</strong>
+    Convenção de Nomes de Arquivo · Uso Interno
+  </div>
+</header>
+
+<!-- Formato -->
+<div class="format-box">
+  <div class="format-rule">
+    Formato: <code>[tipo-doc]-[papel][número].[ext]</code>
+  </div>
+  <div class="format-parts">
+    <div class="format-part"><code>tipo-doc</code> — tipo do documento (ex: RG, CNH, matricula)</div>
+    <div class="format-part"><code>papel</code> — quem é a pessoa no contrato (ex: locador, locatario, fiador)</div>
+    <div class="format-part"><code>número</code> — 1, 2, 3… se houver mais de uma pessoa no mesmo papel <span style="color:var(--faint)">(opcional para o primeiro)</span></div>
+    <div class="format-part"><code>ext</code> — .jpg .jpeg .png .pdf</div>
+  </div>
+</div>
+
+<div class="intro">
+  Exemplos rápidos: <code>RG-locatario1.jpg</code> &nbsp;·&nbsp; <code>CNH-locador1.jpg</code> &nbsp;·&nbsp; <code>matricula-imovel.pdf</code> &nbsp;·&nbsp; <code>passaporte-locatario2.jpg</code> &nbsp;·&nbsp; <code>CNPJ-locatario1.pdf</code>
+</div>
+
+<!-- Grid principal -->
+<div class="grid" style="margin-top:14px">
+
+  <!-- LOCADORES -->
+  <div class="group">
+    <div class="group-header">🏠 LOCADOR (Proprietário)</div>
+    <table>
+      <tr><td>RG-locador1.jpg</td><td>RG <span class="badge b-pf">PF</span></td></tr>
+      <tr><td>RG-locador2.jpg</td><td>RG do 2º locador</td></tr>
+      <tr><td>CNH-locador1.jpg</td><td>CNH (alternativa ao RG)</td></tr>
+      <tr><td>passaporte-locador1.jpg</td><td>Passaporte (estrangeiro)</td></tr>
+      <tr><td>comprovante-locador1.jpg</td><td>Comprovante de endereço</td></tr>
+      <tr><td>banco-locador1.jpg</td><td>Dados bancários (print)</td></tr>
+      <tr><td>CNPJ-locador1.pdf</td><td>Cartão CNPJ <span class="badge b-pj">PJ</span></td></tr>
+      <tr><td>contrato-social-locador1.pdf</td><td>Contrato Social / Estatuto <span class="badge b-pj">PJ</span></td></tr>
+      <tr><td>RG-rep-locador1.jpg</td><td>RG do representante legal <span class="badge b-pj">PJ</span></td></tr>
+      <tr><td>procuracao-locador1.pdf</td><td>Procuração <span class="badge b-opt">opc.</span></td></tr>
+    </table>
+  </div>
+
+  <!-- LOCATÁRIOS -->
+  <div class="group">
+    <div class="group-header gold">🔑 LOCATÁRIO (Inquilino)</div>
+    <table>
+      <tr><td>RG-locatario1.jpg</td><td>RG do locatário <span class="badge b-pf">PF</span></td></tr>
+      <tr><td>RG-locatario2.jpg</td><td>RG do cônjuge/companheiro</td></tr>
+      <tr><td>CNH-locatario1.jpg</td><td>CNH (alternativa ao RG)</td></tr>
+      <tr><td>passaporte-locatario1.jpg</td><td>Passaporte (estrangeiro)</td></tr>
+      <tr><td>comprovante-locatario1.jpg</td><td>Comprovante de endereço</td></tr>
+      <tr><td>banco-locatario1.jpg</td><td>Dados bancários <span class="badge b-opt">opc.</span></td></tr>
+      <tr><td>CNPJ-locatario1.pdf</td><td>Cartão CNPJ <span class="badge b-pj">PJ</span></td></tr>
+      <tr><td>contrato-social-locatario1.pdf</td><td>Contrato Social / Estatuto <span class="badge b-pj">PJ</span></td></tr>
+      <tr><td>RG-rep-locatario1.jpg</td><td>RG do representante legal <span class="badge b-pj">PJ</span></td></tr>
+      <tr><td>procuracao-locatario1.pdf</td><td>Procuração <span class="badge b-opt">opc.</span></td></tr>
+    </table>
+  </div>
+
+</div>
+
+<div class="grid" style="margin-top:10px">
+
+  <!-- FIADORES -->
+  <div class="group">
+    <div class="group-header sage">🤝 FIADOR</div>
+    <table>
+      <tr><td>RG-fiador1.jpg</td><td>RG do fiador 1</td></tr>
+      <tr><td>RG-fiador2.jpg</td><td>RG do fiador 2 (se houver)</td></tr>
+      <tr><td>CNH-fiador1.jpg</td><td>CNH (alternativa ao RG)</td></tr>
+      <tr><td>RG-conjuge-fiador1.jpg</td><td>RG do cônjuge/convivente</td></tr>
+      <tr><td>comprovante-fiador1.jpg</td><td>Comprovante de endereço</td></tr>
+      <tr><td>matricula-fiador1.pdf</td><td>Matrícula do imóvel do fiador</td></tr>
+    </table>
+    <div class="note">⚖️ Se casado ou em união estável, o cônjuge/convivente deve assinar o contrato (art. 1.647 CC). Inclua sempre o RG e comprovante.</div>
+  </div>
+
+  <!-- IMÓVEL -->
+  <div class="group">
+    <div class="group-header rust">📍 IMÓVEL</div>
+    <table>
+      <tr><td>matricula-imovel.pdf</td><td>Certidão de matrícula atualizada</td></tr>
+      <tr><td>iptu-imovel.pdf</td><td>Carnê/guia do IPTU vigente</td></tr>
+      <tr><td>planta-imovel.pdf</td><td>Planta baixa <span class="badge b-opt">opc.</span></td></tr>
+      <tr><td>vistoria.pdf</td><td>Laudo de vistoria de entrada</td></tr>
+    </table>
+    <div class="note">📋 A matrícula atualizada (máx. 30 dias) é o documento principal — extrai endereço, comarca, cartório, proprietário e metragem.</div>
+  </div>
+
+</div>
+
+<!-- GARANTIAS -->
+<h2><span class="icon">🛡️</span> Documentos de Garantia</h2>
+<div class="grid grid3">
+
+  <div class="group">
+    <div class="group-header">💰 Depósito Caução</div>
+    <table>
+      <tr><td>caucao-comprovante.jpg</td><td>Comprovante de depósito</td></tr>
+    </table>
+    <div class="note">Máx. 3 meses de aluguel (art. 38 §2º Lei 8.245/91). Remunerado a 100% CDI por acordo das partes.</div>
+  </div>
+
+  <div class="group">
+    <div class="group-header">📊 Título de Capitalização</div>
+    <table>
+      <tr><td>titulo-capitalizacao.pdf</td><td>Proposta/apólice do título</td></tr>
+    </table>
+    <div class="note">Extrai: nº proposta, valor nominal, instituição, vigência. Porto Seguro Capitalização S.A. é o padrão Jaime.</div>
+  </div>
+
+  <div class="group">
+    <div class="group-header gray">📄 Seguro Fiança</div>
+    <table>
+      <tr><td>apolice-seguro.pdf</td><td>Apólice do seguro fiança</td></tr>
+    </table>
+    <div class="note">Extrai: nº apólice, PAC, seguradora, vigência e valor segurado. Seguradoras: Porto, Tokio Marine, Too.</div>
+  </div>
+
+</div>
+
+<!-- Regras importantes -->
+<h2 style="margin-top:14px"><span class="icon">📌</span> Regras importantes</h2>
+<div class="grid">
+  <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:8.5pt;color:var(--muted);line-height:1.7">
+    <strong style="display:block;margin-bottom:4px;color:var(--ink)">Múltiplas pessoas no mesmo papel</strong>
+    Sempre use número: <code>RG-locatario<strong>1</strong>.jpg</code>, <code>RG-locatario<strong>2</strong>.jpg</code>.<br>
+    O número define a ordem de qualificação no contrato.<br>
+    Para cônjuge do locatário, use <code>RG-locatario2.jpg</code> (segundo locatário).
+  </div>
+  <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:8.5pt;color:var(--muted);line-height:1.7">
+    <strong style="display:block;margin-bottom:4px;color:var(--ink)">RG x CNH — qual usar?</strong>
+    Use o documento que contiver mais dados visíveis.<br>
+    A CNH traz CPF impresso, o que economiza um arquivo.<br>
+    O RG da nova geração (CIN) contém CPF — prefira se disponível.
+  </div>
+  <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:8.5pt;color:var(--muted);line-height:1.7">
+    <strong style="display:block;margin-bottom:4px;color:var(--ink)">Qualidade mínima de imagem</strong>
+    Fotos com resolução ≥ 300dpi ou scan. Evitar sombras, reflexos e texto cortado.<br>
+    Para PDFs, a primeira página é usada para OCR.<br>
+    Arquivos aceitos: <code>.jpg</code> <code>.jpeg</code> <code>.png</code> <code>.pdf</code>
+  </div>
+  <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:8.5pt;color:var(--muted);line-height:1.7">
+    <strong style="display:block;margin-bottom:4px;color:var(--ink)">Pasta no OneDrive</strong>
+    Crie uma pasta por contrato: <code>Contrato-NomeLocatario-Endereço</code>.<br>
+    Coloque todos os arquivos na raiz da pasta (sem subpastas).<br>
+    Compartilhe com permissão "Qualquer pessoa com o link pode visualizar".
+  </div>
+</div>
+
+<footer>
+  <span>JAIMERX IMOBILIÁRIA LTDA · CNPJ 63.271.809/0001-78 · Uso interno da equipe jurídica</span>
+  <span>Sistema de Contratos · v2.0</span>
+</footer>
+
+</div>
+
+<script>
+// Print button for screen view
+if (window.location.search.includes('print')) window.print()
+</script>
+</body>
+</html>

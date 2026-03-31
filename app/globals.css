@@ -1,0 +1,558 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ══════════════════════════════════════════════════════════
+   PAPAIA — Design System
+   Cores da identidade visual Papaia
+   (tenant pode sobrescrever --tenant-primary / --tenant-secondary)
+   ══════════════════════════════════════════════════════════ */
+
+:root {
+  /* Papaia brand */
+  --coral:    #E8735A;
+  --coral-d:  #D4614A;
+  --coral-l:  #F5A090;
+  --coral-p:  #FDEAE6;
+  --sage:     #8BAD8B;
+  --sage-d:   #6B8D6B;
+  --sage-l:   #B4CDB4;
+  --sage-p:   #EBF3EB;
+  --orange:   #F0A030;
+  --cream:    #FAF6F1;
+  --parchment:#F2EBE0;
+  --ink:      #2D2D2D;
+  --ink-m:    #5A5A5A;
+  --ink-f:    #999999;
+  --white:    #FFFFFF;
+  --border:   rgba(45,45,45,.10);
+  --border-s: rgba(45,45,45,.18);
+
+  /* Tenant override (default = Papaia coral) */
+  --tenant-primary:   var(--coral);
+  --tenant-primary-d: var(--coral-d);
+  --tenant-primary-p: var(--coral-p);
+  --tenant-secondary: var(--sage);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── HEADER ─────────────────────────────────────────────── */
+.j-header {
+  background: var(--ink);
+  color: var(--cream);
+  padding: 0 32px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.j-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--white);
+  text-decoration: none;
+  letter-spacing: -.01em;
+}
+.j-logo-sq {
+  width: 28px; height: 28px;
+  background: var(--tenant-primary);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  color: var(--white);
+}
+.j-badge {
+  background: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.75);
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* ── STEPS BAR ──────────────────────────────────────────── */
+.j-steps-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 32px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.j-step-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--ink-f);
+  transition: all .15s;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.j-step-btn:hover { background: rgba(45,45,45,.05); color: var(--ink); }
+.j-step-btn.active { background: var(--ink); color: var(--white); }
+.j-step-btn.done { color: var(--sage-d); }
+.j-step-num {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: rgba(45,45,45,.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 600;
+  font-family: 'DM Mono', monospace;
+  transition: all .15s;
+}
+.j-step-btn.active .j-step-num { background: var(--tenant-primary); color: var(--white); }
+.j-step-btn.done .j-step-num { background: var(--sage); color: white; }
+.j-step-sep { width: 20px; height: 1px; background: var(--border); }
+
+/* ── PROGRESS ────────────────────────────────────────────── */
+.j-progress { height: 3px; background: var(--border); }
+.j-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--tenant-primary), var(--tenant-primary-d));
+  transition: width .4s ease;
+}
+
+/* ── MAIN ────────────────────────────────────────────────── */
+.j-main { max-width: 880px; margin: 0 auto; padding: 32px 24px; }
+
+/* ── PAGE HEADER ─────────────────────────────────────────── */
+.j-eyebrow {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--tenant-primary); margin-bottom: 6px;
+}
+.j-title {
+  font-size: 22px; font-weight: 700;
+  color: var(--ink); margin-bottom: 6px;
+  letter-spacing: -.02em;
+}
+.j-desc { font-size: 13px; color: var(--ink-m); line-height: 1.6; margin-bottom: 24px; }
+
+/* ── CARDS ────────────────────────────────────────────────── */
+.j-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(45,45,45,.06);
+}
+.j-card-title {
+  font-size: 14px; font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ── SECTION HEADER ──────────────────────────────────────── */
+.j-sh {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-f);
+  margin-bottom: 10px; margin-top: 4px;
+  display: flex; align-items: center; gap: 7px;
+}
+.j-sh::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ── FIELDS ───────────────────────────────────────────────── */
+.j-grid { display: grid; gap: 12px; }
+.j-grid-2 { grid-template-columns: 1fr 1fr; }
+.j-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.j-grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+.j-fw { grid-column: 1 / -1; }
+
+.j-field { display: flex; flex-direction: column; gap: 5px; }
+.j-label {
+  font-size: 11px; font-weight: 600;
+  color: var(--ink-m); letter-spacing: .01em;
+}
+.j-input, .j-select, .j-textarea {
+  width: 100%;
+  padding: 8px 11px;
+  border: 1.5px solid var(--border-s);
+  border-radius: 8px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--cream);
+  outline: none;
+  appearance: none;
+  transition: all .14s;
+}
+.j-input:focus, .j-select:focus, .j-textarea:focus {
+  border-color: var(--tenant-primary);
+  background: var(--white);
+  box-shadow: 0 0 0 3px var(--tenant-primary-p);
+}
+.j-select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%235A5A5A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+.j-textarea { resize: vertical; min-height: 70px; }
+
+/* ── CHOICE CARDS ────────────────────────────────────────── */
+.j-choices { display: grid; gap: 11px; }
+.j-choices-2 { grid-template-columns: 1fr 1fr; }
+.j-choices-3 { grid-template-columns: 1fr 1fr 1fr; }
+.j-choices-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+.j-choice {
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all .15s;
+  background: var(--white);
+  position: relative;
+  text-align: left;
+}
+.j-choice:hover { border-color: var(--tenant-primary); box-shadow: 0 0 0 3px var(--tenant-primary-p); }
+.j-choice.sel { border-color: var(--tenant-primary); background: var(--tenant-primary-p); }
+.j-choice.sel::after {
+  content: '✓';
+  position: absolute; top: 8px; right: 10px;
+  width: 18px; height: 18px;
+  background: var(--tenant-primary); color: var(--white);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700;
+}
+.j-choice-icon { font-size: 20px; margin-bottom: 5px; }
+.j-choice-label { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.j-choice-desc { font-size: 11px; color: var(--ink-f); line-height: 1.4; }
+
+/* ── UPLOAD ZONE ─────────────────────────────────────────── */
+.j-upload {
+  border: 2px dashed var(--border-s);
+  border-radius: 10px;
+  padding: 18px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .18s;
+  background: var(--cream);
+  position: relative;
+  margin-bottom: 12px;
+}
+.j-upload:hover { border-color: var(--tenant-primary); background: var(--tenant-primary-p); }
+.j-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.j-upload-icon { font-size: 22px; margin-bottom: 5px; }
+.j-upload-txt { font-size: 12px; color: var(--ink-m); }
+.j-upload-txt strong { color: var(--tenant-primary); }
+.j-upload-note { font-size: 10px; color: var(--ink-f); margin-top: 3px; }
+
+/* ── FILE ITEM ───────────────────────────────────────────── */
+.j-file-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  margin-bottom: 6px;
+}
+.j-file-name { font-size: 13px; font-weight: 500; flex: 1; }
+.j-file-meta { font-size: 11px; color: var(--ink-f); }
+.j-file-status-ok { font-size: 11px; color: var(--sage-d); }
+.j-file-status-loading { font-size: 11px; color: var(--orange); }
+.j-file-status-err { font-size: 11px; color: #D4614A; }
+
+/* ── NOTICE ──────────────────────────────────────────────── */
+.j-notice {
+  background: var(--sage-p);
+  border: 1px solid var(--sage-l);
+  border-radius: 8px;
+  padding: 10px 13px;
+  font-size: 12px;
+  color: var(--ink-m);
+  display: flex; align-items: flex-start; gap: 8px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+/* ── BUTTONS ─────────────────────────────────────────────── */
+.j-btn {
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  transition: all .14s;
+  border: none;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.j-btn-ink { background: var(--ink); color: var(--white); }
+.j-btn-ink:hover { background: #1a1a1a; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(45,45,45,.2); }
+.j-btn-primary { background: var(--tenant-primary); color: var(--white); }
+.j-btn-primary:hover { background: var(--tenant-primary-d); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(232,115,90,.3); }
+/* Alias legado */
+.j-btn-gold { background: var(--tenant-primary); color: var(--white); }
+.j-btn-gold:hover { background: var(--tenant-primary-d); transform: translateY(-1px); }
+.j-btn-out { background: transparent; color: var(--ink-m); border: 1.5px solid var(--border-s); }
+.j-btn-out:hover { background: var(--cream); color: var(--ink); }
+.j-btn-ds { background: #3B4EDE; color: white; font-weight: 600; }
+.j-btn-ds:hover { background: #2D3ECC; transform: translateY(-1px); }
+.j-btn:disabled { opacity: .4; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+/* ── BTN ROW ─────────────────────────────────────────────── */
+.j-btn-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 24px; padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── DIVIDER ─────────────────────────────────────────────── */
+.j-div { height: 1px; background: var(--border); margin: 16px 0; }
+
+/* ── DOCUSIGN PANEL ──────────────────────────────────────── */
+.j-ds-panel {
+  border: 2px solid #3B4EDE;
+  border-radius: 12px;
+  padding: 20px;
+  background: rgba(59,78,222,.03);
+}
+.j-ds-title {
+  font-size: 14px; font-weight: 700;
+  color: #3B4EDE;
+  display: flex; align-items: center; gap: 7px;
+  margin-bottom: 5px;
+}
+
+/* ── SIGNATURE ───────────────────────────────────────────── */
+.j-sig {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  background: var(--cream);
+}
+.j-sig-name { font-weight: 700; font-size: 13px; color: var(--ink); margin-bottom: 2px; }
+.j-sig-role { font-size: 11px; color: var(--ink-f); margin-bottom: 10px; }
+.j-sig-line { border-bottom: 1px solid var(--ink); height: 36px; position: relative; margin-bottom: 4px; }
+
+/* ── CHECKBOX ────────────────────────────────────────────── */
+.j-check-item { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; margin-bottom: 14px; }
+.j-check-item input[type=checkbox] { width: 15px; height: 15px; margin-top: 2px; accent-color: var(--tenant-primary); cursor: pointer; flex-shrink: 0; }
+.j-check-label { font-size: 13px; color: var(--ink); line-height: 1.45; }
+.j-check-sub { font-size: 11px; color: var(--ink-f); }
+
+/* ── SPINNER ─────────────────────────────────────────────── */
+.j-spin { display: inline-block; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── STEP PAGE ───────────────────────────────────────────── */
+.j-page { display: none; animation: fi .25s ease; }
+.j-page.active { display: block; }
+@keyframes fi { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── CONVENTION GRID ─────────────────────────────────────── */
+.j-conv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.j-conv-item { display: flex; align-items: flex-start; gap: 8px; font-size: 11px; color: var(--ink-m); }
+.j-conv-item code { background: var(--cream); border: 1px solid var(--border); padding: 1px 6px; border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 10px; white-space: nowrap; color: var(--coral); }
+
+/* ── PAPAIA — Login / Admin ──────────────────────────────── */
+.p-login-bg {
+  min-height: 100vh;
+  background: var(--cream);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  background-image:
+    radial-gradient(ellipse at 10% 0%, rgba(232,115,90,.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 100%, rgba(139,173,139,.10) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 10%, rgba(240,160,48,.08) 0%, transparent 40%);
+}
+.p-login-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 8px 40px rgba(45,45,45,.10), 0 1px 3px rgba(45,45,45,.06);
+}
+.p-logo-mark {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  overflow: hidden;
+  margin: 0 auto 16px;
+  display: block;
+}
+.p-login-title {
+  font-size: 26px; font-weight: 700;
+  color: var(--ink);
+  text-align: center;
+  letter-spacing: -.03em;
+  margin-bottom: 4px;
+}
+.p-login-sub {
+  font-size: 12px; color: var(--ink-f);
+  text-align: center;
+  margin-bottom: 28px;
+  font-style: italic;
+}
+.p-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+.p-label { font-size: 12px; font-weight: 600; color: var(--ink-m); }
+.p-input {
+  width: 100%; padding: 10px 14px;
+  border: 1.5px solid var(--border-s);
+  border-radius: 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; color: var(--ink);
+  background: var(--cream);
+  outline: none; transition: all .14s;
+}
+.p-input:focus {
+  border-color: var(--coral);
+  background: var(--white);
+  box-shadow: 0 0 0 3px var(--coral-p);
+}
+.p-btn-login {
+  width: 100%; padding: 11px;
+  background: var(--coral);
+  color: var(--white);
+  border: none; border-radius: 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all .15s;
+  margin-top: 8px;
+}
+.p-btn-login:hover { background: var(--coral-d); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(232,115,90,.35); }
+.p-btn-login:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+.p-error {
+  background: #FEE2DC;
+  border: 1px solid #F5A090;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px; color: #C0392B;
+  margin-bottom: 14px;
+}
+.p-tagline {
+  text-align: center; margin-top: 24px;
+  font-size: 11px; color: var(--ink-f);
+  font-style: italic;
+}
+
+/* ── ADMIN ───────────────────────────────────────────────── */
+.p-admin-header {
+  background: var(--ink);
+  padding: 0 32px;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 50;
+}
+.p-admin-body { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+.p-admin-title { font-size: 22px; font-weight: 700; color: var(--ink); margin-bottom: 4px; letter-spacing: -.02em; }
+.p-admin-sub { font-size: 13px; color: var(--ink-m); margin-bottom: 28px; }
+.p-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(45,45,45,.06);
+}
+.p-table th {
+  text-align: left; padding: 12px 16px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink-f);
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+}
+.p-table td {
+  padding: 13px 16px;
+  font-size: 13px; color: var(--ink);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.p-table tr:last-child td { border-bottom: none; }
+.p-table tr:hover td { background: var(--cream); }
+.p-badge {
+  display: inline-flex; align-items: center;
+  padding: 2px 9px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+}
+.p-badge-trial   { background: #FFF3CD; color: #856404; }
+.p-badge-active  { background: var(--sage-p); color: var(--sage-d); }
+.p-badge-suspended { background: #FEE2DC; color: #C0392B; }
+.p-action-btn {
+  padding: 4px 12px; border-radius: 6px;
+  font-size: 11px; font-weight: 600;
+  border: 1.5px solid var(--border-s);
+  background: var(--white); color: var(--ink-m);
+  cursor: pointer; transition: all .12s;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.p-action-btn:hover { border-color: var(--coral); color: var(--coral); background: var(--coral-p); }
+.p-usage-bar {
+  height: 5px; border-radius: 99px;
+  background: var(--border);
+  overflow: hidden; min-width: 80px;
+}
+.p-usage-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, var(--sage), var(--coral));
+  transition: width .3s;
+}
+
+/* ── MODAL ───────────────────────────────────────────────── */
+.p-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(45,45,45,.45);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; padding: 24px;
+}
+.p-modal {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 28px;
+  width: 100%; max-width: 420px;
+  box-shadow: 0 20px 60px rgba(45,45,45,.18);
+}
+.p-modal-title { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 16px; }
+.p-modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+.p-btn-confirm {
+  padding: 8px 20px; border-radius: 8px;
+  background: var(--coral); color: var(--white);
+  font-size: 13px; font-weight: 700;
+  border: none; cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  transition: all .14s;
+}
+.p-btn-confirm:hover { background: var(--coral-d); }
+.p-btn-cancel {
+  padding: 8px 20px; border-radius: 8px;
+  background: var(--cream); color: var(--ink-m);
+  font-size: 13px; font-weight: 600;
+  border: 1.5px solid var(--border-s); cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .j-grid-2, .j-grid-3, .j-grid-4 { grid-template-columns: 1fr; }
+  .j-choices-2, .j-choices-3, .j-choices-4 { grid-template-columns: 1fr 1fr; }
+  .j-main { padding: 20px 16px; }
+  .p-admin-body { padding: 20px 16px; }
+}

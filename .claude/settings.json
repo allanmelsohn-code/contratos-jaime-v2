@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(grep -r \"insideH\\\\|insideV\\\\|ITableBordersOptions\" c:/Users/Pichau/jaime-contratos-v2/node_modules/docx/build --include=*.d.ts -l)",
+      "Bash(grep -n \"from ''@/app/page''\\\\|from ''../../app/page''\" c:/Users/Pichau/jaime-contratos-v2/src/components/*.tsx)",
+      "Bash(sed -i \"s|from ''../../app/page''|from ''@/lib/types''|g\" src/components/StepContrato.tsx src/components/StepGerar.tsx src/components/StepOneDrive.tsx src/components/StepReview.tsx src/components/StepUpload.tsx)",
+      "Bash(grep -n \"from ''../../app/page''\\\\|from ''@/lib/types''\" src/components/*.tsx)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\Pichau\\jaime-contratos-v2\\app"
+    ]
+  }
+}

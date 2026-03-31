@@ -1,0 +1,214 @@
+'use client'
+
+import { useState } from 'react'
+import type { FormState } from '@/lib/types'
+
+interface Props {
+  form: FormState
+  onPrev: () => void
+  tenantId?: string
+}
+
+export default function StepGerar({ form, onPrev, tenantId }: Props) {
+  const [dsStatus, setDsStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
+  const [dsResult, setDsResult] = useState<any>(null)
+  const [generating, setGenerating] = useState(false)
+  const [dsAccount, setDsAccount] = useState('')
+  const [dsMsg, setDsMsg] = useState('Prezado(a), encaminhamos para sua assinatura o Contrato de Locação intermediado pela Jaime Imobiliária. Por gentileza, assine digitalmente dentro do prazo estipulado.')
+
+  // Build signatarios list from form
+  const signatarios = [
+    ...form.locadores.map(l => ({ nome: l.nome || 'LOCADOR', email: l.email || '', role: 'LOCADOR(A)' })),
+    ...form.locatarios.map(l => ({ nome: l.nome || 'LOCATÁRIO', email: l.email || '', role: 'LOCATÁRIO(A)' })),
+    ...(form.gnt === 'fiador' ? form.fiadores.flatMap(f => {
+      const s = [{ nome: f.nome || 'FIADOR', email: f.email || '', role: 'FIADOR(A)' }]
+      if (f.conjuge?.nome) s.push({ nome: f.conjuge.nome, email: f.conjuge.email || '', role: 'CÔNJUGE/OUTORGANTE' })
+      return s
+    }) : []),
+    ...form.testemunhas.map(t => ({ nome: t.nome || 'TESTEMUNHA', email: t.email || '', role: 'TESTEMUNHA' })),
+    { nome: 'JAIMERX IMOBILIÁRIA LTDA', email: 'juridico@jaimeimobiliaria.com.br', role: 'Intermediadora' },
+  ]
+
+  async function downloadDocx() {
+    setGenerating(true)
+    try {
+      const res = await fetch('/api/gerar-contrato', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+
+      if (!res.ok) {
+        const err = await res.json()
+        alert(`Erro ao gerar contrato: ${err.error}`)
+        return
+      }
+
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      const imovel = form.imovel?.complemento || form.imovel?.endereco || 'contrato'
+      const gnt = form.gnt?.toUpperCase() || 'CONTRATO'
+      a.download = `LOCAÇÃO - ${gnt} - ${imovel.toUpperCase()}.docx`
+      a.click()
+      URL.revokeObjectURL(url)
+    } finally {
+      setGenerating(false)
+    }
+  }
+
+  async function enviarDocuSign() {
+    if (!signatarios.some(s => s.email)) {
+      alert('Preencha os e-mails dos signatários antes de enviar via DocuSign.')
+      return
+    }
+
+    setDsStatus('loading')
+    try {
+      // First generate the contract
+      const contractRes = await fetch('/api/gerar-contrato', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      const contractBuffer = await contractRes.arrayBuffer()
+      const contractBase64 = btoa(String.fromCharCode(...new Uint8Array(contractBuffer)))
+
+      // Send to DocuSign
+      const dsRes = await fetch('/api/docusign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          signatarios,
+          assunto: `Contrato de Locação · ${form.imovel?.complemento || form.imovel?.endereco || 'Jaime Imobiliária'}`,
+          mensagem: dsMsg,
+          contractBase64,
+          accountId: dsAccount || undefined,
+        }),
+      })
+
+      const result = await dsRes.json()
+      if (!dsRes.ok) {
+        setDsStatus('error')
+        setDsResult(result)
+      } else {
+        setDsStatus('done')
+        setDsResult(result)
+      }
+    } catch (e: any) {
+      setDsStatus('error')
+      setDsResult({ error: e.message })
+    }
+  }
+
+  return (
+    <div>
+      <div className="mb-7">
+        <div className="text-[11px] font-medium tracking-widest uppercase text-[#B8860B] mb-2">Passo 4 de 4</div>
+        <h1 className="font-serif text-2xl text-[#1A1612] mb-2">Assinaturas e Geração</h1>
+        <p className="text-sm text-[#4A3F35] leading-relaxed">Confirme as partes, baixe o .docx ou envie para DocuSign.</p>
+      </div>
+
+      {/* Signatários */}
+      <div className="bg-white border border-black/10 rounded-xl p-5 shadow-sm mb-4">
+        <div className="font-serif text-base font-semibold text-[#1A1612] mb-4 pb-3 border-b border-black/8 flex items-center gap-2">
+          <span>✍️</span> Partes para Assinatura
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {signatarios.map((s, i) => (
+            <div key={i} className="border border-black/10 rounded-xl p-3 bg-[#F5F0E8]">
+              <div className="font-semibold text-sm text-[#1A1612]">{s.nome}</div>
+              <div className="text-[11px] text-[#8A7A6A]">{s.role}</div>
+              {s.email && <div className="text-[11px] text-[#B8860B] mt-1">📧 {s.email}</div>}
+              <div className="border-b border-[#1A1612] mt-6 mb-1 h-0.5" />
+              <div className="text-[10px] text-[#8A7A6A]">Assinatura</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Testemunhas */}
+        <div className="mt-4 pt-4 border-t border-black/8">
+          <div className="text-[11px] font-medium tracking-widest uppercase text-[#8A7A6A] mb-3">Testemunhas</div>
+          <div className="grid grid-cols-2 gap-3">
+            {form.testemunhas.map((t, i) => (
+              <div key={i} className="flex flex-col gap-1">
+                <label className="text-[11px] text-[#4A3F35]">Testemunha {i + 1}</label>
+                <input type="text" value={t.nome || ''} onChange={e => {
+                  const arr = [...form.testemunhas]
+                  arr[i] = { ...arr[i], nome: e.target.value }
+                }}
+                  className="px-2.5 py-1.5 border border-black/15 rounded-lg text-sm bg-[#F5F0E8] focus:outline-none focus:border-[#B8860B]"
+                  placeholder="Nome completo" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Download .docx */}
+      <div className="bg-white border border-black/10 rounded-xl p-5 shadow-sm mb-4">
+        <div className="font-serif text-base font-semibold text-[#1A1612] mb-3 pb-3 border-b border-black/8 flex items-center gap-2">
+          <span>📄</span> Gerar Arquivo Word (.docx)
+        </div>
+        <p className="text-sm text-[#4A3F35] mb-4">
+          Gera o contrato completo em formato Word (.docx), fiel aos modelos Jaime, com Quadro Resumo, todas as cláusulas e blocos de assinatura.
+        </p>
+        <button onClick={downloadDocx} disabled={generating}
+          className="px-6 py-2.5 bg-[#1A1612] text-[#F5F0E8] rounded-lg text-sm font-semibold hover:bg-[#2D2520] disabled:opacity-50 transition-all flex items-center gap-2">
+          {generating ? <><span className="animate-spin">⚙️</span> Gerando...</> : <>📥 Baixar .docx</>}
+        </button>
+      </div>
+
+      {/* DocuSign */}
+      <div className="border-2 border-[#3B4EDE] rounded-xl p-5 bg-[#3B4EDE]/[0.03] mb-4">
+        <div className="text-base font-semibold text-[#3B4EDE] flex items-center gap-2 mb-2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#3B4EDE"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          Enviar via DocuSign
+        </div>
+        <p className="text-sm text-[#4A3F35] mb-4">
+          Gera o contrato e cria um envelope DocuSign com todos os signatários. Cada parte recebe o documento por e-mail para assinatura digital com validade jurídica (MP 2.200-2, Decreto 8.539/15).
+        </p>
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-[11px] font-medium text-[#4A3F35]">Account ID (deixe vazio para usar env var)</label>
+            <input type="text" value={dsAccount} onChange={e => setDsAccount(e.target.value)}
+              placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+              className="px-2.5 py-1.5 border border-black/15 rounded-lg text-xs font-mono bg-[#F5F0E8] focus:outline-none focus:border-[#3B4EDE]" />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-[11px] font-medium text-[#4A3F35]">E-mails dos signatários preenchidos</label>
+            <div className="text-sm text-[#4A3F35] bg-[#F5F0E8] px-2.5 py-1.5 rounded-lg border border-black/10">
+              {signatarios.filter(s => s.email).length} / {signatarios.length} com e-mail
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-1 mb-4">
+          <label className="text-[11px] font-medium text-[#4A3F35]">Mensagem para os signatários</label>
+          <textarea value={dsMsg} onChange={e => setDsMsg(e.target.value)} rows={2}
+            className="px-2.5 py-1.5 border border-black/15 rounded-lg text-sm bg-[#F5F0E8] focus:outline-none focus:border-[#3B4EDE] resize-none" />
+        </div>
+        <button onClick={enviarDocuSign} disabled={dsStatus === 'loading'}
+          className="px-6 py-2.5 bg-[#3B4EDE] text-white rounded-lg text-sm font-semibold hover:bg-[#2D3ECC] disabled:opacity-50 transition-all flex items-center gap-2">
+          {dsStatus === 'loading' ? <><span className="animate-spin">⚙️</span> Enviando...</> : <>🖊️ Enviar via DocuSign</>}
+        </button>
+
+        {dsStatus === 'done' && dsResult && (
+          <div className="mt-4 p-3 bg-[#3B4EDE]/8 border border-[#3B4EDE]/25 rounded-lg text-sm text-[#3B4EDE]">
+            ✅ Envelope criado com sucesso — ID: <code className="font-mono text-xs">{dsResult.envelopeId}</code>
+            <br /><span className="text-xs text-[#6B7DB3]">Status: {dsResult.status} · Signatários notificados por e-mail</span>
+          </div>
+        )}
+        {dsStatus === 'error' && dsResult && (
+          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+            ⚠️ {dsResult.error} {dsResult.detail && <span className="text-xs block mt-1 font-mono">{JSON.stringify(dsResult.detail)}</span>}
+          </div>
+        )}
+      </div>
+
+      <div className="flex justify-between pt-5 border-t border-black/10">
+        <button onClick={onPrev} className="px-5 py-2.5 border border-black/15 rounded-lg text-sm text-[#4A3F35] hover:bg-black/5 transition-all">← Voltar</button>
+      </div>
+    </div>
+  )
+}
