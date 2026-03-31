@@ -3,9 +3,7 @@
   <ellipse cx="70" cy="80" rx="80" ry="75" fill="#E8735A" opacity="0.92"/>
   <ellipse cx="145" cy="130" rx="70" ry="65" fill="#8BAD8B" opacity="0.85"/>
   <ellipse cx="160" cy="55" rx="45" ry="40" fill="#F0A030" opacity="0.55"/>
-  <g transform="translate(100,105) scale(1,-1)">
-    <polygon points="0,-48 48,-8 -48,-8" fill="white" opacity="0.95"/>
-    <rect x="-30" y="-8" width="60" height="44" fill="white" opacity="0.95"/>
-    <rect x="-11" y="8" width="22" height="36" rx="3" fill="#E8735A" opacity="0.5"/>
-  </g>
+  <polygon points="100,57 148,92 52,92" fill="white" opacity="0.95"/>
+  <rect x="70" y="92" width="60" height="44" fill="white" opacity="0.95"/>
+  <rect x="89" y="108" width="22" height="28" rx="3" fill="#E8735A" opacity="0.5"/>
 </svg>
