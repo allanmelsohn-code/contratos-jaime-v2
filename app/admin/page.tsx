@@ -19,7 +19,16 @@ export default function AdminPage() {
   const [tenants, setTenants] = useState<TenantConfig[]>([])
   const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState<Modal>(null)
+  const [actionErro, setActionErro] = useState('')
   const [isPending, startTransition] = useTransition()
+
+  function run(fn: () => Promise<void>) {
+    setActionErro('')
+    startTransition(async () => {
+      try { await fn() }
+      catch (e: any) { setActionErro(e?.message || 'Erro desconhecido') }
+    })
+  }
 
   // Campos modais
   const [trialDias, setTrialDias] = useState(14)
@@ -80,10 +89,14 @@ export default function AdminPage() {
             <h1 className="p-admin-title">Imobiliárias</h1>
             <p className="p-admin-sub">{tenants.length} tenants cadastrados</p>
           </div>
-          <button className="j-btn j-btn-primary" onClick={() => setModal({ tipo: 'novo' })}>
+          <button className="j-btn j-btn-primary" onClick={() => { setActionErro(''); setModal({ tipo: 'novo' }) }}>
             + Nova imobiliária
           </button>
         </div>
+
+        {actionErro && (
+          <div className="p-error" style={{ marginBottom: 16 }}>{actionErro}</div>
+        )}
 
         {loading ? (
           <p style={{ color: 'var(--ink-f)', fontSize: 13 }}>Carregando...</p>
@@ -143,13 +156,13 @@ export default function AdminPage() {
                           Usuário
                         </button>
                         {t.status !== 'active' && (
-                          <button className="p-action-btn" onClick={() => startTransition(() => ativarTenant(t.id))}>
+                          <button className="p-action-btn" onClick={() => run(() => ativarTenant(t.id))}>
                             Ativar
                           </button>
                         )}
                         {t.status !== 'suspended' && (
                           <button className="p-action-btn" style={{ color: '#C0392B', borderColor: '#F5A090' }}
-                            onClick={() => { if (confirm(`Suspender ${t.nome}?`)) startTransition(() => suspenderTenant(t.id)) }}>
+                            onClick={() => { if (confirm(`Suspender ${t.nome}?`)) run(() => suspenderTenant(t.id)) }}>
                             Suspender
                           </button>
                         )}
@@ -176,7 +189,7 @@ export default function AdminPage() {
             <div className="p-modal-actions">
               <button className="p-btn-cancel" onClick={() => setModal(null)}>Cancelar</button>
               <button className="p-btn-confirm" onClick={() => {
-                startTransition(() => liberarTrial(modal.tenant.id, trialDias))
+                run(() => liberarTrial(modal.tenant.id, trialDias))
                 setModal(null)
               }}>Liberar {trialDias} dias</button>
             </div>
@@ -202,12 +215,12 @@ export default function AdminPage() {
               </div>
             </div>
             <div className="p-modal-actions">
-              <button className="p-btn-cancel" onClick={() => startTransition(() => { resetarContador(modal.tenant.id); setModal(null) })}>
+              <button className="p-btn-cancel" onClick={() => { run(() => resetarContador(modal.tenant.id)); setModal(null) }}>
                 Zerar
               </button>
               <button className="p-btn-cancel" onClick={() => setModal(null)}>Cancelar</button>
               <button className="p-btn-confirm" onClick={() => {
-                startTransition(() => editarContador(modal.tenant.id, usados, limite))
+                run(() => editarContador(modal.tenant.id, usados, limite))
                 setModal(null)
               }}>Salvar</button>
             </div>
@@ -238,7 +251,7 @@ export default function AdminPage() {
             <div className="p-modal-actions">
               <button className="p-btn-cancel" onClick={() => setModal(null)}>Cancelar</button>
               <button className="p-btn-confirm" onClick={() => {
-                startTransition(() => associarUsuario(novoEmail, modal.tenant.id, novoRole))
+                run(() => associarUsuario(novoEmail, modal.tenant.id, novoRole))
                 setModal(null)
               }}>Associar</button>
             </div>
@@ -251,7 +264,7 @@ export default function AdminPage() {
         <div className="p-modal-overlay" onClick={() => setModal(null)}>
           <div className="p-modal" style={{ maxWidth: 520 }} onClick={e => e.stopPropagation()}>
             <h2 className="p-modal-title">Nova imobiliária</h2>
-            <form action={async (fd) => { await criarTenant(fd); setModal(null) }}>
+            <form action={async (fd) => { run(() => criarTenant(fd)); setModal(null) }}>
               <div className="j-grid j-grid-2" style={{ gap: 12 }}>
                 <div className="p-field j-fw">
                   <label className="p-label">Nome da imobiliária *</label>
