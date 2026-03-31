@@ -61,7 +61,7 @@ function quadroResumo(data: any): Table {
   const ltNomes = locatarios.map((l: any) => qualificarPessoa(l)).join('; e, ')
 
   const imStr = [
-    imovel.complemento?.toUpperCase(),
+    [imovel.tipo, imovel.complemento?.toUpperCase()].filter(Boolean).join(' — '),
     `${imovel.endereco}, nº ${imovel.numero}`,
     imovel.bairro,
     `CEP ${imovel.cep} – ${imovel.cidade}/${imovel.uf}`,
@@ -151,7 +151,7 @@ function formatGarantia(gnt: string, garantia: any): string {
       return `TÍTULO DE CAPITALIZAÇÃO no valor nominal de R$ ${garantia.valor} subscrito(s) pela ${inst}, proposta/formulário nº ${garantia.numero}`
     }
     case 'seguro':
-      return `SEGURO FIANÇA – ${garantia.seguradora}, Apólice nº ${garantia.apolice}${garantia.pac ? `, PAC: ${garantia.pac}` : ''}`
+      return `SEGURO FIANÇA – ${garantia.seguradora}, Apólice nº ${garantia.apolice}${garantia.pac ? `, PAC: ${garantia.pac}` : ''}${garantia.cobertura ? ` – Cobertura: ${garantia.cobertura}` : ''}`
     case 'fiador':
       return 'Conforme qualificação no item III do Quadro Resumo'
     case 'imovel-cau': {
@@ -206,7 +206,7 @@ function garantiaClause(gnt: string, garantia: any, fiadores: any[]): Paragraph[
     )
   } else if (gnt === 'seguro') {
     clauses.push(
-      p(`A garantia da presente locação é o SEGURO FIANÇA junto à seguradora ${garantia.seguradora || '###'}, Apólice nº ${garantia.apolice || '###'}${garantia.pac ? `, PAC: ${garantia.pac}` : ''}, com vigência até ${garantia.vigencia ? formatDate(garantia.vigencia) : '###'}.`),
+      p(`A garantia da presente locação é o SEGURO FIANÇA junto à seguradora ${garantia.seguradora || '###'}, Apólice nº ${garantia.apolice || '###'}${garantia.pac ? `, PAC: ${garantia.pac}` : ''}${garantia.cobertura ? `, com cobertura para ${garantia.cobertura}` : ''}, com vigência até ${garantia.vigencia ? formatDate(garantia.vigencia) : '###'}.`),
       p(`12.1 — Os prêmios iniciais e renovações, calculados conforme normas vigentes, serão pagos pelo(a) LOCATÁRIO(A), de acordo com o inciso XI do artigo 23 da Lei do Inquilinato, sob pena de rescisão desta locação, com o consequente despejo e cancelamento da apólice.`),
       p(`12.2 — Eventuais débitos decorrentes do presente contrato, não pagos pelo(a) LOCATÁRIO(A) após regularmente instado(a) a tanto, serão comunicados às entidades mantenedoras de bancos de dados de proteção ao crédito (Serasa, SPC, etc.), quer pelo(a) LOCADOR(A), quer pela Seguradora.`)
     )
@@ -216,7 +216,7 @@ function garantiaClause(gnt: string, garantia: any, fiadores: any[]): Paragraph[
       [c.nome, c.rg ? `RG nº ${c.rg}` : '', c.cpf ? `CPF nº ${c.cpf}` : ''].filter(Boolean).join(', ')
     )
     clauses.push(
-      p(`As partes têm entre si ajustada a caução do bem imóvel descrito na matrícula nº ${garantia.matricula || '###'} do ${garantia.cartorio || '###'}${garantia.descricao ? `, relativo a "${garantia.descricao}"` : ''}.`),
+      p(`As partes têm entre si ajustada a caução do bem imóvel descrito na matrícula nº ${garantia.matricula || '###'} do ${garantia.cartorio || '###'}${garantia.comarca ? `, Comarca de ${garantia.comarca}` : ''}${garantia.descricao ? `, relativo a "${garantia.descricao}"` : ''}.`),
       p(`12.1 — Os(As) CAUCIONANTE(S) — ${cqual.join('; e, ') || '###'} — oferecem ao(à) LOCADOR(A), que desde já aceita como garantia real de suas obrigações solidárias, o imóvel objeto da matrícula supra, AUTORIZANDO EXPRESSAMENTE O REGISTRO DE GRAVAME EM SEUS ASSENTAMENTOS, na modalidade de caução locatícia complementar e extraordinária, em virtude do valor considerável do aluguel, nos termos do art. 38 §1º da Lei 8.245/91.`),
       p(`12.2 — A caução imobiliária ora prestada permanecerá válida e efetiva até a data em que o(a) LOCADOR(A) passar recibo das chaves, dando quitação plena ao(à) LOCATÁRIO(A), mesmo que isso venha a ocorrer após o término do prazo de locação.`),
       p(`12.3 — A averbação da caução e seu cancelamento, após a quitação de todas as obrigações contratuais, são de responsabilidade e custo do(a) LOCATÁRIO(A), devendo ser providenciados no prazo de 30 (trinta) dias após a entrega das chaves.`)
@@ -352,6 +352,10 @@ export async function POST(request: Request) {
         p(`O prazo da locação é o estipulado no item VI do quadro resumo, onde, ao término do presente contrato o(a) LOCATÁRIO(A) se obriga a restituir as chaves do aludido imóvel ao(à) LOCADOR(A), ou a seu procurador ou ainda a seu representante legal, no estado em que o recebeu, independentemente de Notificação ou Interpelação Judicial, deixando-o livre, vago e desembaraçado de pessoas e coisas.`),
         p(`O(A) LOCADOR(A) declara expressamente ser o(a) legítimo(a) proprietário(a) do imóvel objeto do presente instrumento, assumindo a responsabilidade civil e criminal por esta declaração, isentando a empresa intermediadora de toda e qualquer responsabilidade.`),
 
+        ...(valor.carencia && valor.carenciaPrazo ? [
+          p(`1.3 — Fica pactuado entre as partes um período de carência de ${valor.carenciaPrazo} (${valor.carenciaPrazo}) ${parseInt(valor.carenciaPrazo) === 1 ? 'mês' : 'meses'} a contar do início da locação${valor.carenciaMotivo ? `, destinado a: ${valor.carenciaMotivo}` : ''}, durante o qual fica isento o pagamento do aluguel mensal.`),
+        ] : []),
+
         heading('Do Pagamento'),
         p(`O(A) LOCATÁRIO(A) se compromete a pagar, pontualmente até a data do vencimento especificada no item VIII do quadro resumo de cada mês subsequente ao vencido, o valor do aluguel mencionado no item VII do quadro resumo, na conta bancária indicada: ${bkStr}.`),
         p(`Tendo em vista a intermediação realizada pela JAIMERX IMOBILIÁRIA LTDA, CNPJ 63.271.809/0001-78, o(a) LOCADOR(A) desde já reconhece e autoriza o(a) LOCATÁRIO(A) a pagar o valor correspondente ao primeiro aluguel integral, no valor de R$ ${valor.aluguel}, no vencimento de ${formatDate(comissao.vencimento)}, observando as proporções descritas abaixo:`),
@@ -364,6 +368,11 @@ export async function POST(request: Request) {
         heading('Da Finalidade da Locação'),
         p(`O imóvel, objeto deste contrato, destina-se exclusivamente para o fim descrito no item V do quadro resumo do(a) LOCATÁRIO(A), o que não ocorrendo ficará configurado como infração contratual, operando-se automaticamente a rescisão do presente contrato.`),
 
+        ...(clausulas.moradores?.trim() ? [
+          heading('Dos Moradores'),
+          p(`Além do(a) LOCATÁRIO(A), residirão no imóvel: ${clausulas.moradores.trim()}. Qualquer alteração nesta relação de moradores deverá ser comunicada ao(à) LOCADOR(A) por escrito, no prazo de 30 (trinta) dias.`),
+        ] : []),
+
         heading('Do Imóvel, Conservação, Manutenção e Vistorias'),
         p(`O(A) LOCATÁRIO(A) declara receber o imóvel no estado de conservação conforme vistoria em anexo, obrigando-se a: (a) manter o imóvel no mais perfeito estado de higiene, conservação e limpeza, restituindo-o pintado na cor original, limpo e livre de pessoas e coisas; (b) efetuar todas as obras e reparos necessários, excetuados os estruturais; (c) não ceder, sublocar ou emprestar o imóvel sem prévia autorização escrita do(a) LOCADOR(A); (d) atender às exigências dos Poderes Públicos; (e) transferir as ligações de energia elétrica, água e gás para seu nome no prazo de 30 (trinta) dias.`),
         ...((imovel.consEnergia || imovel.consGas || imovel.consAgua) ? [
@@ -375,6 +384,9 @@ export async function POST(request: Request) {
           ? `De mútuo e comum acordo, as PARTES convencionam que o IPTU (Imposto Predial e Territorial Urbano) e as taxas condominiais ordinárias serão pagos pelo(a) LOCADOR(A) durante a vigência deste contrato, permanecendo a obrigação do(a) LOCATÁRIO(A) quanto às despesas de luz, gás, água, tarifas bancárias e demais encargos incidentes sobre o imóvel.`
           : `De mútuo e comum acordo, as PARTES convencionam que todos os impostos, especialmente o IPTU (Imposto Predial e Territorial Urbano), taxas condominiais ordinárias, despesas de luz, gás, água, tarifas bancárias e demais encargos incidentes sobre o imóvel serão de responsabilidade integral do(a) LOCATÁRIO(A), devendo efetuar o pagamento até a respectiva data de vencimento.`
         ),
+        ...(clausulas.iptuProporcional ? [
+          p(`6.1 — No mês de início da presente locação, o IPTU (Imposto Predial e Territorial Urbano), as taxas condominiais ordinárias e demais encargos mensais incidentes sobre o imóvel serão rateados proporcionalmente entre o(a) LOCADOR(A) e o(a) LOCATÁRIO(A), conforme os dias de efetiva ocupação no respectivo mês.`),
+        ] : []),
         p(`O(A) LOCADOR(A) efetuará um seguro do imóvel contra riscos de incêndio, cujo pagamento deverá ser efetuado pelo(a) LOCATÁRIO(A), com seguradora de livre escolha do(a) LOCADOR(A), com base no valor real do imóvel.`),
 
         // Garantia clause (dynamic)
@@ -388,7 +400,7 @@ export async function POST(request: Request) {
 
         ...(clausulas.abono ? [
           heading('Do Abono para Obras'),
-          p(`Fica pactuado que o(a) LOCADOR(A) concederá um abono no valor total de R$ ${clausulas.abono.valor} em benefício do(a) LOCATÁRIO(A), aplicados a partir do ${clausulas.abono.mes}º mês de locação, para que este(a) efetue ${clausulas.abono.obs || 'obras de adequação do imóvel'}.`),
+          p(`Fica pactuado que o(a) LOCADOR(A) concederá um abono no valor total de R$ ${clausulas.abono.valor}${clausulas.abono.parcelas && parseInt(clausulas.abono.parcelas) > 1 ? `, dividido em ${clausulas.abono.parcelas} parcelas` : ''}, em benefício do(a) LOCATÁRIO(A), aplicado a partir do ${clausulas.abono.mes}º mês de locação${clausulas.abono.prazo ? ` pelo prazo de ${clausulas.abono.prazo} meses` : ''}, para que este(a) efetue ${clausulas.abono.obs || 'obras de adequação do imóvel'}.`),
         ] : []),
 
         ...(clausulas.livre ? [
@@ -403,6 +415,12 @@ export async function POST(request: Request) {
         heading('Do Direito de Preferência'),
         p(`O(A) LOCADOR(A) deverá notificar o(a) LOCATÁRIO(A) para que este possa exercer seu direito de preferência na aquisição do imóvel, nas mesmas condições em que for oferecido a terceiros, no prazo de 30 (trinta) dias.`),
         ...(admJaime ? [p(`Fica pactuado que, exercido o direito de preferência pelo(a) LOCATÁRIO(A), o(a) LOCADOR(A) pagará a título de comissão de 6% (seis por cento) sobre o valor da venda que se concretizar à JAIME ADMINISTRAÇÃO DE BENS E CONDOMÍNIOS LTDA., inscrita no CNPJ sob o número 65.082.380/0001-04, pela intermediação.`)] : []),
+
+        ...(clausulas.comunicacaoEmail ? [
+          heading('Das Comunicações'),
+          p(`As comunicações entre as PARTES referentes ao presente contrato deverão ser realizadas por escrito.`),
+          p(`9.1 — As PARTES elegem o correio eletrônico (e-mail) como meio preferencial de comunicação para notificações, avisos e demais comunicações relativas ao presente contrato, sem exclusividade de outros meios admitidos em lei. As mensagens enviadas por e-mail com confirmação de leitura ou entrega terão plena validade legal entre as partes.`),
+        ] : []),
 
         heading('Das Assinaturas Digitais e Eletrônicas'),
         p(`As PARTES ajustam que o Contrato, anexos e os documentos correlatos, bem como eventuais aditivos poderão ser assinados digital ou eletronicamente, produzindo todos os efeitos legais. Nos termos do art. 10, § 2º, da Medida Provisória nº 2.200-2, as PARTES expressamente concordam em utilizar e reconhecem como válida qualquer forma de comprovação de anuência aos termos ora acordados em formato eletrônico.`),

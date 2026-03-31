@@ -172,7 +172,7 @@ export default function StepGerar({ form, onPrev, tenantId }: Props) {
           <div className="text-[11px] font-medium tracking-widest uppercase text-[#8A7A6A] mb-3">Testemunhas</div>
           <div className="grid grid-cols-2 gap-3">
             {form.testemunhas.map((t, i) => (
-              <div key={i} className="flex flex-col gap-1">
+              <div key={i} className="flex flex-col gap-2">
                 <label className="text-[11px] text-[#4A3F35]">Testemunha {i + 1}</label>
                 <input type="text" value={t.nome || ''} onChange={e => {
                   const arr = [...form.testemunhas]
@@ -180,6 +180,12 @@ export default function StepGerar({ form, onPrev, tenantId }: Props) {
                 }}
                   className="px-2.5 py-1.5 border border-black/15 rounded-lg text-sm bg-[#F5F0E8] focus:outline-none focus:border-[#B8860B]"
                   placeholder="Nome completo" />
+                <input type="text" value={t.cpf || ''} onChange={e => {
+                  const arr = [...form.testemunhas]
+                  arr[i] = { ...arr[i], cpf: e.target.value }
+                }}
+                  className="px-2.5 py-1.5 border border-black/15 rounded-lg text-sm bg-[#F5F0E8] focus:outline-none focus:border-[#B8860B]"
+                  placeholder="CPF" />
               </div>
             ))}
           </div>

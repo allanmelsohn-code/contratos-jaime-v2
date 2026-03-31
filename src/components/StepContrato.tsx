@@ -154,6 +154,8 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
       {/* Imóvel complemento */}
       <Card title="Imóvel — Dados Complementares" icon="📍">
         <div className="grid grid-cols-3 gap-3">
+          <Select label="Tipo do imóvel" value={form.imovel?.tipo} onChange={(v: string) => up('imovel', { ...form.imovel, tipo: v })}
+            options={[['Apartamento','Apartamento'],['Casa','Casa'],['Sala/Conjunto Comercial','Sala/Conjunto Comercial'],['Galpão','Galpão'],['Loja','Loja'],['Terreno','Terreno'],['Outro','Outro']]} />
           <Field label="Complemento (Apto, Conj., etc)" value={form.imovel?.complemento} onChange={(v: string) => up('imovel', { ...form.imovel, complemento: v })} />
           <Field label="Vagas de garagem" value={form.imovel?.vaga} onChange={(v: string) => up('imovel', { ...form.imovel, vaga: v })} placeholder="01 (uma) vaga" />
           <Select label="Finalidade" value={form.imovel?.finalidade} onChange={(v: string) => up('imovel', { ...form.imovel, finalidade: v })}
@@ -185,6 +187,21 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
             options={[['IGP-M da FGV','IGP-M'],['IPCA','IPCA'],['IPC-FIPE','IPC-FIPE'],['Outro','Outro']]} />
           <Select label="Periodicidade" value={form.valor?.reajuste} onChange={(v: string) => upVal('reajuste', v)}
             options={[['a cada 12 meses','Anual'],['a cada 6 meses','Semestral']]} />
+        </div>
+        <div className="mt-4 pt-4 border-t border-black/8">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="text-[11px] font-medium tracking-widest uppercase text-[#8A7A6A]">Carência</div>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" checked={!!form.valor?.carencia} onChange={e => upVal('carencia', e.target.checked ? 'sim' : '')} className="accent-[#B8860B]" />
+              <span className="text-xs text-[#4A3F35]">Há período de carência</span>
+            </label>
+          </div>
+          {form.valor?.carencia && (
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Prazo de carência (meses)" type="number" value={form.valor?.carenciaPrazo} onChange={(v: string) => upVal('carenciaPrazo', v)} placeholder="2" />
+              <Field label="Motivo da carência" value={form.valor?.carenciaMotivo} onChange={(v: string) => upVal('carenciaMotivo', v)} placeholder="Ex: Reforma do imóvel pelo locatário" />
+            </div>
+          )}
         </div>
         <div className="mt-4 pt-4 border-t border-black/8">
           <div className="text-[11px] font-medium tracking-widest uppercase text-[#8A7A6A] mb-3">Conta para pagamento do aluguel</div>
@@ -224,6 +241,7 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
             )}
             <Field label="Nº Proposta/Formulário *" value={form.garantia?.numero} onChange={(v: string) => upGnt('numero', v)} placeholder="XXXXXXXXX" />
             <Field label="Valor nominal (R$) *" value={form.garantia?.valor} onChange={(v: string) => upGnt('valor', v)} />
+            <Field label="Data de emissão" type="date" value={form.garantia?.dataEmissao} onChange={(v: string) => upGnt('dataEmissao', v)} />
           </div>
         </Card>
       )}
@@ -235,6 +253,12 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
               options={[['Porto Seguro','Porto Seguro'],['Tokio Marine','Tokio Marine'],['Too Seguros','Too Seguros'],['Outra','Outra']]} />
             <Field label="Nº da Apólice *" value={form.garantia?.apolice} onChange={(v: string) => upGnt('apolice', v)} />
             <Field label="PAC" value={form.garantia?.pac} onChange={(v: string) => upGnt('pac', v)} />
+            <Select label="Cobertura" value={form.garantia?.cobertura} onChange={(v: string) => upGnt('cobertura', v)}
+              options={[
+                ['Aluguel + Encargos','Aluguel + Encargos'],
+                ['Aluguel + Encargos + Danos ao Imóvel','Aluguel + Encargos + Danos ao Imóvel'],
+                ['Personalizado','Personalizado'],
+              ]} />
             <Field label="Vigência" type="date" value={form.garantia?.vigencia} onChange={(v: string) => upGnt('vigencia', v)} />
           </div>
         </Card>
@@ -242,8 +266,9 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
 
       {form.gnt === 'imovel-cau' && (
         <Card title="Imóvel Caucionado" icon="🏠">
-          <div className="grid grid-cols-3 gap-3 mb-4">
+          <div className="grid grid-cols-2 gap-3 mb-4">
             <Field label="Nº da Matrícula *" value={form.garantia?.matricula} onChange={(v: string) => upGnt('matricula', v)} placeholder="12.345" />
+            <Field label="Comarca" value={form.garantia?.comarca} onChange={(v: string) => upGnt('comarca', v)} placeholder="São Paulo" />
             <Field label="Cartório (Nº/Nome) *" value={form.garantia?.cartorio} onChange={(v: string) => upGnt('cartorio', v)} placeholder="15º RI São Paulo" />
             <Field label="Descrição do imóvel" value={form.garantia?.descricao} onChange={(v: string) => upGnt('descricao', v)} placeholder="Ap. 12, Rua..." />
           </div>
@@ -368,10 +393,12 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
               <div className="text-sm font-medium text-[#1A1612]">Abono em dinheiro para reforma</div>
               <div className="text-[11px] text-[#8A7A6A]">Locador concede desconto para obras pelo locatário</div>
               {form.clausulas?.abono && (
-                <div className="grid grid-cols-3 gap-3 mt-2">
+                <div className="grid grid-cols-2 gap-3 mt-2">
                   <Field label="Valor (R$)" value={form.clausulas.abono.valor} onChange={(v: string) => upCla('abono', { ...form.clausulas.abono, valor: v })} />
                   <Field label="A partir do mês" type="number" value={form.clausulas.abono.mes} onChange={(v: string) => upCla('abono', { ...form.clausulas.abono, mes: v })} />
                   <Field label="Destinação" value={form.clausulas.abono.obs} onChange={(v: string) => upCla('abono', { ...form.clausulas.abono, obs: v })} placeholder="Reforma, pintura..." />
+                  <Field label="Nº de parcelas de abono" type="number" value={form.clausulas.abono.parcelas} onChange={(v: string) => upCla('abono', { ...form.clausulas.abono, parcelas: v })} placeholder="1" />
+                  <Field label="Prazo para obras (meses)" type="number" value={form.clausulas.abono.prazo} onChange={(v: string) => upCla('abono', { ...form.clausulas.abono, prazo: v })} placeholder="3" />
                 </div>
               )}
             </div>
@@ -382,6 +409,35 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
             <div>
               <div className="text-sm font-medium text-[#1A1612]">IPTU pago pelo locador</div>
               <div className="text-[11px] text-[#8A7A6A]">Por padrão, todos encargos (IPTU, condomínio, luz, água, gás) são do locatário. Marque para transferir IPTU e condomínio ao locador.</div>
+            </div>
+          </label>
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" checked={!!form.clausulas?.iptuProporcional} onChange={e => upCla('iptuProporcional', e.target.checked)}
+              className="mt-1 accent-[#B8860B]" />
+            <div>
+              <div className="text-sm font-medium text-[#1A1612]">IPTU e condomínio proporcionais no início</div>
+              <div className="text-[11px] text-[#8A7A6A]">No mês de início da locação, encargos calculados proporcionalmente aos dias de ocupação</div>
+            </div>
+          </label>
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" checked={!!form.clausulas?.moradores} onChange={e => upCla('moradores', e.target.checked ? ' ' : null)}
+              className="mt-1 accent-[#B8860B]" />
+            <div className="flex-1">
+              <div className="text-sm font-medium text-[#1A1612]">Moradores adicionais</div>
+              <div className="text-[11px] text-[#8A7A6A]">Cônjuge, filhos ou dependentes que residirão no imóvel</div>
+              {form.clausulas?.moradores !== undefined && form.clausulas?.moradores !== null && (
+                <textarea value={form.clausulas.moradores} onChange={e => upCla('moradores', e.target.value)} rows={2}
+                  placeholder="Ex: cônjuge Fulana de Tal, CPF 000.000.000-00, e filhos menores"
+                  className="mt-2 w-full px-3 py-2 border border-black/15 rounded-lg text-sm bg-[#F5F0E8] focus:outline-none focus:border-[#B8860B] resize-none" />
+              )}
+            </div>
+          </label>
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" checked={!!form.clausulas?.comunicacaoEmail} onChange={e => upCla('comunicacaoEmail', e.target.checked)}
+              className="mt-1 accent-[#B8860B]" />
+            <div>
+              <div className="text-sm font-medium text-[#1A1612]">Comunicação preferencial por e-mail</div>
+              <div className="text-[11px] text-[#8A7A6A]">Notificações, avisos e comunicações entre as partes preferencialmente por e-mail</div>
             </div>
           </label>
           <label className="flex items-start gap-3 cursor-pointer">
