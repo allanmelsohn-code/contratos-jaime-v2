@@ -268,8 +268,8 @@ export default function StepGerar({ form, onPrev, tenantId }: Props) {
         )}
       </div>
 
-      <div className="flex justify-between pt-5 border-t border-black/10">
-        <button onClick={onPrev} className="px-5 py-2.5 border border-black/15 rounded-lg text-sm text-[#4A3F35] hover:bg-black/5 transition-all">← Voltar</button>
+      <div className="j-btn-row">
+        <button onClick={onPrev} className="j-btn j-btn-out">← Voltar</button>
       </div>
     </div>
   )

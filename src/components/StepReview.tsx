@@ -252,13 +252,9 @@ export default function StepReview({ docs, setDocs, form, setForm, onNext, onPre
         </div>
       </div>
 
-      <div className="flex justify-between pt-6 mt-6 border-t border-black/10">
-        <button onClick={onPrev} className="px-5 py-2.5 border border-black/15 rounded-lg text-sm text-[#4A3F35] hover:bg-black/5 transition-all">
-          ← Voltar
-        </button>
-        <button onClick={onNext} className="px-6 py-2.5 bg-[#B8860B] text-[#1A1612] rounded-lg text-sm font-semibold hover:bg-[#D4A017] transition-all">
-          Preencher Contrato →
-        </button>
+      <div className="j-btn-row">
+        <button onClick={onPrev} className="j-btn j-btn-out">← Voltar</button>
+        <button onClick={onNext} className="j-btn j-btn-gold">Preencher Contrato →</button>
       </div>
     </div>
   )

@@ -186,15 +186,9 @@ export default function StepNegocioCV({ form, setForm, onNext, onPrev }: Props) 
         </div>
       </Card>
 
-      <div className="flex justify-between pt-5 border-t border-black/10">
-        <button
-          onClick={onPrev}
-          className="px-5 py-2.5 border border-black/15 rounded-lg text-sm text-[#4A3F35] hover:bg-black/5 transition-all"
-        >← Voltar</button>
-        <button
-          onClick={onNext}
-          className="px-6 py-2.5 bg-[#B8860B] text-[#1A1612] rounded-lg text-sm font-semibold hover:bg-[#D4A017] transition-all"
-        >Continuar →</button>
+      <div className="j-btn-row">
+        <button onClick={onPrev} className="j-btn j-btn-out">← Voltar</button>
+        <button onClick={onNext} className="j-btn j-btn-gold">Continuar →</button>
       </div>
     </div>
   )
