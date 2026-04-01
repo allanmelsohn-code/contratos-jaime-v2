@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, type ReactNode } from 'react'
+import { Home, Users, Handshake, MapPin, Shield, Banknote, BarChart3, Plus } from 'lucide-react'
 import type { FormState, ExtractedDoc } from '@/lib/types'
 
 // ── Slot definitions ──────────────────────────────────────────────────────────
@@ -260,11 +261,11 @@ function SlotRow({ label, state, onUpload, onManualSave, manualFields }: {
 // ── Main component ────────────────────────────────────────────────────────────
 
 const GNT_OPTIONS = [
-  { id: 'fiador',     icon: '🤝', label: 'Fiador',               desc: 'Pessoa física garantidora' },
-  { id: 'seguro',     icon: '🛡️', label: 'Seguro Fiança',        desc: 'Apólice de seguro' },
-  { id: 'caucao',     icon: '💰', label: 'Caução',               desc: 'Depósito em dinheiro' },
-  { id: 'titulo',     icon: '📜', label: 'Título Capitalização', desc: 'Título em garantia' },
-  { id: 'imovel-cau', icon: '🏠', label: 'Imóvel Caucionado',   desc: 'Garantia real em imóvel · art. 38 §1º' },
+  { id: 'fiador',     icon: <Users size={16} />,      label: 'Fiador',               desc: 'Pessoa física garantidora' },
+  { id: 'seguro',     icon: <Shield size={16} />,     label: 'Seguro Fiança',        desc: 'Apólice de seguro' },
+  { id: 'caucao',     icon: <Banknote size={16} />,   label: 'Caução',               desc: 'Depósito em dinheiro' },
+  { id: 'titulo',     icon: <BarChart3 size={16} />,  label: 'Título Capitalização', desc: 'Título em garantia' },
+  { id: 'imovel-cau', icon: <Home size={16} />,       label: 'Imóvel Caucionado',    desc: 'Garantia real em imóvel · art. 38 §1º' },
 ]
 
 const ROLE_META = {
@@ -386,7 +387,7 @@ export default function StepUpload({ docs, setDocs, form, setForm, onNext }: Pro
     }
   }
 
-  function renderSection(role: 'locador' | 'locatario' | 'fiador', title: string, sCards: PersonCard[], required = false) {
+  function renderSection(role: 'locador' | 'locatario' | 'fiador', title: ReactNode, sCards: PersonCard[], required = false) {
     const meta = ROLE_META[role]
     return (
       <div className="j-card" style={{ borderTop: `3px solid ${meta.border}` }}>
@@ -435,7 +436,7 @@ export default function StepUpload({ docs, setDocs, form, setForm, onNext }: Pro
           onMouseOver={e => (e.currentTarget.style.background = meta.bg + '66')}
           onMouseOut={e  => (e.currentTarget.style.background = 'transparent')}
         >
-          <span style={{ fontSize: 20, lineHeight: 1 }}>＋</span> Adicionar {meta.label}
+          <Plus size={14} /> Adicionar {meta.label}
         </button>
       </div>
     )
@@ -453,7 +454,7 @@ export default function StepUpload({ docs, setDocs, form, setForm, onNext }: Pro
 
       {/* ── Modelo ── */}
       <div className="j-card" style={{ borderTop: '3px solid var(--tenant-primary)' }}>
-        <div className="j-card-title">📋 Modelo de Contrato — Tipo de Garantia</div>
+        <div className="j-card-title"><Shield size={15} /> Modelo de Contrato — Tipo de Garantia</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
           {GNT_OPTIONS.map(opt => (
             <button key={opt.id} onClick={() => setGnt(opt.id as FormState['gnt'])} style={{
@@ -478,16 +479,16 @@ export default function StepUpload({ docs, setDocs, form, setForm, onNext }: Pro
       </div>
 
       {/* ── Partes ── */}
-      {renderSection('locador',   '🏠 Locadores',  locadores)}
-      {renderSection('locatario', '🔑 Locatários', locatarios)}
+      {renderSection('locador',   <><Home size={15} /> Locadores</>,   locadores)}
+      {renderSection('locatario', <><Users size={15} /> Locatários</>, locatarios)}
       {form.gnt === 'fiador'
-        ? renderSection('fiador', '🤝 Fiadores',            fiadores, true)
-        : renderSection('fiador', '🤝 Fiadores (opcional)', fiadores, false)
+        ? renderSection('fiador', <><Handshake size={15} /> Fiadores</>,            fiadores, true)
+        : renderSection('fiador', <><Handshake size={15} /> Fiadores (opcional)</>, fiadores, false)
       }
 
       {/* ── Imóvel ── */}
       <div className="j-card" style={{ borderTop: '3px solid #86EFAC' }}>
-        <div className="j-card-title">📍 Imóvel</div>
+        <div className="j-card-title"><MapPin size={15} /> Imóvel</div>
         {SLOTS_IMOVEL.map(slot => (
           <SlotRow
             key={slot.docType}
