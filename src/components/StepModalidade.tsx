@@ -1,62 +1,76 @@
 'use client'
 
-interface Props {
-  onSelect: (modalidade: 'locacao' | 'compra-venda' | 'escritura') => void
-}
+import type { ReactNode } from 'react'
+import { Home, DollarSign, FileText } from 'lucide-react'
 
-const MODALIDADES = [
+export type Modalidade = 'locacao' | 'compra-venda' | 'escritura'
+
+const OPCOES: {
+  id: Modalidade
+  icon: ReactNode
+  label: string
+  desc: string
+  tag: string
+  novo?: boolean
+}[] = [
   {
-    id: 'locacao' as const,
-    icon: '🏠',
+    id: 'locacao',
+    icon: <Home size={22} />,
     label: 'Locação',
-    desc: 'Contrato de locação residencial ou comercial',
+    desc: 'Contrato de aluguel residencial ou comercial com todas as cláusulas padrão.',
+    tag: '4 etapas · OCR automático',
   },
   {
-    id: 'compra-venda' as const,
-    icon: '🤝',
+    id: 'compra-venda',
+    icon: <DollarSign size={22} />,
     label: 'Compra e Venda',
-    desc: 'Instrumento particular de compra e venda de imóvel',
+    desc: 'Promessa de compra e venda de imóvel com condições de pagamento e prazo.',
+    tag: '3 etapas',
   },
   {
-    id: 'escritura' as const,
-    icon: '📜',
+    id: 'escritura',
+    icon: <FileText size={22} />,
     label: 'Escritura',
-    desc: 'Escritura pública de compra e venda ou doação',
+    desc: 'Instrumento particular com força de escritura pública para transferência definitiva.',
+    tag: '3 etapas',
+    novo: true,
   },
 ]
 
-export default function StepModalidade({ onSelect }: Props) {
-  const today = new Date().toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-
+export default function StepModalidade({ onSelect }: { onSelect: (m: Modalidade) => void }) {
   return (
-    <div className="min-h-[calc(100vh-56px)] flex flex-col items-center justify-center bg-[#F5F0E8] px-6 py-16">
-      <div className="w-full max-w-3xl">
-        <div className="text-center mb-10">
-          <div className="text-[11px] font-medium tracking-widest uppercase text-[#B8860B] mb-3">
-            Novo Contrato
-          </div>
-          <h1 className="font-serif text-3xl font-semibold text-[#1A1612] mb-3">
-            Selecione a Modalidade
-          </h1>
-          <p className="text-sm text-[#8A7A6A]">{today}</p>
-        </div>
+    <main className="j-main">
+      <div className="j-eyebrow">Novo contrato</div>
+      <h1 className="j-title">Selecione a modalidade</h1>
+      <p className="j-desc">
+        Escolha o tipo de contrato que deseja gerar. O fluxo e os campos serão adaptados automaticamente.
+      </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {MODALIDADES.map((m) => (
-            <button
-              key={m.id}
-              onClick={() => onSelect(m.id)}
-              className="border-2 border-black/10 hover:border-[#B8860B] bg-white rounded-xl p-7 text-left transition-all shadow-sm hover:shadow-md hover:bg-[#B8860B]/5 group"
-            >
-              <div className="text-5xl mb-4">{m.icon}</div>
-              <div className="font-serif text-lg font-semibold text-[#1A1612] mb-2 group-hover:text-[#B8860B] transition-colors">
-                {m.label}
-              </div>
-              <div className="text-[13px] text-[#8A7A6A] leading-snug">{m.desc}</div>
-            </button>
-          ))}
-        </div>
+      <div className="j-choices-modal">
+        {OPCOES.map((op) => (
+          <button
+            key={op.id}
+            className="j-choice-modal"
+            onClick={() => onSelect(op.id)}
+            style={{ position: 'relative' }}
+          >
+            {op.novo && (
+              <span style={{
+                position: 'absolute', top: 14, right: 14,
+                background: 'var(--sage-p)', color: 'var(--sage-d)',
+                padding: '2px 8px', borderRadius: 20,
+                fontSize: 9, fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase',
+              }}>
+                Novo
+              </span>
+            )}
+            <div className="j-choice-modal-icon">{op.icon}</div>
+            <div className="j-choice-modal-label">{op.label}</div>
+            <div className="j-choice-modal-desc">{op.desc}</div>
+            <span className="j-choice-modal-tag">{op.tag}</span>
+          </button>
+        ))}
       </div>
-    </div>
+    </main>
   )
 }
