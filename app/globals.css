@@ -464,7 +464,7 @@ body {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ── STEP PAGE ───────────────────────────────────────────── */
-.j-page { display: none; animation: fi .25s ease; }
+.j-page { display: none; }
 .j-page.active { display: block; animation: stepEnter .3s cubic-bezier(.22,.68,0,1.2); }
 @keyframes stepEnter {
   from { opacity: 0; transform: translateX(18px); }
@@ -658,6 +658,7 @@ body {
 @media (max-width: 640px) {
   .j-grid-2, .j-grid-3, .j-grid-4 { grid-template-columns: 1fr; }
   .j-choices-2, .j-choices-3, .j-choices-4 { grid-template-columns: 1fr 1fr; }
+  .j-choices-modal { grid-template-columns: 1fr; }
   .j-main { padding: 20px 16px; }
   .p-admin-body { padding: 20px 16px; }
   .j-steps-bar { overflow-x: auto; scrollbar-width: none; }
