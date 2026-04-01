@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { PenTool, FileText, Loader2, Download } from 'lucide-react'
 import type { FormState } from '@/lib/types'
 
 interface Props {
@@ -70,7 +71,7 @@ export default function StepGerarCV({ form, onPrev }: Props) {
       {/* Signatários */}
       <div className="bg-white border border-black/10 rounded-xl p-5 shadow-sm mb-4">
         <div className="font-serif text-base font-semibold text-[#1A1612] mb-4 pb-3 border-b border-black/8 flex items-center gap-2">
-          <span>✍️</span> Partes para Assinatura
+          <PenTool size={15} /> Partes para Assinatura
         </div>
         <div className="grid grid-cols-2 gap-3">
           {signatarios.map((s, i) => (
@@ -87,7 +88,7 @@ export default function StepGerarCV({ form, onPrev }: Props) {
       {/* Download */}
       <div className="bg-white border border-black/10 rounded-xl p-5 shadow-sm mb-4">
         <div className="font-serif text-base font-semibold text-[#1A1612] mb-3 pb-3 border-b border-black/8 flex items-center gap-2">
-          <span>📄</span> Gerar Documento
+          <FileText size={15} /> Gerar Documento
         </div>
         <p className="text-sm text-[#4A3F35] mb-4">
           Clique abaixo para gerar e baixar o{' '}
@@ -99,9 +100,9 @@ export default function StepGerarCV({ form, onPrev }: Props) {
           className="px-6 py-2.5 bg-[#1A1612] text-[#F5F0E8] rounded-lg text-sm font-semibold hover:bg-[#2D2520] disabled:opacity-50 transition-all flex items-center gap-2"
         >
           {generating ? (
-            <><span className="animate-spin">⚙️</span> Gerando...</>
+            <><Loader2 size={13} className="j-spin" /> Gerando...</>
           ) : (
-            <>📥 Baixar .docx</>
+            <><Download size={13} /> Baixar .docx</>
           )}
         </button>
       </div>

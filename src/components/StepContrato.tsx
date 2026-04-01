@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import type { ReactNode } from 'react'
 import type { FormState } from '@/lib/types'
 import CorretorSearch from '@/components/CorretorSearch'
 import { formatarCorretorClausula, type Corretor } from '@/lib/corretores'
+import { Building, Landmark, ClipboardList, Shield, Handshake, FileText, Banknote, DollarSign, BarChart3, Home, MapPin, Briefcase, AlertCircle, FileEdit } from 'lucide-react'
 
 interface Props {
   form: FormState
@@ -47,13 +49,13 @@ function Card({ title, icon, children }: any) {
   )
 }
 
-function ChoiceCard({ id, selected, onSelect, icon, label, desc }: any) {
+function ChoiceCard({ id, selected, onSelect, icon, label, desc }: { id: any; selected: any; onSelect: (id: any) => void; icon: ReactNode; label: string; desc?: string }) {
   return (
     <button onClick={() => onSelect(id)}
       className={`border-2 rounded-xl p-4 text-left transition-all relative ${selected === id ? 'border-[#B8860B] bg-[#B8860B]/5' : 'border-black/10 hover:border-[#B8860B]/50 bg-white'}`}
     >
       {selected === id && <span className="absolute top-2 right-2 w-5 h-5 bg-[#B8860B] rounded-full text-[#1A1612] text-[10px] font-bold flex items-center justify-center">✓</span>}
-      <div className="text-2xl mb-1">{icon}</div>
+      <div className="mb-1 text-[#4A3F35]">{icon}</div>
       <div className="font-semibold text-sm text-[#1A1612]">{label}</div>
       {desc && <div className="text-[11px] text-[#8A7A6A] mt-1 leading-snug">{desc}</div>}
     </button>
@@ -126,25 +128,25 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
       </div>
 
       {/* Administração */}
-      <Card title="Tipo de Administração" icon="🏢">
+      <Card title="Tipo de Administração" icon={<Building size={15} />}>
         <div className="grid grid-cols-2 gap-3">
           <ChoiceCard id={true} selected={form.admJaime} onSelect={(v: any) => up('admJaime', v === true || v === 'true')}
-            icon="🏛️" label="Jaime Administradora" desc="Inclui cláusula de 6% na venda · CNPJ 65.082.380/0001-04" />
+            icon={<Landmark size={15} />} label="Jaime Administradora" desc="Inclui cláusula de 6% na venda · CNPJ 65.082.380/0001-04" />
           <ChoiceCard id={false} selected={form.admJaime} onSelect={(v: any) => up('admJaime', false)}
-            icon="📋" label="Sem Administração Jaime" desc="Intermediação apenas" />
+            icon={<ClipboardList size={15} />} label="Sem Administração Jaime" desc="Intermediação apenas" />
         </div>
       </Card>
 
       {/* Garantia */}
-      <Card title="Modalidade de Garantia" icon="🛡️">
+      <Card title="Modalidade de Garantia" icon={<Shield size={15} />}>
         <div className="grid grid-cols-3 gap-3">
-          {[
-            { id: 'fiador', icon: '🤝', label: 'Fiador', desc: 'Pagador solidário, arts. 835–838 CC' },
-            { id: 'seguro', icon: '📄', label: 'Seguro Fiança', desc: 'Apólice com seguradora' },
-            { id: 'caucao', icon: '💰', label: 'Caução', desc: 'Depósito · máx. 3 meses · 100% CDI' },
-            { id: 'titulo', icon: '📊', label: 'Título de Cap.', desc: 'Porto Seguro Capitalização' },
-            { id: 'imovel-cau', icon: '🏠', label: 'Imóvel Caucionado', desc: 'Caucionantes oferecem imóvel próprio · art. 38 §1º Lei 8.245/91' },
-          ].map(g => (
+          {([
+            { id: 'fiador', icon: <Handshake size={15} />, label: 'Fiador', desc: 'Pagador solidário, arts. 835–838 CC' },
+            { id: 'seguro', icon: <FileText size={15} />, label: 'Seguro Fiança', desc: 'Apólice com seguradora' },
+            { id: 'caucao', icon: <Banknote size={15} />, label: 'Caução', desc: 'Depósito · máx. 3 meses · 100% CDI' },
+            { id: 'titulo', icon: <BarChart3 size={15} />, label: 'Título de Cap.', desc: 'Porto Seguro Capitalização' },
+            { id: 'imovel-cau', icon: <Home size={15} />, label: 'Imóvel Caucionado', desc: 'Caucionantes oferecem imóvel próprio · art. 38 §1º Lei 8.245/91' },
+          ] as { id: string; icon: ReactNode; label: string; desc: string }[]).map(g => (
             <ChoiceCard key={g.id} id={g.id} selected={form.gnt} onSelect={(v: string) => up('gnt', v)}
               icon={g.icon} label={g.label} desc={g.desc} />
           ))}
@@ -152,7 +154,7 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
       </Card>
 
       {/* Imóvel complemento */}
-      <Card title="Imóvel — Dados Complementares" icon="📍">
+      <Card title="Imóvel — Dados Complementares" icon={<MapPin size={15} />}>
         <div className="grid grid-cols-3 gap-3">
           <Select label="Tipo do imóvel" value={form.imovel?.tipo} onChange={(v: string) => up('imovel', { ...form.imovel, tipo: v })}
             options={[['Apartamento','Apartamento'],['Casa','Casa'],['Sala/Conjunto Comercial','Sala/Conjunto Comercial'],['Galpão','Galpão'],['Loja','Loja'],['Terreno','Terreno'],['Outro','Outro']]} />
@@ -172,7 +174,7 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
       </Card>
 
       {/* Valor */}
-      <Card title="Valor, Prazo e Reajuste" icon="💵">
+      <Card title="Valor, Prazo e Reajuste" icon={<DollarSign size={15} />}>
         <div className="grid grid-cols-3 gap-3">
           <Field label="Aluguel mensal (R$) *" value={form.valor?.aluguel} onChange={(v: string) => upVal('aluguel', v)} placeholder="7.500,00" />
           <Select label="Dia de vencimento" value={form.valor?.vencimento} onChange={(v: string) => upVal('vencimento', v)}
@@ -218,7 +220,7 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
 
       {/* Garantia detalhes */}
       {form.gnt === 'caucao' && (
-        <Card title="Depósito Caução" icon="💰">
+        <Card title="Depósito Caução" icon={<Banknote size={15} />}>
           <div className="grid grid-cols-3 gap-3">
             <Field label="Valor da caução (R$) *" value={form.garantia?.valor} onChange={(v: string) => upGnt('valor', v)} />
             <Field label="Banco *" value={form.garantia?.banco} onChange={(v: string) => upGnt('banco', v)} placeholder="Banco do depósito" />
@@ -232,7 +234,7 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
       )}
 
       {form.gnt === 'titulo' && (
-        <Card title="Título de Capitalização" icon="📊">
+        <Card title="Título de Capitalização" icon={<BarChart3 size={15} />}>
           <div className="grid grid-cols-3 gap-3">
             <Select label="Instituição" value={form.garantia?.instituicao} onChange={(v: string) => upGnt('instituicao', v)}
               options={[['Porto Seguro Capitalização S.A','Porto Seguro Capitalização S.A'],['Outra','Outra']]} />
@@ -247,7 +249,7 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
       )}
 
       {form.gnt === 'seguro' && (
-        <Card title="Seguro Fiança" icon="📄">
+        <Card title="Seguro Fiança" icon={<FileText size={15} />}>
           <div className="grid grid-cols-3 gap-3">
             <Select label="Seguradora" value={form.garantia?.seguradora} onChange={(v: string) => upGnt('seguradora', v)}
               options={[['Porto Seguro','Porto Seguro'],['Tokio Marine','Tokio Marine'],['Too Seguros','Too Seguros'],['Outra','Outra']]} />
@@ -265,7 +267,7 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
       )}
 
       {form.gnt === 'imovel-cau' && (
-        <Card title="Imóvel Caucionado" icon="🏠">
+        <Card title="Imóvel Caucionado" icon={<Home size={15} />}>
           <div className="grid grid-cols-2 gap-3 mb-4">
             <Field label="Nº da Matrícula *" value={form.garantia?.matricula} onChange={(v: string) => upGnt('matricula', v)} placeholder="12.345" />
             <Field label="Comarca" value={form.garantia?.comarca} onChange={(v: string) => upGnt('comarca', v)} placeholder="São Paulo" />
@@ -298,7 +300,7 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
       )}
 
       {/* Comissão */}
-      <Card title="Comissão de Intermediação" icon="💼">
+      <Card title="Comissão de Intermediação" icon={<Briefcase size={15} />}>
         <div className="grid grid-cols-3 gap-3 mb-4">
           <Field label="Vencimento (data)" type="date" value={form.comissao?.vencimento} onChange={(v: string) => upCom('vencimento', v)} />
           <Field label="% Jaime" value={form.comissao?.pctJaime} onChange={(v: string) => {
@@ -362,7 +364,7 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
                   </div>
                 )}
               </div>
-              {c.obs && <div style={{ marginTop: 8, fontSize: 11, color: 'var(--rust)', background: 'rgba(139,58,26,.06)', padding: '6px 10px', borderRadius: 6 }}>⚠️ {c.obs}</div>}
+              {c.obs && <div style={{ marginTop: 8, fontSize: 11, color: 'var(--rust)', background: 'rgba(139,58,26,.06)', padding: '6px 10px', borderRadius: 6 }} className="flex items-center gap-1"><AlertCircle size={11} /> {c.obs}</div>}
             </div>
           ))}
         </div>
@@ -370,7 +372,7 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
       </Card>
 
       {/* Cláusulas especiais */}
-      <Card title="Cláusulas Especiais" icon="📝">
+      <Card title="Cláusulas Especiais" icon={<FileEdit size={15} />}>
         <div className="space-y-4">
           <label className="flex items-start gap-3 cursor-pointer">
             <input type="checkbox" checked={!!form.clausulas?.isencaoMeses} onChange={e => upCla('isencaoMeses', e.target.checked ? '12' : '')}

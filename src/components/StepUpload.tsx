@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, type ReactNode } from 'react'
+import { Home, Users, Handshake, MapPin, Shield, Banknote, BarChart3, Plus, Upload, Pencil, CheckCircle2, Loader2, AlertCircle } from 'lucide-react'
 import type { FormState, ExtractedDoc } from '@/lib/types'
 
 // ── Slot definitions ──────────────────────────────────────────────────────────
@@ -194,23 +195,13 @@ function SlotRow({ label, state, onUpload, onManualSave, manualFields }: {
   return (
     <div style={{ borderBottom: '1px solid var(--border-s)', paddingBottom: 10, marginBottom: 10 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-        <button onClick={() => ref.current?.click()} disabled={isLoad} style={{
-          fontSize: 11, fontWeight: 600, padding: '5px 12px', borderRadius: 7,
-          border: `1.5px solid ${isDone ? '#86EFAC' : 'var(--border)'}`,
-          background: isDone ? '#DCFCE7' : 'var(--cream)',
-          color: isDone ? '#166534' : 'var(--ink-m)', cursor: isLoad ? 'wait' : 'pointer', flexShrink: 0,
-        }}>
-          {isLoad ? '⏳' : isDone ? '✅' : '📎'} Upload
+        <button onClick={() => ref.current?.click()} disabled={isLoad} className="slot-btn">
+          <Upload size={11} /> Upload
         </button>
 
         {manualFields.length > 0 && (
-          <button onClick={() => setShowForm(v => !v)} style={{
-            fontSize: 11, fontWeight: 600, padding: '5px 12px', borderRadius: 7,
-            border: `1.5px solid ${showForm ? 'var(--tenant-primary)' : 'var(--border)'}`,
-            background: showForm ? 'var(--tenant-primary-p)' : 'var(--cream)',
-            color: showForm ? 'var(--tenant-primary-d)' : 'var(--ink-m)', cursor: 'pointer', flexShrink: 0,
-          }}>
-            ✏️ Preencher
+          <button onClick={() => setShowForm(v => !v)} className={`slot-btn${showForm ? ' active' : ''}`}>
+            <Pencil size={11} /> Preencher
           </button>
         )}
 
@@ -220,14 +211,22 @@ function SlotRow({ label, state, onUpload, onManualSave, manualFields }: {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink)' }}>{label}</div>
           {isDone && (
-            <div style={{ fontSize: 11, color: 'var(--sage)', marginTop: 2 }}>
-              {state.extracted?.nome || state.extracted?.razao_social || state.extracted?.banco || state.extracted?.numero_matricula || vals.nome || vals.matricula || '✓ preenchido'}
+            <div style={{ fontSize: 11, color: 'var(--sage-d)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4, fontWeight: 600 }}>
+              <CheckCircle2 size={11} />
+              {state.extracted?.nome || state.extracted?.razao_social || state.extracted?.banco || state.extracted?.numero_matricula || vals.nome || vals.matricula || 'preenchido'}
             </div>
           )}
-          {isError && <div style={{ fontSize: 11, color: 'var(--coral)', marginTop: 2 }}>{state.error}</div>}
+          {isLoad && (
+            <div style={{ fontSize: 11, color: 'var(--ink-f)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
+              <Loader2 size={11} className="j-spin" /> Processando...
+            </div>
+          )}
+          {isError && (
+            <div style={{ fontSize: 11, color: 'var(--coral)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
+              <AlertCircle size={11} /> {state.error}
+            </div>
+          )}
         </div>
-
-        {state.status === 'idle' && <span style={{ fontSize: 11, color: 'var(--ink-f)', flexShrink: 0 }}>Não enviado</span>}
       </div>
 
       {showForm && (
@@ -260,11 +259,11 @@ function SlotRow({ label, state, onUpload, onManualSave, manualFields }: {
 // ── Main component ────────────────────────────────────────────────────────────
 
 const GNT_OPTIONS = [
-  { id: 'fiador',     icon: '🤝', label: 'Fiador',               desc: 'Pessoa física garantidora' },
-  { id: 'seguro',     icon: '🛡️', label: 'Seguro Fiança',        desc: 'Apólice de seguro' },
-  { id: 'caucao',     icon: '💰', label: 'Caução',               desc: 'Depósito em dinheiro' },
-  { id: 'titulo',     icon: '📜', label: 'Título Capitalização', desc: 'Título em garantia' },
-  { id: 'imovel-cau', icon: '🏠', label: 'Imóvel Caucionado',   desc: 'Garantia real em imóvel · art. 38 §1º' },
+  { id: 'fiador',     icon: <Users size={16} />,      label: 'Fiador',               desc: 'Pessoa física garantidora' },
+  { id: 'seguro',     icon: <Shield size={16} />,     label: 'Seguro Fiança',        desc: 'Apólice de seguro' },
+  { id: 'caucao',     icon: <Banknote size={16} />,   label: 'Caução',               desc: 'Depósito em dinheiro' },
+  { id: 'titulo',     icon: <BarChart3 size={16} />,  label: 'Título Capitalização', desc: 'Título em garantia' },
+  { id: 'imovel-cau', icon: <Home size={16} />,       label: 'Imóvel Caucionado',    desc: 'Garantia real em imóvel · art. 38 §1º' },
 ]
 
 const ROLE_META = {
@@ -386,7 +385,7 @@ export default function StepUpload({ docs, setDocs, form, setForm, onNext }: Pro
     }
   }
 
-  function renderSection(role: 'locador' | 'locatario' | 'fiador', title: string, sCards: PersonCard[], required = false) {
+  function renderSection(role: 'locador' | 'locatario' | 'fiador', title: ReactNode, sCards: PersonCard[], required = false) {
     const meta = ROLE_META[role]
     return (
       <div className="j-card" style={{ borderTop: `3px solid ${meta.border}` }}>
@@ -435,7 +434,7 @@ export default function StepUpload({ docs, setDocs, form, setForm, onNext }: Pro
           onMouseOver={e => (e.currentTarget.style.background = meta.bg + '66')}
           onMouseOut={e  => (e.currentTarget.style.background = 'transparent')}
         >
-          <span style={{ fontSize: 20, lineHeight: 1 }}>＋</span> Adicionar {meta.label}
+          <Plus size={14} /> Adicionar {meta.label}
         </button>
       </div>
     )
@@ -453,7 +452,7 @@ export default function StepUpload({ docs, setDocs, form, setForm, onNext }: Pro
 
       {/* ── Modelo ── */}
       <div className="j-card" style={{ borderTop: '3px solid var(--tenant-primary)' }}>
-        <div className="j-card-title">📋 Modelo de Contrato — Tipo de Garantia</div>
+        <div className="j-card-title"><Shield size={15} /> Modelo de Contrato — Tipo de Garantia</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
           {GNT_OPTIONS.map(opt => (
             <button key={opt.id} onClick={() => setGnt(opt.id as FormState['gnt'])} style={{
@@ -478,16 +477,16 @@ export default function StepUpload({ docs, setDocs, form, setForm, onNext }: Pro
       </div>
 
       {/* ── Partes ── */}
-      {renderSection('locador',   '🏠 Locadores',  locadores)}
-      {renderSection('locatario', '🔑 Locatários', locatarios)}
+      {renderSection('locador',   <><Home size={15} /> Locadores</>,   locadores)}
+      {renderSection('locatario', <><Users size={15} /> Locatários</>, locatarios)}
       {form.gnt === 'fiador'
-        ? renderSection('fiador', '🤝 Fiadores',            fiadores, true)
-        : renderSection('fiador', '🤝 Fiadores (opcional)', fiadores, false)
+        ? renderSection('fiador', <><Handshake size={15} /> Fiadores</>,            fiadores, true)
+        : renderSection('fiador', <><Handshake size={15} /> Fiadores (opcional)</>, fiadores, false)
       }
 
       {/* ── Imóvel ── */}
       <div className="j-card" style={{ borderTop: '3px solid #86EFAC' }}>
-        <div className="j-card-title">📍 Imóvel</div>
+        <div className="j-card-title"><MapPin size={15} /> Imóvel</div>
         {SLOTS_IMOVEL.map(slot => (
           <SlotRow
             key={slot.docType}

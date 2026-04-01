@@ -10,6 +10,7 @@ import StepModalidade from '@/components/StepModalidade'
 import StepPartesCV from '@/components/StepPartesCV'
 import StepNegocioCV from '@/components/StepNegocioCV'
 import StepGerarCV from '@/components/StepGerarCV'
+import { LogOut, Clock, Lock } from 'lucide-react'
 import type { ExtractedDoc, FormState, TenantConfig } from '@/lib/types'
 
 const STEPS = ['Documentos', 'Revisão', 'Contrato', 'Gerar']
@@ -103,8 +104,8 @@ export default function TenantApp({ params }: { params: { tenant: string } }) {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <span className="j-badge">Jurídico · Contratos</span>
-          <button onClick={logout} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,.5)', cursor: 'pointer', fontSize: 12 }}>
-            Sair
+          <button onClick={logout} className="j-btn-ghost">
+            <LogOut size={12} /> Sair
           </button>
         </div>
       </header>
@@ -149,7 +150,9 @@ export default function TenantApp({ params }: { params: { tenant: string } }) {
                   <span className="j-step-num">{i < step ? '✓' : i + 1}</span>
                   {s}
                 </button>
-                {i < activeSteps.length - 1 && <div className="j-step-sep" />}
+                {i < activeSteps.length - 1 && (
+                  <div className={`j-step-sep${i < step ? ' done' : ''}`} />
+                )}
               </div>
             ))}
           </div>
@@ -160,16 +163,18 @@ export default function TenantApp({ params }: { params: { tenant: string } }) {
 
           {/* Aviso de trial */}
           {tenant?.status === 'trial' && tenant.trial_ends_at && (
-            <div style={{ background: '#FFF3CD', borderBottom: '1px solid #FFE083', padding: '8px 32px', fontSize: 12, color: '#856404', textAlign: 'center' }}>
-              ⏰ Trial ativo até {new Date(tenant.trial_ends_at).toLocaleDateString('pt-BR')} ·{' '}
+            <div className="j-banner-trial">
+              <Clock size={13} />
+              Trial ativo até {new Date(tenant.trial_ends_at).toLocaleDateString('pt-BR')} ·{' '}
               {Math.max(0, tenant.contratos_limite - tenant.contratos_usados)} contratos restantes
             </div>
           )}
 
           {/* Aviso de limite atingido */}
           {tenant && tenant.contratos_usados >= tenant.contratos_limite && (
-            <div style={{ background: '#FEE2DC', borderBottom: '1px solid #F5A090', padding: '8px 32px', fontSize: 12, color: '#C0392B', textAlign: 'center' }}>
-              🔒 Limite de contratos atingido este mês. Entre em contato com o suporte Papaia para ampliar.
+            <div className="j-banner-limit">
+              <Lock size={13} />
+              Limite de contratos atingido este mês. Entre em contato com o suporte Papaia para ampliar.
             </div>
           )}
 

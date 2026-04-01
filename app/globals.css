@@ -42,6 +42,9 @@
 body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--cream);
+  background-image:
+    radial-gradient(ellipse at 0% 0%, rgba(232,115,90,.06) 0%, transparent 45%),
+    radial-gradient(ellipse at 100% 100%, rgba(139,173,139,.05) 0%, transparent 45%);
   color: var(--ink);
   min-height: 100vh;
 }
@@ -58,6 +61,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 50;
+  background-image: radial-gradient(ellipse at 0% 50%, rgba(232,115,90,.15) 0%, transparent 55%);
 }
 .j-logo {
   display: flex; align-items: center; gap: 10px;
@@ -74,6 +78,7 @@ body {
   display: flex; align-items: center; justify-content: center;
   font-size: 13px; font-weight: 700;
   color: var(--white);
+  box-shadow: 0 2px 10px rgba(232,115,90,.45);
 }
 .j-badge {
   background: rgba(255,255,255,.12);
@@ -84,6 +89,7 @@ body {
   font-weight: 600;
   letter-spacing: .08em;
   text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,.08);
 }
 
 /* ── STEPS BAR ──────────────────────────────────────────── */
@@ -108,8 +114,10 @@ body {
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 .j-step-btn:hover { background: rgba(45,45,45,.05); color: var(--ink); }
-.j-step-btn.active { background: var(--ink); color: var(--white); }
-.j-step-btn.done { color: var(--sage-d); }
+.j-step-btn.active { background: var(--ink); color: var(--white); box-shadow: 0 2px 8px rgba(45,45,45,.2); }
+.j-step-btn.done { color: var(--sage-d); background: var(--sage-p); }
+.j-step-btn.done .j-step-num { background: var(--sage); color: white; }
+.j-step-btn.done:hover { background: var(--sage-p); color: var(--sage-d); }
 .j-step-num {
   width: 20px; height: 20px;
   border-radius: 50%;
@@ -119,15 +127,17 @@ body {
   font-family: 'DM Mono', monospace;
   transition: all .15s;
 }
-.j-step-btn.active .j-step-num { background: var(--tenant-primary); color: var(--white); }
-.j-step-btn.done .j-step-num { background: var(--sage); color: white; }
-.j-step-sep { width: 20px; height: 1px; background: var(--border); }
+.j-step-btn.active .j-step-num { background: var(--tenant-primary); color: var(--white); box-shadow: 0 1px 4px rgba(232,115,90,.5); }
+.j-step-sep { width: 20px; height: 2px; background: var(--border); border-radius: 2px; }
+.j-step-sep.done { background: var(--sage-l); }
 
 /* ── PROGRESS ────────────────────────────────────────────── */
 .j-progress { height: 3px; background: var(--border); }
 .j-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--tenant-primary), var(--tenant-primary-d));
+  height: 3px;
+  background: linear-gradient(90deg, var(--tenant-primary), var(--coral-l));
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 8px rgba(232,115,90,.35);
   transition: width .4s ease;
 }
 
@@ -154,7 +164,7 @@ body {
   border-radius: 14px;
   padding: 22px;
   margin-bottom: 16px;
-  box-shadow: 0 2px 12px rgba(45,45,45,.06);
+  box-shadow: 0 2px 14px rgba(45,45,45,.07);
 }
 .j-card-title {
   font-size: 14px; font-weight: 700;
@@ -220,6 +230,51 @@ body {
 .j-choices-3 { grid-template-columns: 1fr 1fr 1fr; }
 .j-choices-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
 
+/* ── CHOICE MODAL (tela de seleção de modalidade) ─────────── */
+.j-choices-modal { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.j-choice-modal {
+  border: 2px solid var(--border);
+  border-radius: 18px; padding: 28px 24px;
+  cursor: pointer; background: var(--white);
+  position: relative; text-align: left;
+  transition: all .2s cubic-bezier(.22,.68,0,1.1);
+  box-shadow: 0 2px 12px rgba(45,45,45,.05);
+}
+.j-choice-modal:hover {
+  border-color: var(--tenant-primary);
+  transform: translateY(-4px);
+  box-shadow: 0 14px 36px rgba(232,115,90,.14);
+}
+.j-choice-modal.sel { border-color: var(--tenant-primary); background: var(--coral-p); }
+.j-choice-modal.sel::after {
+  content: '';
+  position: absolute; top: 14px; right: 14px;
+  width: 20px; height: 20px;
+  background: var(--coral);
+  border-radius: 50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='9' viewBox='0 0 11 9'%3E%3Cpath d='M1 4l3 3 6-6' stroke='white' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.j-choice-modal-icon {
+  width: 48px; height: 48px; border-radius: 13px;
+  background: var(--cream);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px; transition: all .2s;
+}
+.j-choice-modal:hover .j-choice-modal-icon,
+.j-choice-modal.sel .j-choice-modal-icon { background: var(--coral-p); }
+.j-choice-modal-icon svg { width: 22px; height: 22px; color: var(--coral); }
+.j-choice-modal-label { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 6px; letter-spacing: -.02em; }
+.j-choice-modal-desc { font-size: 12px; color: var(--ink-f); line-height: 1.55; }
+.j-choice-modal-tag {
+  display: inline-block; margin-top: 14px; padding: 3px 9px; border-radius: 20px;
+  font-size: 10px; font-weight: 700; background: var(--cream); color: var(--ink-f);
+  transition: all .2s;
+}
+.j-choice-modal:hover .j-choice-modal-tag,
+.j-choice-modal.sel .j-choice-modal-tag { background: rgba(232,115,90,.15); color: var(--coral-d); }
+
 .j-choice {
   border: 2px solid var(--border);
   border-radius: 12px;
@@ -247,22 +302,35 @@ body {
 
 /* ── UPLOAD ZONE ─────────────────────────────────────────── */
 .j-upload {
-  border: 2px dashed var(--border-s);
+  border: 2px dashed rgba(232,115,90,.28);
   border-radius: 10px;
   padding: 18px;
   text-align: center;
   cursor: pointer;
   transition: all .18s;
-  background: var(--cream);
+  background: rgba(232,115,90,.03);
   position: relative;
   margin-bottom: 12px;
 }
 .j-upload:hover { border-color: var(--tenant-primary); background: var(--tenant-primary-p); }
+.j-upload svg { color: var(--coral); opacity: .7; }
 .j-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
 .j-upload-icon { font-size: 22px; margin-bottom: 5px; }
 .j-upload-txt { font-size: 12px; color: var(--ink-m); }
 .j-upload-txt strong { color: var(--tenant-primary); }
 .j-upload-note { font-size: 10px; color: var(--ink-f); margin-top: 3px; }
+
+/* ── SLOT BTN (StepUpload SlotRow) ──────────────────────────── */
+.slot-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600; padding: 5px 11px; border-radius: 7px;
+  border: 1.5px solid var(--border-s); background: var(--cream);
+  color: var(--ink-m); cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
+  white-space: nowrap; flex-shrink: 0; transition: all .14s;
+}
+.slot-btn svg { width: 11px; height: 11px; }
+.slot-btn.active { border-color: var(--coral); background: var(--coral-p); color: var(--coral-d); }
+.slot-btn:hover:not(.active) { border-color: var(--ink-m); color: var(--ink); }
 
 /* ── FILE ITEM ───────────────────────────────────────────── */
 .j-file-item {
@@ -292,6 +360,24 @@ body {
   margin-bottom: 12px;
 }
 
+/* ── BANNERS ─────────────────────────────────────────────── */
+.j-banner-trial {
+  background: linear-gradient(90deg, #FFF8E7 0%, #FFF3CD 100%);
+  border-bottom: 1px solid #FFE083;
+  padding: 9px 32px;
+  font-size: 12px; color: #856404;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; font-weight: 500;
+}
+.j-banner-limit {
+  background: linear-gradient(90deg, #FFF0EE 0%, #FEE2DC 100%);
+  border-bottom: 1px solid #F5A090;
+  padding: 9px 32px;
+  font-size: 12px; color: #C0392B;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; font-weight: 600;
+}
+
 /* ── BUTTONS ─────────────────────────────────────────────── */
 .j-btn {
   padding: 9px 20px;
@@ -305,13 +391,29 @@ body {
 }
 .j-btn-ink { background: var(--ink); color: var(--white); }
 .j-btn-ink:hover { background: #1a1a1a; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(45,45,45,.2); }
-.j-btn-primary { background: var(--tenant-primary); color: var(--white); }
-.j-btn-primary:hover { background: var(--tenant-primary-d); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(232,115,90,.3); }
+.j-btn-primary { background: var(--tenant-primary); color: var(--white); box-shadow: 0 3px 12px rgba(232,115,90,.3); }
+.j-btn-primary:hover { background: var(--tenant-primary-d); transform: translateY(-1px); box-shadow: 0 5px 16px rgba(232,115,90,.4); }
 /* Alias legado */
 .j-btn-gold { background: var(--tenant-primary); color: var(--white); }
 .j-btn-gold:hover { background: var(--tenant-primary-d); transform: translateY(-1px); }
 .j-btn-out { background: transparent; color: var(--ink-m); border: 1.5px solid var(--border-s); }
 .j-btn-out:hover { background: var(--cream); color: var(--ink); }
+.j-btn-ghost {
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.55);
+  border: 1px solid rgba(255,255,255,.10);
+  padding: 5px 14px;
+  border-radius: 7px;
+  font-size: 12px; font-weight: 500;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  display: inline-flex; align-items: center; gap: 5px;
+  transition: all .14s;
+}
+.j-btn-ghost:hover {
+  background: rgba(255,255,255,.15);
+  color: var(--white);
+}
 .j-btn-ds { background: #3B4EDE; color: white; font-weight: 600; }
 .j-btn-ds:hover { background: #2D3ECC; transform: translateY(-1px); }
 .j-btn:disabled { opacity: .4; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
@@ -362,9 +464,12 @@ body {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ── STEP PAGE ───────────────────────────────────────────── */
-.j-page { display: none; animation: fi .25s ease; }
-.j-page.active { display: block; }
-@keyframes fi { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.j-page { display: none; }
+.j-page.active { display: block; animation: stepEnter .3s cubic-bezier(.22,.68,0,1.2); }
+@keyframes stepEnter {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
 
 /* ── CONVENTION GRID ─────────────────────────────────────── */
 .j-conv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
@@ -553,6 +658,10 @@ body {
 @media (max-width: 640px) {
   .j-grid-2, .j-grid-3, .j-grid-4 { grid-template-columns: 1fr; }
   .j-choices-2, .j-choices-3, .j-choices-4 { grid-template-columns: 1fr 1fr; }
+  .j-choices-modal { grid-template-columns: 1fr; }
   .j-main { padding: 20px 16px; }
   .p-admin-body { padding: 20px 16px; }
+  .j-steps-bar { overflow-x: auto; scrollbar-width: none; }
+  .j-steps-bar::-webkit-scrollbar { display: none; }
+  .j-step-btn { white-space: nowrap; }
 }

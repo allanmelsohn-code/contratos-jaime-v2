@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Tag, Handshake } from 'lucide-react'
 import type { FormState } from '@/lib/types'
 
 interface Props {
@@ -46,7 +47,7 @@ function Card({ title, icon, children }: any) {
   return (
     <div className="bg-white border border-black/10 rounded-xl p-5 shadow-sm mb-4">
       <div className="font-serif text-base font-semibold text-[#1A1612] mb-4 pb-3 border-b border-black/8 flex items-center gap-2">
-        <span>{icon}</span>{title}
+        {icon}{title}
       </div>
       {children}
     </div>
@@ -226,7 +227,7 @@ export default function StepPartesCV({ form, setForm, onNext, onPrev }: Props) {
         </p>
       </div>
 
-      <Card title={vendLabel} icon="🏷️">
+      <Card title={vendLabel} icon={<Tag size={15} />}>
         {(form.vendedores || []).length === 0 && (
           <p className="text-sm text-[#8A7A6A] mb-4">Nenhum {vendSingle.toLowerCase()} adicionado.</p>
         )}
@@ -248,7 +249,7 @@ export default function StepPartesCV({ form, setForm, onNext, onPrev }: Props) {
         </button>
       </Card>
 
-      <Card title={compLabel} icon="🤝">
+      <Card title={compLabel} icon={<Handshake size={15} />}>
         {(form.compradores || []).length === 0 && (
           <p className="text-sm text-[#8A7A6A] mb-4">Nenhum {compSingle.toLowerCase()} adicionado.</p>
         )}
