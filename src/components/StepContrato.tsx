@@ -137,22 +137,6 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
         </div>
       </Card>
 
-      {/* Garantia */}
-      <Card title="Modalidade de Garantia" icon={<Shield size={15} />}>
-        <div className="grid grid-cols-3 gap-3">
-          {([
-            { id: 'fiador', icon: <Handshake size={15} />, label: 'Fiador', desc: 'Pagador solidário, arts. 835–838 CC' },
-            { id: 'seguro', icon: <FileText size={15} />, label: 'Seguro Fiança', desc: 'Apólice com seguradora' },
-            { id: 'caucao', icon: <Banknote size={15} />, label: 'Caução', desc: 'Depósito · máx. 3 meses · 100% CDI' },
-            { id: 'titulo', icon: <BarChart3 size={15} />, label: 'Título de Cap.', desc: 'Porto Seguro Capitalização' },
-            { id: 'imovel-cau', icon: <Home size={15} />, label: 'Imóvel Caucionado', desc: 'Caucionantes oferecem imóvel próprio · art. 38 §1º Lei 8.245/91' },
-          ] as { id: string; icon: ReactNode; label: string; desc: string }[]).map(g => (
-            <ChoiceCard key={g.id} id={g.id} selected={form.gnt} onSelect={(v: string) => up('gnt', v)}
-              icon={g.icon} label={g.label} desc={g.desc} />
-          ))}
-        </div>
-      </Card>
-
       {/* Imóvel complemento */}
       <Card title="Imóvel — Dados Complementares" icon={<MapPin size={15} />}>
         <div className="grid grid-cols-3 gap-3">
