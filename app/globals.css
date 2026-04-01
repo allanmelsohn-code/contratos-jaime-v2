@@ -42,6 +42,9 @@
 body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--cream);
+  background-image:
+    radial-gradient(ellipse at 0% 0%, rgba(232,115,90,.06) 0%, transparent 45%),
+    radial-gradient(ellipse at 100% 100%, rgba(139,173,139,.05) 0%, transparent 45%);
   color: var(--ink);
   min-height: 100vh;
 }
@@ -58,6 +61,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 50;
+  background-image: radial-gradient(ellipse at 0% 50%, rgba(232,115,90,.15) 0%, transparent 55%);
 }
 .j-logo {
   display: flex; align-items: center; gap: 10px;
@@ -74,6 +78,7 @@ body {
   display: flex; align-items: center; justify-content: center;
   font-size: 13px; font-weight: 700;
   color: var(--white);
+  box-shadow: 0 2px 10px rgba(232,115,90,.45);
 }
 .j-badge {
   background: rgba(255,255,255,.12);
@@ -84,6 +89,24 @@ body {
   font-weight: 600;
   letter-spacing: .08em;
   text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.j-btn-ghost {
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.55);
+  border: 1px solid rgba(255,255,255,.10);
+  padding: 5px 14px;
+  border-radius: 7px;
+  font-size: 12px; font-weight: 500;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  display: inline-flex; align-items: center; gap: 5px;
+  transition: all .14s;
+}
+.j-btn-ghost:hover {
+  background: rgba(255,255,255,.15);
+  color: var(--white);
 }
 
 /* ── STEPS BAR ──────────────────────────────────────────── */
