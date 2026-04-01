@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, type ReactNode } from 'react'
-import { Home, Users, Handshake, MapPin, Shield, Banknote, BarChart3, Plus } from 'lucide-react'
+import { Home, Users, Handshake, MapPin, Shield, Banknote, BarChart3, Plus, Upload, Pencil, CheckCircle2, Loader2, AlertCircle } from 'lucide-react'
 import type { FormState, ExtractedDoc } from '@/lib/types'
 
 // ── Slot definitions ──────────────────────────────────────────────────────────
@@ -195,23 +195,13 @@ function SlotRow({ label, state, onUpload, onManualSave, manualFields }: {
   return (
     <div style={{ borderBottom: '1px solid var(--border-s)', paddingBottom: 10, marginBottom: 10 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-        <button onClick={() => ref.current?.click()} disabled={isLoad} style={{
-          fontSize: 11, fontWeight: 600, padding: '5px 12px', borderRadius: 7,
-          border: `1.5px solid ${isDone ? '#86EFAC' : 'var(--border)'}`,
-          background: isDone ? '#DCFCE7' : 'var(--cream)',
-          color: isDone ? '#166534' : 'var(--ink-m)', cursor: isLoad ? 'wait' : 'pointer', flexShrink: 0,
-        }}>
-          {isLoad ? '⏳' : isDone ? '✅' : '📎'} Upload
+        <button onClick={() => ref.current?.click()} disabled={isLoad} className="slot-btn">
+          <Upload size={11} /> Upload
         </button>
 
         {manualFields.length > 0 && (
-          <button onClick={() => setShowForm(v => !v)} style={{
-            fontSize: 11, fontWeight: 600, padding: '5px 12px', borderRadius: 7,
-            border: `1.5px solid ${showForm ? 'var(--tenant-primary)' : 'var(--border)'}`,
-            background: showForm ? 'var(--tenant-primary-p)' : 'var(--cream)',
-            color: showForm ? 'var(--tenant-primary-d)' : 'var(--ink-m)', cursor: 'pointer', flexShrink: 0,
-          }}>
-            ✏️ Preencher
+          <button onClick={() => setShowForm(v => !v)} className={`slot-btn${showForm ? ' active' : ''}`}>
+            <Pencil size={11} /> Preencher
           </button>
         )}
 
@@ -221,14 +211,22 @@ function SlotRow({ label, state, onUpload, onManualSave, manualFields }: {
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink)' }}>{label}</div>
           {isDone && (
-            <div style={{ fontSize: 11, color: 'var(--sage)', marginTop: 2 }}>
-              {state.extracted?.nome || state.extracted?.razao_social || state.extracted?.banco || state.extracted?.numero_matricula || vals.nome || vals.matricula || '✓ preenchido'}
+            <div style={{ fontSize: 11, color: 'var(--sage-d)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4, fontWeight: 600 }}>
+              <CheckCircle2 size={11} />
+              {state.extracted?.nome || state.extracted?.razao_social || state.extracted?.banco || state.extracted?.numero_matricula || vals.nome || vals.matricula || 'preenchido'}
             </div>
           )}
-          {isError && <div style={{ fontSize: 11, color: 'var(--coral)', marginTop: 2 }}>{state.error}</div>}
+          {isLoad && (
+            <div style={{ fontSize: 11, color: 'var(--ink-f)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
+              <Loader2 size={11} className="j-spin" /> Processando...
+            </div>
+          )}
+          {isError && (
+            <div style={{ fontSize: 11, color: 'var(--coral)', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
+              <AlertCircle size={11} /> {state.error}
+            </div>
+          )}
         </div>
-
-        {state.status === 'idle' && <span style={{ fontSize: 11, color: 'var(--ink-f)', flexShrink: 0 }}>Não enviado</span>}
       </div>
 
       {showForm && (
