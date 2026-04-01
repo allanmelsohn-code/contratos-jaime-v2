@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { PenTool, Mail, FileText, Loader2, Download, Printer, Pen, CheckCircle2, AlertTriangle } from 'lucide-react'
 import type { FormState } from '@/lib/types'
 
 interface Props {
@@ -153,14 +154,14 @@ export default function StepGerar({ form, onPrev, tenantId }: Props) {
       {/* Signatários */}
       <div className="bg-white border border-black/10 rounded-xl p-5 shadow-sm mb-4">
         <div className="font-serif text-base font-semibold text-[#1A1612] mb-4 pb-3 border-b border-black/8 flex items-center gap-2">
-          <span>✍️</span> Partes para Assinatura
+          <PenTool size={15} /> Partes para Assinatura
         </div>
         <div className="grid grid-cols-2 gap-3">
           {signatarios.map((s, i) => (
             <div key={i} className="border border-black/10 rounded-xl p-3 bg-[#F5F0E8]">
               <div className="font-semibold text-sm text-[#1A1612]">{s.nome}</div>
               <div className="text-[11px] text-[#8A7A6A]">{s.role}</div>
-              {s.email && <div className="text-[11px] text-[#B8860B] mt-1">📧 {s.email}</div>}
+              {s.email && <div className="text-[11px] text-[#B8860B] mt-1 flex items-center gap-1"><Mail size={11} /> {s.email}</div>}
               <div className="border-b border-[#1A1612] mt-6 mb-1 h-0.5" />
               <div className="text-[10px] text-[#8A7A6A]">Assinatura</div>
             </div>
@@ -195,7 +196,7 @@ export default function StepGerar({ form, onPrev, tenantId }: Props) {
       {/* Download */}
       <div className="bg-white border border-black/10 rounded-xl p-5 shadow-sm mb-4">
         <div className="font-serif text-base font-semibold text-[#1A1612] mb-3 pb-3 border-b border-black/8 flex items-center gap-2">
-          <span>📄</span> Gerar Contrato
+          <FileText size={15} /> Gerar Contrato
         </div>
         <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
           <span style={{ fontSize:13, color:'var(--ink-m)', fontWeight:500 }}>Formato:</span>
@@ -211,12 +212,12 @@ export default function StepGerar({ form, onPrev, tenantId }: Props) {
         {formato === 'docx' ? (
           <button onClick={downloadDocx} disabled={generating}
             className="px-6 py-2.5 bg-[#1A1612] text-[#F5F0E8] rounded-lg text-sm font-semibold hover:bg-[#2D2520] disabled:opacity-50 transition-all flex items-center gap-2">
-            {generating ? <><span className="animate-spin">⚙️</span> Gerando...</> : <>📥 Baixar .docx</>}
+            {generating ? <><Loader2 size={13} className="j-spin" /> Gerando...</> : <><Download size={13} /> Baixar .docx</>}
           </button>
         ) : (
           <button onClick={gerarPdf}
             className="px-6 py-2.5 bg-[#1A1612] text-[#F5F0E8] rounded-lg text-sm font-semibold hover:bg-[#2D2520] transition-all flex items-center gap-2">
-            🖨️ Abrir para imprimir / salvar PDF
+            <Printer size={13} /> Abrir para imprimir / salvar PDF
           </button>
         )}
       </div>
@@ -251,18 +252,18 @@ export default function StepGerar({ form, onPrev, tenantId }: Props) {
         </div>
         <button onClick={enviarDocuSign} disabled={dsStatus === 'loading'}
           className="px-6 py-2.5 bg-[#3B4EDE] text-white rounded-lg text-sm font-semibold hover:bg-[#2D3ECC] disabled:opacity-50 transition-all flex items-center gap-2">
-          {dsStatus === 'loading' ? <><span className="animate-spin">⚙️</span> Enviando...</> : <>🖊️ Enviar via DocuSign</>}
+          {dsStatus === 'loading' ? <><Loader2 size={13} className="j-spin" /> Enviando...</> : <><Pen size={13} /> Enviar via DocuSign</>}
         </button>
 
         {dsStatus === 'done' && dsResult && (
           <div className="mt-4 p-3 bg-[#3B4EDE]/8 border border-[#3B4EDE]/25 rounded-lg text-sm text-[#3B4EDE]">
-            ✅ Envelope criado com sucesso — ID: <code className="font-mono text-xs">{dsResult.envelopeId}</code>
+            <CheckCircle2 size={14} className="inline mr-1" /> Envelope criado com sucesso — ID: <code className="font-mono text-xs">{dsResult.envelopeId}</code>
             <br /><span className="text-xs text-[#6B7DB3]">Status: {dsResult.status} · Signatários notificados por e-mail</span>
           </div>
         )}
         {dsStatus === 'error' && dsResult && (
           <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
-            ⚠️ {dsResult.error} {dsResult.detail && <span className="text-xs block mt-1 font-mono">{JSON.stringify(dsResult.detail)}</span>}
+            <AlertTriangle size={13} className="inline mr-1" /> {dsResult.error} {dsResult.detail && <span className="text-xs block mt-1 font-mono">{JSON.stringify(dsResult.detail)}</span>}
           </div>
         )}
       </div>
