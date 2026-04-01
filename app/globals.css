@@ -92,23 +92,6 @@ body {
   border: 1px solid rgba(255,255,255,.08);
 }
 
-.j-btn-ghost {
-  background: rgba(255,255,255,.08);
-  color: rgba(255,255,255,.55);
-  border: 1px solid rgba(255,255,255,.10);
-  padding: 5px 14px;
-  border-radius: 7px;
-  font-size: 12px; font-weight: 500;
-  cursor: pointer;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  display: inline-flex; align-items: center; gap: 5px;
-  transition: all .14s;
-}
-.j-btn-ghost:hover {
-  background: rgba(255,255,255,.15);
-  color: var(--white);
-}
-
 /* ── STEPS BAR ──────────────────────────────────────────── */
 .j-steps-bar {
   background: var(--white);
@@ -335,6 +318,22 @@ body {
 .j-btn-gold:hover { background: var(--tenant-primary-d); transform: translateY(-1px); }
 .j-btn-out { background: transparent; color: var(--ink-m); border: 1.5px solid var(--border-s); }
 .j-btn-out:hover { background: var(--cream); color: var(--ink); }
+.j-btn-ghost {
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.55);
+  border: 1px solid rgba(255,255,255,.10);
+  padding: 5px 14px;
+  border-radius: 7px;
+  font-size: 12px; font-weight: 500;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  display: inline-flex; align-items: center; gap: 5px;
+  transition: all .14s;
+}
+.j-btn-ghost:hover {
+  background: rgba(255,255,255,.15);
+  color: var(--white);
+}
 .j-btn-ds { background: #3B4EDE; color: white; font-weight: 600; }
 .j-btn-ds:hover { background: #2D3ECC; transform: translateY(-1px); }
 .j-btn:disabled { opacity: .4; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
