@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { AlertCircle } from 'lucide-react'
 import { buscarCorretor, type Corretor } from '@/lib/corretores'
 
 interface Props {
@@ -67,7 +68,7 @@ export default function CorretorSearch({ value, onChange, onSelect, placeholder 
             >
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>
                 {c.apelido}
-                {c.obs && <span style={{ marginLeft: 6, fontSize: 10, color: 'var(--rust)', fontWeight: 400 }}>⚠️ {c.obs}</span>}
+                {c.obs && <span style={{ marginLeft: 6, fontSize: 10, color: 'var(--rust)', fontWeight: 400, display: 'inline-flex', alignItems: 'center', gap: 3 }}><AlertCircle size={11} style={{ color: 'var(--orange)', flexShrink: 0 }} /> {c.obs}</span>}
               </div>
               <div style={{ fontSize: 11, color: 'var(--ink-f)', marginTop: 1 }}>
                 {c.nome} · CRECI {c.creci} · {c.banco}

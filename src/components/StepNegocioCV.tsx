@@ -1,5 +1,6 @@
 'use client'
 
+import { Home, DollarSign, FileText } from 'lucide-react'
 import type { FormState } from '@/lib/types'
 
 interface Props {
@@ -45,7 +46,7 @@ function Card({ title, icon, children }: any) {
   return (
     <div className="bg-white border border-black/10 rounded-xl p-5 shadow-sm mb-4">
       <div className="font-serif text-base font-semibold text-[#1A1612] mb-4 pb-3 border-b border-black/8 flex items-center gap-2">
-        <span>{icon}</span>{title}
+        {icon}{title}
       </div>
       {children}
     </div>
@@ -67,7 +68,7 @@ export default function StepNegocioCV({ form, setForm, onNext, onPrev }: Props) 
       </div>
 
       {/* Imóvel */}
-      <Card title="Imóvel" icon="🏠">
+      <Card title="Imóvel" icon={<Home size={15} />}>
         <div className="grid grid-cols-3 gap-3">
           <Select
             label="Tipo"
@@ -100,7 +101,7 @@ export default function StepNegocioCV({ form, setForm, onNext, onPrev }: Props) 
       </Card>
 
       {/* Preço e Pagamento */}
-      <Card title="Preço e Forma de Pagamento" icon="💵">
+      <Card title="Preço e Forma de Pagamento" icon={<DollarSign size={15} />}>
         <div className="grid grid-cols-3 gap-3">
           <Field label="Valor total (R$) *" value={neg.valorTotal} onChange={(v: string) => up('valorTotal', v)} placeholder="350.000,00" />
           <Field label="Sinal / Entrada (R$)" value={neg.sinal} onChange={(v: string) => up('sinal', v)} placeholder="35.000,00" />
@@ -131,7 +132,7 @@ export default function StepNegocioCV({ form, setForm, onNext, onPrev }: Props) 
       </Card>
 
       {/* Cláusulas Especiais */}
-      <Card title="Cláusulas Especiais" icon="📝">
+      <Card title="Cláusulas Especiais" icon={<FileText size={15} />}>
         <div className="space-y-4">
           <label className="flex items-start gap-3 cursor-pointer">
             <input
