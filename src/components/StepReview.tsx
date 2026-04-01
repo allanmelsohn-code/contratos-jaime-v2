@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { Home, KeyRound, Handshake, Users, MapPin, HelpCircle, Paperclip } from 'lucide-react'
 import type { ExtractedDoc, FormState } from '@/lib/types'
 
 interface Props {
@@ -26,13 +27,13 @@ function Field({ label, value, onChange }: { label: string; value: string; onCha
   )
 }
 
-const roleLabel: Record<string, string> = {
-  locador: '🏠 Locador',
-  locatario: '🔑 Locatário',
-  fiador: '🤝 Fiador',
-  conjuge: '💑 Cônjuge',
-  imovel: '📍 Imóvel',
-  desconhecido: '❓ Desconhecido',
+const roleLabel: Record<string, React.ReactNode> = {
+  locador:      <><Home size={13} /> Locador</>,
+  locatario:    <><KeyRound size={13} /> Locatário</>,
+  fiador:       <><Handshake size={13} /> Fiador</>,
+  conjuge:      <><Users size={13} /> Cônjuge</>,
+  imovel:       <><MapPin size={13} /> Imóvel</>,
+  desconhecido: <><HelpCircle size={13} /> Desconhecido</>,
 }
 
 const fieldLabels: Record<string, string> = {
@@ -169,7 +170,7 @@ export default function StepReview({ docs, setDocs, form, setForm, onNext, onPre
     setArr(next)
   }
 
-  function PessoaCard({ pessoas, setPessoas, title }: { pessoas: any[]; setPessoas: (v: any[]) => void; title: string }) {
+  function PessoaCard({ pessoas, setPessoas, title, singleLabel }: { pessoas: any[]; setPessoas: (v: any[]) => void; title: React.ReactNode; singleLabel: string }) {
     if (!pessoas.length) return (
       <div className="text-sm text-[#8A7A6A] italic px-1">Nenhum documento detectado — preencha manualmente no passo seguinte.</div>
     )
@@ -178,8 +179,12 @@ export default function StepReview({ docs, setDocs, form, setForm, onNext, onPre
         {pessoas.map((p, i) => (
           <div key={i} className="border border-black/10 rounded-xl p-4 bg-[#F5F0E8] mb-4">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-sm font-semibold text-[#1A1612]">{title} {pessoas.length > 1 ? i + 1 : ''}</span>
-              {p._source && <span className="text-[10px] bg-[#B8860B]/15 text-[#B8860B] px-2 py-0.5 rounded-full">📎 {p._source}</span>}
+              <span className="text-sm font-semibold text-[#1A1612]">{title}{pessoas.length > 1 ? ` ${i + 1}` : ''}</span>
+              {p._source && (
+                <span className="inline-flex items-center gap-1 text-[10px] bg-[#B8860B]/15 text-[#B8860B] px-2 py-0.5 rounded-full">
+                  <Paperclip size={11} /> {p._source}
+                </span>
+              )}
               {p._docType && <span className="text-[10px] bg-black/8 text-[#4A3F35] px-2 py-0.5 rounded-full">{p._docType}</span>}
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -201,9 +206,9 @@ export default function StepReview({ docs, setDocs, form, setForm, onNext, onPre
   }
 
   const sections = [
-    { title: '🏠 Locadores', pessoas: form.locadores, set: (v: any[]) => setForm({ ...form, locadores: v }) },
-    { title: '🔑 Locatários', pessoas: form.locatarios, set: (v: any[]) => setForm({ ...form, locatarios: v }) },
-    { title: '🤝 Fiadores', pessoas: form.fiadores, set: (v: any[]) => setForm({ ...form, fiadores: v }) },
+    { title: <><Home size={15} /> Locadores</>, singleLabel: 'Locador', pessoas: form.locadores, set: (v: any[]) => setForm({ ...form, locadores: v }) },
+    { title: <><KeyRound size={15} /> Locatários</>, singleLabel: 'Locatário', pessoas: form.locatarios, set: (v: any[]) => setForm({ ...form, locatarios: v }) },
+    { title: <><Handshake size={15} /> Fiadores</>, singleLabel: 'Fiador', pessoas: form.fiadores, set: (v: any[]) => setForm({ ...form, fiadores: v }) },
   ]
 
   return (
@@ -217,19 +222,21 @@ export default function StepReview({ docs, setDocs, form, setForm, onNext, onPre
       </div>
 
       <div className="space-y-6">
-        {sections.map(s => (
-          <div key={s.title} className="bg-white border border-black/10 rounded-xl p-5 shadow-sm">
-            <div className="font-serif text-base font-semibold text-[#1A1612] mb-4 pb-3 border-b border-black/8">{s.title}</div>
-            <PessoaCard pessoas={s.pessoas} setPessoas={s.set} title={s.title.replace(/^.+ /, '')} />
+        {sections.map((s, idx) => (
+          <div key={idx} className="bg-white border border-black/10 rounded-xl p-5 shadow-sm">
+            <div className="inline-flex items-center gap-1.5 font-serif text-base font-semibold text-[#1A1612] mb-4 pb-3 border-b border-black/8 w-full">{s.title}</div>
+            <PessoaCard pessoas={s.pessoas} setPessoas={s.set} title={s.title} singleLabel={s.singleLabel} />
           </div>
         ))}
 
         {/* Imóvel */}
         <div className="bg-white border border-black/10 rounded-xl p-5 shadow-sm">
-          <div className="font-serif text-base font-semibold text-[#1A1612] mb-4 pb-3 border-b border-black/8">📍 Imóvel</div>
+          <div className="inline-flex items-center gap-1.5 font-serif text-base font-semibold text-[#1A1612] mb-4 pb-3 border-b border-black/8 w-full">
+            <MapPin size={15} /> Imóvel
+          </div>
           {form.imovel._source && (
             <div className="text-[10px] bg-[#B8860B]/15 text-[#B8860B] px-2 py-0.5 rounded-full inline-flex items-center gap-1 mb-3">
-              📎 {form.imovel._source}
+              <Paperclip size={11} /> {form.imovel._source}
             </div>
           )}
           <div className="grid grid-cols-2 gap-3">
