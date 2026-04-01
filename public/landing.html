@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Papaia — IA para Imobiliárias e Cartórios</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET ────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── TOKENS ───────────────────────────────────────────────────────── */
+:root {
+  --bg:           #09070A;
+  --surface:      #110E0A;
+  --card:         #1B1610;
+  --card-hover:   #221C14;
+  --orange:       #E97030;
+  --orange-lt:    #F59A6A;
+  --orange-glow:  rgba(233,112,48,.14);
+  --orange-ring:  rgba(233,112,48,.28);
+  --cream:        #F2EBD8;
+  --cream-dim:    #90806C;
+  --muted:        #4C4136;
+  --border:       rgba(242,235,216,.07);
+  --border-str:   rgba(242,235,216,.14);
+  --font-d:       'Cormorant Garamond', Georgia, serif;
+  --font-b:       'DM Sans', system-ui, sans-serif;
+  --font-m:       'DM Mono', monospace;
+  --sh:           0 2px 24px rgba(0,0,0,.4);
+  --sh-lg:        0 12px 56px rgba(0,0,0,.55);
+}
+
+/* ── BASE ─────────────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-b);
+  background: var(--bg);
+  color: var(--cream);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── GRAIN OVERLAY ────────────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: .032;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── SCROLLBAR ────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 9px; }
+
+/* ── TYPOGRAPHY HELPERS ───────────────────────────────────────────── */
+.serif { font-family: var(--font-d); }
+.mono  { font-family: var(--font-m); letter-spacing: .1em; text-transform: uppercase; }
+
+/* ── NAV ──────────────────────────────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 3rem;
+  background: rgba(9,7,10,.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow .3s;
+}
+nav.scrolled { box-shadow: 0 4px 32px rgba(0,0,0,.5); }
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.nav-logo-svg { width: 30px; height: 30px; }
+.nav-logo-name {
+  font-family: var(--font-d);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--cream);
+  letter-spacing: -.02em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--cream-dim);
+  text-decoration: none;
+  font-size: .875rem;
+  font-weight: 500;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--cream); }
+
+.nav-cta {
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  padding: .6rem 1.375rem;
+  border-radius: 100px;
+  font-family: var(--font-b);
+  font-size: .875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, box-shadow .2s, transform .15s;
+}
+.nav-cta:hover {
+  background: var(--orange-lt);
+  box-shadow: 0 6px 22px rgba(233,112,48,.4);
+  transform: translateY(-1px);
+}
+
+/* ── HERO ─────────────────────────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 5rem;
+  padding: 8rem 3rem 6rem;
+  max-width: 1360px;
+  margin: 0 auto;
+  position: relative;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  top: 15%;
+  right: 8%;
+  width: 680px;
+  height: 680px;
+  background: radial-gradient(circle, rgba(233,112,48,.09) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+/* Hero entry animations */
+@keyframes heroFade { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+.hero-content > * {
+  opacity: 0;
+  animation: heroFade .75s ease forwards;
+}
+.hero-content > *:nth-child(1) { animation-delay: .08s; }
+.hero-content > *:nth-child(2) { animation-delay: .2s; }
+.hero-content > *:nth-child(3) { animation-delay: .36s; }
+.hero-content > *:nth-child(4) { animation-delay: .52s; }
+.hero-visual {
+  opacity: 0;
+  animation: heroFade .85s .28s ease forwards;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: rgba(233,112,48,.1);
+  border: 1px solid var(--orange-ring);
+  color: var(--orange-lt);
+  padding: .35rem .875rem;
+  border-radius: 100px;
+  margin-bottom: 1.875rem;
+  font-size: .7rem;
+  font-family: var(--font-m);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.hero-badge-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--orange);
+  animation: blink 2.2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+
+.hero-title {
+  font-family: var(--font-d);
+  font-size: clamp(3.25rem, 5.5vw, 5.75rem);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -.025em;
+  margin-bottom: 1.5rem;
+}
+.hero-title em {
+  font-style: italic;
+  color: var(--orange-lt);
+  font-weight: 400;
+}
+
+.hero-sub {
+  font-size: 1.0625rem;
+  color: var(--cream-dim);
+  line-height: 1.72;
+  max-width: 460px;
+  margin-bottom: 2.5rem;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  padding: .9rem 1.875rem;
+  border-radius: 12px;
+  font-family: var(--font-b);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, box-shadow .25s, transform .15s;
+}
+.btn-primary:hover {
+  background: var(--orange-lt);
+  box-shadow: 0 10px 30px rgba(233,112,48,.38);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--cream-dim);
+  border: 1px solid var(--border-str);
+  padding: .9rem 1.875rem;
+  border-radius: 12px;
+  font-family: var(--font-b);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color .2s, color .2s;
+}
+.btn-outline:hover {
+  border-color: var(--cream-dim);
+  color: var(--cream);
+}
+
+/* Hero visual card */
+.hero-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  aspect-ratio: 4/3;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--sh-lg);
+}
+.hero-card img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: .55;
+}
+.hero-card-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(9,7,10,.92) 0%, rgba(9,7,10,.2) 55%, transparent 100%);
+}
+.hero-processing {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 1.25rem;
+  right: 1.25rem;
+  background: rgba(17,14,10,.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border-str);
+  border-radius: 16px;
+  padding: 1rem 1.125rem;
+}
+.proc-row {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-bottom: .75rem;
+}
+.proc-icon {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  background: rgba(233,112,48,.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--orange-lt);
+  flex-shrink: 0;
+}
+.proc-label {
+  display: block;
+  font-family: var(--font-m);
+  font-size: .62rem;
+  color: var(--orange-lt);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.proc-name {
+  font-size: .8125rem;
+  font-weight: 500;
+  color: var(--cream);
+}
+.proc-bar {
+  height: 3px;
+  background: var(--border);
+  border-radius: 9px;
+  overflow: hidden;
+}
+.proc-fill {
+  height: 100%;
+  background: var(--orange);
+  border-radius: 9px;
+  animation: progressPulse 3.5s ease-in-out infinite;
+}
+@keyframes progressPulse { 0% { width: 18%; } 50% { width: 78%; } 100% { width: 18%; } }
+
+/* ── SECTION COMMONS ──────────────────────────────────────────────── */
+.section {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 7rem 3rem;
+}
+.section-label {
+  display: inline-block;
+  font-family: var(--font-m);
+  font-size: .68rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--orange-lt);
+  margin-bottom: 1.25rem;
+}
+.section-title {
+  font-family: var(--font-d);
+  font-size: clamp(2.25rem, 3.5vw, 3.75rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  margin-bottom: 1rem;
+}
+.section-sub {
+  font-size: 1.0625rem;
+  color: var(--cream-dim);
+  max-width: 480px;
+  line-height: 1.7;
+}
+
+/* Scroll-reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity .65s ease, transform .65s ease;
+}
+.reveal.in { opacity: 1; transform: none; }
+.reveal-d1 { transition-delay: .1s; }
+.reveal-d2 { transition-delay: .2s; }
+.reveal-d3 { transition-delay: .3s; }
+
+/* ── STEPS ────────────────────────────────────────────────────────── */
+.steps-wrap {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 4rem;
+}
+.step-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.25rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .3s, transform .3s, box-shadow .3s;
+  cursor: default;
+}
+.step-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top left, var(--orange-glow), transparent 60%);
+  opacity: 0;
+  transition: opacity .35s;
+}
+.step-card:hover::before { opacity: 1; }
+.step-card:hover {
+  border-color: var(--orange-ring);
+  transform: translateY(-4px);
+  box-shadow: 0 18px 48px rgba(0,0,0,.45);
+}
+.step-num {
+  font-family: var(--font-d);
+  font-size: 4.75rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--border-str);
+  letter-spacing: -.05em;
+  margin-bottom: 1.5rem;
+}
+.step-icon-wrap {
+  width: 44px; height: 44px;
+  background: rgba(233,112,48,.12);
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--orange-lt);
+  margin-bottom: 1.375rem;
+}
+.step-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: .625rem;
+  color: var(--cream);
+}
+.step-desc {
+  font-size: .9rem;
+  color: var(--cream-dim);
+  line-height: 1.65;
+}
+
+/* ── FEATURES BENTO ───────────────────────────────────────────────── */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.25rem;
+  margin-top: 4rem;
+}
+.bc { /* bento card */
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.25rem;
+  transition: border-color .3s;
+  position: relative;
+  overflow: hidden;
+}
+.bc:hover { border-color: var(--orange-ring); }
+
+.bc-1 { grid-column: span 7; }
+.bc-2 { grid-column: span 5; display: flex; flex-direction: column; justify-content: space-between; }
+.bc-3 { grid-column: span 12; }
+
+.bento-tag {
+  display: inline-block;
+  font-family: var(--font-m);
+  font-size: .62rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--orange-lt);
+  background: rgba(233,112,48,.1);
+  border: 1px solid rgba(233,112,48,.2);
+  padding: .25rem .65rem;
+  border-radius: 100px;
+  margin-bottom: 1.5rem;
+}
+.bento-title {
+  font-family: var(--font-d);
+  font-size: 2.125rem;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -.015em;
+  margin-bottom: .75rem;
+}
+.bento-desc {
+  font-size: .9375rem;
+  color: var(--cream-dim);
+  line-height: 1.65;
+  max-width: 400px;
+}
+
+/* OCR chips */
+.ocr-chips {
+  display: flex;
+  gap: .875rem;
+  flex-wrap: wrap;
+  margin-top: 2.25rem;
+}
+.doc-chip {
+  display: flex;
+  align-items: center;
+  gap: .625rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: .625rem .875rem;
+  font-size: .8125rem;
+  font-weight: 500;
+  color: var(--cream-dim);
+  transition: border-color .2s, color .2s;
+  cursor: default;
+}
+.doc-chip:hover { border-color: var(--orange); color: var(--cream); }
+.doc-chip-ico {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  background: rgba(233,112,48,.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--orange-lt);
+}
+
+/* DocuSign stat */
+.big-stat {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.big-stat-num {
+  font-family: var(--font-d);
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--orange-lt);
+  line-height: 1;
+  letter-spacing: -.04em;
+}
+.big-stat-label {
+  font-size: .875rem;
+  color: var(--cream-dim);
+  margin-top: .375rem;
+}
+
+/* Templates grid */
+.bc-3-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+.feat-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: .875rem;
+  margin-top: 1.875rem;
+}
+.feat-item {
+  display: flex;
+  align-items: center;
+  gap: .875rem;
+  font-size: .9375rem;
+  color: var(--cream-dim);
+}
+.feat-check {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: rgba(233,112,48,.13);
+  border: 1px solid rgba(233,112,48,.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--orange-lt);
+  font-size: .7rem;
+  font-weight: 700;
+}
+.template-tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .75rem;
+}
+.t-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 1.125rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: .78rem;
+  font-family: var(--font-m);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--cream-dim);
+  transition: all .22s;
+  cursor: pointer;
+}
+.t-tile:hover, .t-tile.active {
+  background: rgba(233,112,48,.09);
+  border-color: rgba(233,112,48,.3);
+  color: var(--cream);
+}
+.t-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  flex-shrink: 0;
+  transition: background .22s;
+}
+.t-tile.active .t-dot { background: var(--orange); }
+
+/* ── LOGOS ────────────────────────────────────────────────────────── */
+.logos-section {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 4.5rem 3rem;
+  text-align: center;
+}
+.logos-label {
+  font-family: var(--font-m);
+  font-size: .65rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 3rem;
+}
+.logos-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3.5rem;
+  flex-wrap: wrap;
+}
+.logo-item {
+  display: flex;
+  align-items: center;
+  gap: .625rem;
+  font-family: var(--font-d);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--cream);
+  opacity: .28;
+  filter: grayscale(1);
+  transition: opacity .25s, filter .25s;
+}
+.logo-item:hover { opacity: .65; filter: none; }
+
+/* ── CTA ──────────────────────────────────────────────────────────── */
+.cta-wrap {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 3rem 6rem;
+}
+.cta-card {
+  background: var(--orange);
+  border-radius: 26px;
+  padding: 5.5rem 3.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta-card::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -15%;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(255,255,255,.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-card::after {
+  content: '';
+  position: absolute;
+  bottom: -45%;
+  left: -12%;
+  width: 520px; height: 520px;
+  background: radial-gradient(circle, rgba(0,0,0,.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-title {
+  font-family: var(--font-d);
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -.025em;
+  margin-bottom: 1.125rem;
+  position: relative;
+  z-index: 1;
+}
+.cta-title em { font-style: italic; font-weight: 400; }
+.cta-sub {
+  font-size: 1.0625rem;
+  color: rgba(255,255,255,.72);
+  max-width: 520px;
+  margin: 0 auto 2.5rem;
+  line-height: 1.72;
+  position: relative;
+  z-index: 1;
+}
+.btn-cta {
+  background: #fff;
+  color: var(--orange);
+  border: none;
+  padding: 1.0625rem 2.375rem;
+  border-radius: 13px;
+  font-family: var(--font-b);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+  position: relative;
+  z-index: 1;
+}
+.btn-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 38px rgba(0,0,0,.22);
+}
+.cta-note {
+  font-size: .85rem;
+  color: rgba(255,255,255,.48);
+  margin-top: 1.125rem;
+  font-style: italic;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── FOOTER ───────────────────────────────────────────────────────── */
+footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 3.5rem 3rem;
+}
+.footer-inner {
+  max-width: 1360px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+.footer-brand {
+  font-family: var(--font-d);
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--cream);
+}
+.footer-copy {
+  font-size: .8rem;
+  color: var(--muted);
+  margin-top: .3rem;
+}
+.footer-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+.footer-links a {
+  font-size: .875rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color .2s;
+}
+.footer-links a:hover { color: var(--cream-dim); }
+.footer-socials {
+  display: flex;
+  gap: .625rem;
+}
+.social-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color .2s, color .2s;
+}
+.social-btn:hover { border-color: var(--orange); color: var(--orange-lt); }
+
+/* ── RESPONSIVE ───────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .bc-1, .bc-2, .bc-3 { grid-column: span 12; }
+  .bc-3-inner { grid-template-columns: 1fr; gap: 2rem; }
+}
+@media (max-width: 860px) {
+  nav { padding: 0 1.5rem; }
+  .nav-links { display: none; }
+  .hero { grid-template-columns: 1fr; padding: 6rem 1.5rem 4rem; gap: 3rem; }
+  .hero::after { display: none; }
+  .section { padding: 5rem 1.5rem; }
+  .steps-grid { grid-template-columns: 1fr; gap: 1rem; }
+  .cta-wrap { padding: 0 1.5rem 5rem; }
+  .cta-card { padding: 4rem 2rem; }
+  footer { padding: 3rem 1.5rem; }
+  .footer-inner { flex-direction: column; align-items: flex-start; }
+  .logos-section { padding: 4rem 1.5rem; }
+  .logos-row { gap: 2rem; }
+}
+@media (max-width: 480px) {
+  .hero-actions { flex-direction: column; }
+  .ocr-chips { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ───────────────────────────────────────────────────────── -->
+<nav id="nav">
+  <a class="nav-brand" href="#">
+    <!-- Papaya logo mark -->
+    <svg class="nav-logo-svg" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="15" cy="17" rx="8.5" ry="11" fill="#E97030" opacity=".88"/>
+      <ellipse cx="15" cy="15.5" rx="5" ry="7" fill="#F59A6A" opacity=".72"/>
+      <path d="M15 6.5 Q17.5 2 21 2.8" stroke="#6A9960" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      <circle cx="15" cy="17" r="3" fill="#09070A" opacity=".18"/>
+    </svg>
+    <span class="nav-logo-name">Papaia</span>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="#automacao">Automação</a></li>
+    <li><a href="#funcionalidades">Integrações</a></li>
+    <li><a href="#precos">Preços</a></li>
+  </ul>
+
+  <div style="display:flex;align-items:center;gap:.625rem;">
+    <a href="/login" style="font-family:var(--font-b);font-size:.875rem;font-weight:500;color:var(--cream-dim);text-decoration:none;padding:.6rem 1rem;border-radius:100px;transition:color .2s;" onmouseover="this.style.color='var(--cream)'" onmouseout="this.style.color='var(--cream-dim)'">Entrar</a>
+    <button class="nav-cta">Começar agora</button>
+  </div>
+</nav>
+
+<!-- ── HERO ──────────────────────────────────────────────────────── -->
+<main>
+<section style="background: var(--bg);">
+  <div class="hero">
+    <!-- Left: content -->
+    <div class="hero-content">
+      <div class="hero-badge">
+        <div class="hero-badge-dot"></div>
+        Inteligência Artificial · Mercado Imobiliário
+      </div>
+
+      <h1 class="hero-title">
+        Contratos feitos como<br>
+        <em>mamão com açúcar.</em>
+      </h1>
+
+      <p class="hero-sub">
+        Automatize a elaboração de contratos e escrituras com IA, leitura OCR e assinaturas digitais — tudo em um só lugar.
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn-primary">Começar gratuitamente</button>
+        <button class="btn-outline">Agendar demonstração</button>
+      </div>
+    </div>
+
+    <!-- Right: visual -->
+    <div class="hero-visual">
+      <div class="hero-card">
+        <img
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuDu7hdMIUGXGhNcTndGZfa7CZBCy9mrdMZ-5kB7oMvSfyLGr3jtysk9UjyZT_NYPtd82enlkeLc_BwwV2i4Mqf9yTpAtq79zjqMjNlBKane2NrObwq39QYc21FqKdVelMMzzTy9CHDuCik7uvMHTft-20zbv5F3tswHvK24zfxhB69LVplMv01QZRuFwR1W3G2WLFw9dq9pehn5EUbvPiVRuBor1f8k8aZ-6jG4noG7Y4v7l8ugwbOkpnxqzuE4Hw-sO50MwipMYz03"
+          alt="Escritório moderno de imobiliária"
+          loading="eager"
+        >
+        <div class="hero-card-gradient"></div>
+        <!-- Processing badge -->
+        <div class="hero-processing">
+          <div class="proc-row">
+            <div class="proc-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </div>
+            <div>
+              <span class="proc-label">IA Processando</span>
+              <span class="proc-name">Contrato_Compra_Venda.pdf</span>
+            </div>
+          </div>
+          <div class="proc-bar"><div class="proc-fill"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STEPS ─────────────────────────────────────────────────────── -->
+<div class="steps-wrap" id="automacao">
+  <div class="section">
+    <span class="section-label reveal">Automação</span>
+    <h2 class="section-title reveal reveal-d1">Três passos. Zero papelada.</h2>
+    <p class="section-sub reveal reveal-d2">Simples para quem usa. Poderoso por dentro.</p>
+
+    <div class="steps-grid">
+      <!-- 01 -->
+      <div class="step-card reveal">
+        <div class="step-num">01</div>
+        <div class="step-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+            <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+          </svg>
+        </div>
+        <div class="step-name">Upload de Documentos</div>
+        <p class="step-desc">Faça o upload dos seus documentos. Nossa IA processa e organiza tudo instantaneamente.</p>
+      </div>
+
+      <!-- 02 -->
+      <div class="step-card reveal reveal-d1">
+        <div class="step-num">02</div>
+        <div class="step-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </div>
+        <div class="step-name">Leitura OCR Inteligente</div>
+        <p class="step-desc">Extração automática de dados de RGs, certidões e comprovantes sem digitar uma linha.</p>
+      </div>
+
+      <!-- 03 -->
+      <div class="step-card reveal reveal-d2">
+        <div class="step-num">03</div>
+        <div class="step-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+            <path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/>
+          </svg>
+        </div>
+        <div class="step-name">Gere e Assine em Segundos</div>
+        <p class="step-desc">O contrato é montado com os dados extraídos e enviado direto para assinatura digital via DocuSign.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FEATURES ───────────────────────────────────────────────────── -->
+<section id="funcionalidades">
+  <div class="section">
+    <span class="section-label reveal">Funcionalidades</span>
+    <h2 class="section-title reveal reveal-d1">Tecnologia poderosa.<br>Fluxo elegante.</h2>
+
+    <div class="bento">
+      <!-- OCR -->
+      <div class="bc bc-1 reveal">
+        <span class="bento-tag">Extração Inteligente</span>
+        <h3 class="bento-title">OCR de Alta Precisão</h3>
+        <p class="bento-desc">Extraia dados de RGs, CNHs e certidões automaticamente com reconhecimento de padrões exclusivo para documentos brasileiros.</p>
+        <div class="ocr-chips">
+          <div class="doc-chip">
+            <div class="doc-chip-ico">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 7h10M7 12h10M7 17h5"/></svg>
+            </div>
+            Identidade (RG + CPF)
+          </div>
+          <div class="doc-chip">
+            <div class="doc-chip-ico">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+            </div>
+            CNH
+          </div>
+          <div class="doc-chip">
+            <div class="doc-chip-ico">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            Certidão
+          </div>
+        </div>
+      </div>
+
+      <!-- DocuSign -->
+      <div class="bc bc-2 reveal reveal-d1">
+        <div>
+          <span class="bento-tag">Assinatura Digital</span>
+          <h3 class="bento-title">Integração DocuSign</h3>
+          <p class="bento-desc">Envie para assinatura direto da plataforma. Workflow integrado, sem trocar de aba.</p>
+        </div>
+        <div class="big-stat">
+          <div class="big-stat-num">85%</div>
+          <div class="big-stat-label">mais rápido que o processo tradicional em papel</div>
+        </div>
+      </div>
+
+      <!-- Templates -->
+      <div class="bc bc-3 reveal">
+        <div class="bc-3-inner">
+          <div>
+            <span class="bento-tag">Biblioteca de Modelos</span>
+            <h3 class="bento-title">Modelos Flexíveis para Cada Necessidade</h3>
+            <ul class="feat-list">
+              <li class="feat-item"><span class="feat-check">✓</span> Locação Residencial e Comercial</li>
+              <li class="feat-item"><span class="feat-check">✓</span> Compra e Venda de Imóveis</li>
+              <li class="feat-item"><span class="feat-check">✓</span> Escrituras e Procurações Públicas</li>
+              <li class="feat-item"><span class="feat-check">✓</span> Contratos Personalizados via IA</li>
+            </ul>
+          </div>
+          <div class="template-tiles">
+            <div class="t-tile">
+              <span class="t-dot"></span>Locação
+            </div>
+            <div class="t-tile active">
+              <span class="t-dot"></span>Compra &amp; Venda
+            </div>
+            <div class="t-tile">
+              <span class="t-dot"></span>Escrituras
+            </div>
+            <div class="t-tile">
+              <span class="t-dot"></span>Procuração
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── LOGOS ──────────────────────────────────────────────────────── -->
+<div class="logos-section">
+  <p class="logos-label">Ideal para imobiliárias e tabelionatos</p>
+  <div class="logos-row">
+    <div class="logo-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      RE/MAX
+    </div>
+    <div class="logo-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+      CARTÓRIO 24H
+    </div>
+    <div class="logo-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      Lello Imóveis
+    </div>
+    <div class="logo-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+      Lopes
+    </div>
+  </div>
+</div>
+
+<!-- ── CTA ────────────────────────────────────────────────────────── -->
+<div class="cta-wrap" id="precos">
+  <div class="cta-card reveal">
+    <h2 class="cta-title">Pronto para simplificar<br><em>sua rotina?</em></h2>
+    <p class="cta-sub">Junte-se a centenas de profissionais que já transformaram a papelada em processos fluidos e digitais.</p>
+    <button class="btn-cta">Começar gratuitamente</button>
+    <p class="cta-note">Não é necessário cartão de crédito.</p>
+  </div>
+</div>
+</main>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">Papaia</div>
+      <div class="footer-copy">© 2024 Papaia AI · Effortless notarization.</div>
+    </div>
+
+    <ul class="footer-links">
+      <li><a href="#">Automação</a></li>
+      <li><a href="#">Integrações</a></li>
+      <li><a href="#">Segurança</a></li>
+      <li><a href="#">Privacidade</a></li>
+    </ul>
+
+    <div class="footer-socials">
+      <div class="social-btn" title="Website" role="button" tabindex="0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <div class="social-btn" title="Email" role="button" tabindex="0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Nav shadow on scroll
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+}, { passive: true });
+
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+reveals.forEach(el => observer.observe(el));
+
+// Template tile interaction
+document.querySelectorAll('.t-tile').forEach(tile => {
+  tile.addEventListener('click', () => {
+    document.querySelectorAll('.t-tile').forEach(t => t.classList.remove('active'));
+    tile.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
