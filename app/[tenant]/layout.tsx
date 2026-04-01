@@ -1,5 +1,6 @@
 import { createClient } from '@/../../lib/supabase/server'
 import { notFound } from 'next/navigation'
+import { Lock, Clock } from 'lucide-react'
 import type { TenantConfig } from '@/lib/types'
 
 // Injeta as cores do tenant como CSS vars no <style>
@@ -40,7 +41,7 @@ export default async function TenantLayout({
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--cream)', padding: 24 }}>
         <div style={{ textAlign: 'center', maxWidth: 400 }}>
-          <div style={{ fontSize: 40, marginBottom: 16 }}>🔒</div>
+          <div style={{ fontSize: 40, marginBottom: 16 }}><Lock size={40} /></div>
           <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Conta suspensa</h2>
           <p style={{ fontSize: 14, color: 'var(--ink-m)' }}>
             O plano da sua conta está suspenso. Entre em contato com o suporte Papaia para reativar.
@@ -57,7 +58,7 @@ export default async function TenantLayout({
       return (
         <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--cream)', padding: 24 }}>
           <div style={{ textAlign: 'center', maxWidth: 400 }}>
-            <div style={{ fontSize: 40, marginBottom: 16 }}>⏰</div>
+            <div style={{ fontSize: 40, marginBottom: 16 }}><Clock size={40} /></div>
             <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Trial encerrado</h2>
             <p style={{ fontSize: 14, color: 'var(--ink-m)' }}>
               Seu período de avaliação encerrou. Entre em contato com a Papaia para continuar usando.

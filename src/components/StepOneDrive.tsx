@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { FileText, Paperclip, ClipboardList, Settings, Search, AlertTriangle, CheckCircle2, Folder, Bot } from 'lucide-react'
 import type { FileInfo, ExtractedDoc } from '@/lib/types'
 
 const FILE_CONVENTION = [
@@ -20,9 +21,9 @@ const FILE_CONVENTION = [
 ]
 
 function fileIcon(mime: string) {
-  if (mime.includes('pdf')) return '📄'
-  if (mime.includes('image')) return '🖼️'
-  return '📎'
+  if (mime.includes('pdf')) return <FileText size={20} />
+  if (mime.includes('image')) return <FileText size={20} />
+  return <Paperclip size={20} />
 }
 
 function roleBadge(name: string) {
@@ -101,7 +102,7 @@ export default function StepOneDrive({ folderUrl, setFolderUrl, files, setFiles,
       {/* Convenção */}
       <div className="j-card">
         <button onClick={() => setShowConv(!showConv)} style={{ display:'flex', alignItems:'center', justifyContent:'space-between', width:'100%', background:'none', border:'none', cursor:'pointer', fontFamily:'inherit', padding:0 }}>
-          <span style={{ fontWeight:600, fontSize:13, color:'var(--ink)' }}>📋 Convenção de nomes de arquivo</span>
+          <span style={{ fontWeight:600, fontSize:13, color:'var(--ink)', display:'flex', alignItems:'center', gap:6 }}><ClipboardList size={13} /> Convenção de nomes de arquivo</span>
           <span style={{ fontSize:11, color:'var(--ink-f)' }}>{showConv ? 'Fechar ↑' : 'Ver ↓'}</span>
         </button>
         {showConv && (
@@ -118,29 +119,29 @@ export default function StepOneDrive({ folderUrl, setFolderUrl, files, setFiles,
 
       {/* URL */}
       <div className="j-card">
-        <div className="j-card-title">🔗 Link da pasta OneDrive</div>
+        <div className="j-card-title">Link da pasta OneDrive</div>
         <div style={{ display:'flex', gap:10 }}>
           <input type="url" value={folderUrl} className="j-input" style={{ flex:1, fontFamily:'DM Mono,monospace', fontSize:12 }}
             onChange={e => setFolderUrl(e.target.value)} onKeyDown={e => e.key==='Enter' && loadFolder()}
             placeholder="https://1drv.ms/f/... ou link SharePoint" />
           <button onClick={loadFolder} disabled={loading || !folderUrl.trim()} className="j-btn j-btn-ink">
-            {loading ? <><span className="j-spin">⚙️</span> Carregando...</> : '🔍 Carregar'}
+            {loading ? <><Settings size={13} className="j-spin" style={{ display:'inline', verticalAlign:'middle' }} /> Carregando...</> : <><Search size={13} style={{ display:'inline', verticalAlign:'middle', marginRight:4 }} />Carregar</>}
           </button>
         </div>
-        {error && <div style={{ marginTop:10, padding:'9px 13px', background:'#FEF2F2', border:'1px solid #FECACA', borderRadius:7, fontSize:12, color:'#991B1B' }}>⚠️ {error}</div>}
+        {error && <div style={{ marginTop:10, padding:'9px 13px', background:'#FEF2F2', border:'1px solid #FECACA', borderRadius:7, fontSize:12, color:'#991B1B', display:'flex', alignItems:'center', gap:6 }}><AlertTriangle size={13} /> {error}</div>}
       </div>
 
       {/* Files */}
       {files.length > 0 && (
         <div className="j-card">
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:14 }}>
-            <div style={{ fontWeight:600, fontSize:14 }}>
-              📁 {folderName} <span style={{ color:'var(--ink-f)', fontWeight:400, fontSize:12 }}>· {files.length} arquivo{files.length>1?'s':''}</span>
+            <div style={{ fontWeight:600, fontSize:14, display:'flex', alignItems:'center', gap:6 }}>
+              <Folder size={14} /> {folderName} <span style={{ color:'var(--ink-f)', fontWeight:400, fontSize:12 }}>· {files.length} arquivo{files.length>1?'s':''}</span>
             </div>
             <button onClick={runOCR} disabled={ocrRunning||allDone} className="j-btn j-btn-gold" style={{ fontSize:12 }}>
-              {ocrRunning ? <><span className="j-spin">⚙️</span> Extraindo...</>
-                : allDone ? `✅ ${doneCount}/${files.length} extraídos`
-                : '🤖 Extrair com Claude Vision'}
+              {ocrRunning ? <><Settings size={12} className="j-spin" style={{ display:'inline', verticalAlign:'middle', marginRight:4 }} />Extraindo...</>
+                : allDone ? <><CheckCircle2 size={12} style={{ display:'inline', verticalAlign:'middle', marginRight:4 }} />{doneCount}/{files.length} extraídos</>
+                : <><Bot size={12} style={{ display:'inline', verticalAlign:'middle', marginRight:4 }} />Extrair com Claude Vision</>}
             </button>
           </div>
           {files.map((file, i) => {
@@ -157,9 +158,9 @@ export default function StepOneDrive({ folderUrl, setFolderUrl, files, setFiles,
                 </div>
                 <div style={{ flexShrink:0 }}>
                   {!doc||doc.status==='pending' ? <span className="j-file-meta">Aguardando</span>
-                    : doc.status==='loading' ? <span className="j-file-status-loading"><span className="j-spin">⚙️</span> Lendo…</span>
-                    : doc.status==='done' ? <span className="j-file-status-ok">✅ {doc.classification.type}</span>
-                    : <span className="j-file-status-err">⚠️ {doc.error}</span>}
+                    : doc.status==='loading' ? <span className="j-file-status-loading" style={{ display:'flex', alignItems:'center', gap:4 }}><Settings size={12} className="j-spin" /> Lendo…</span>
+                    : doc.status==='done' ? <span className="j-file-status-ok" style={{ display:'flex', alignItems:'center', gap:4 }}><CheckCircle2 size={12} /> {doc.classification.type}</span>
+                    : <span className="j-file-status-err" style={{ display:'flex', alignItems:'center', gap:4 }}><AlertTriangle size={12} /> {doc.error}</span>}
                 </div>
               </div>
             )
@@ -168,8 +169,8 @@ export default function StepOneDrive({ folderUrl, setFolderUrl, files, setFiles,
       )}
 
       <div className="j-btn-row">
-        <span style={{ fontSize:12, color:'var(--sage)' }}>
-          {allDone && doneCount > 0 && `✅ ${doneCount} documento${doneCount>1?'s':''} extraído${doneCount>1?'s':''}`}
+        <span style={{ fontSize:12, color:'var(--sage)', display:'flex', alignItems:'center', gap:5 }}>
+          {allDone && doneCount > 0 && <><CheckCircle2 size={12} /> {doneCount} documento{doneCount>1?'s':''} extraído{doneCount>1?'s':''}</>}
         </span>
         <button onClick={onNext} className="j-btn j-btn-gold">Revisar Dados →</button>
       </div>
