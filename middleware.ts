@@ -47,9 +47,9 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
-  // ── Rota raiz → login ─────────────────────────────────
+  // ── Rota raiz → landing ───────────────────────────────
   if (pathname === '/') {
-    return NextResponse.redirect(new URL('/login', request.url))
+    return NextResponse.redirect(new URL('/landing.html', request.url))
   }
 
   // ── Todas as outras rotas exigem autenticação ─────────
@@ -93,5 +93,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|logos).*)'],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|logos|.*\\.html).*)'],
 }
