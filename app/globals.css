@@ -230,6 +230,51 @@ body {
 .j-choices-3 { grid-template-columns: 1fr 1fr 1fr; }
 .j-choices-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
 
+/* ── CHOICE MODAL (tela de seleção de modalidade) ─────────── */
+.j-choices-modal { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.j-choice-modal {
+  border: 2px solid var(--border);
+  border-radius: 18px; padding: 28px 24px;
+  cursor: pointer; background: var(--white);
+  position: relative; text-align: left;
+  transition: all .2s cubic-bezier(.22,.68,0,1.1);
+  box-shadow: 0 2px 12px rgba(45,45,45,.05);
+}
+.j-choice-modal:hover {
+  border-color: var(--tenant-primary);
+  transform: translateY(-4px);
+  box-shadow: 0 14px 36px rgba(232,115,90,.14);
+}
+.j-choice-modal.sel { border-color: var(--tenant-primary); background: var(--coral-p); }
+.j-choice-modal.sel::after {
+  content: '';
+  position: absolute; top: 14px; right: 14px;
+  width: 20px; height: 20px;
+  background: var(--coral);
+  border-radius: 50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='9' viewBox='0 0 11 9'%3E%3Cpath d='M1 4l3 3 6-6' stroke='white' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.j-choice-modal-icon {
+  width: 48px; height: 48px; border-radius: 13px;
+  background: var(--cream);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px; transition: all .2s;
+}
+.j-choice-modal:hover .j-choice-modal-icon,
+.j-choice-modal.sel .j-choice-modal-icon { background: var(--coral-p); }
+.j-choice-modal-icon svg { width: 22px; height: 22px; color: var(--coral); }
+.j-choice-modal-label { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 6px; letter-spacing: -.02em; }
+.j-choice-modal-desc { font-size: 12px; color: var(--ink-f); line-height: 1.55; }
+.j-choice-modal-tag {
+  display: inline-block; margin-top: 14px; padding: 3px 9px; border-radius: 20px;
+  font-size: 10px; font-weight: 700; background: var(--cream); color: var(--ink-f);
+  transition: all .2s;
+}
+.j-choice-modal:hover .j-choice-modal-tag,
+.j-choice-modal.sel .j-choice-modal-tag { background: rgba(232,115,90,.15); color: var(--coral-d); }
+
 .j-choice {
   border: 2px solid var(--border);
   border-radius: 12px;
@@ -275,6 +320,18 @@ body {
 .j-upload-txt strong { color: var(--tenant-primary); }
 .j-upload-note { font-size: 10px; color: var(--ink-f); margin-top: 3px; }
 
+/* ── SLOT BTN (StepUpload SlotRow) ──────────────────────────── */
+.slot-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600; padding: 5px 11px; border-radius: 7px;
+  border: 1.5px solid var(--border-s); background: var(--cream);
+  color: var(--ink-m); cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
+  white-space: nowrap; flex-shrink: 0; transition: all .14s;
+}
+.slot-btn svg { width: 11px; height: 11px; }
+.slot-btn.active { border-color: var(--coral); background: var(--coral-p); color: var(--coral-d); }
+.slot-btn:hover:not(.active) { border-color: var(--ink-m); color: var(--ink); }
+
 /* ── FILE ITEM ───────────────────────────────────────────── */
 .j-file-item {
   display: flex; align-items: center; gap: 10px;
@@ -301,6 +358,24 @@ body {
   display: flex; align-items: flex-start; gap: 8px;
   line-height: 1.5;
   margin-bottom: 12px;
+}
+
+/* ── BANNERS ─────────────────────────────────────────────── */
+.j-banner-trial {
+  background: linear-gradient(90deg, #FFF8E7 0%, #FFF3CD 100%);
+  border-bottom: 1px solid #FFE083;
+  padding: 9px 32px;
+  font-size: 12px; color: #856404;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; font-weight: 500;
+}
+.j-banner-limit {
+  background: linear-gradient(90deg, #FFF0EE 0%, #FEE2DC 100%);
+  border-bottom: 1px solid #F5A090;
+  padding: 9px 32px;
+  font-size: 12px; color: #C0392B;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; font-weight: 600;
 }
 
 /* ── BUTTONS ─────────────────────────────────────────────── */
@@ -585,4 +660,7 @@ body {
   .j-choices-2, .j-choices-3, .j-choices-4 { grid-template-columns: 1fr 1fr; }
   .j-main { padding: 20px 16px; }
   .p-admin-body { padding: 20px 16px; }
+  .j-steps-bar { overflow-x: auto; scrollbar-width: none; }
+  .j-steps-bar::-webkit-scrollbar { display: none; }
+  .j-step-btn { white-space: nowrap; }
 }
