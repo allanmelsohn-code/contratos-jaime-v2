@@ -14,24 +14,24 @@
 
 /* ── TOKENS ───────────────────────────────────────────────────────── */
 :root {
-  --bg:           #FEFCF9;
-  --surface:      #FAF8F4;
-  --card:         #FFFFFF;
-  --card-hover:   #F7F4EF;
+  --bg:           #09070A;
+  --surface:      #110E0A;
+  --card:         #1B1610;
+  --card-hover:   #221C14;
   --orange:       #E97030;
-  --orange-lt:    #D4622A;
-  --orange-glow:  rgba(233,112,48,.08);
-  --orange-ring:  rgba(233,112,48,.22);
-  --cream:        #1C1209;
-  --cream-dim:    #7A6A57;
-  --muted:        #B8A898;
-  --border:       rgba(60,40,20,.08);
-  --border-str:   rgba(60,40,20,.14);
+  --orange-lt:    #F59A6A;
+  --orange-glow:  rgba(233,112,48,.14);
+  --orange-ring:  rgba(233,112,48,.28);
+  --cream:        #F2EBD8;
+  --cream-dim:    #90806C;
+  --muted:        #4C4136;
+  --border:       rgba(242,235,216,.07);
+  --border-str:   rgba(242,235,216,.14);
   --font-d:       'Cormorant Garamond', Georgia, serif;
   --font-b:       'DM Sans', system-ui, sans-serif;
   --font-m:       'DM Mono', monospace;
-  --sh:           0 2px 16px rgba(60,40,20,.07);
-  --sh-lg:        0 12px 40px rgba(60,40,20,.12);
+  --sh:           0 2px 24px rgba(0,0,0,.4);
+  --sh-lg:        0 12px 56px rgba(0,0,0,.55);
 }
 
 /* ── BASE ─────────────────────────────────────────────────────────── */
@@ -75,13 +75,13 @@ nav {
   align-items: center;
   justify-content: space-between;
   padding: 0 3rem;
-  background: rgba(254,252,249,.88);
+  background: rgba(9,7,10,.82);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
   transition: box-shadow .3s;
 }
-nav.scrolled { box-shadow: 0 4px 24px rgba(60,40,20,.1); }
+nav.scrolled { box-shadow: 0 4px 32px rgba(0,0,0,.5); }
 
 .nav-brand {
   display: flex;
@@ -511,7 +511,7 @@ nav.scrolled { box-shadow: 0 4px 24px rgba(60,40,20,.1); }
 .step-card:hover {
   border-color: var(--orange-ring);
   transform: translateY(-4px);
-  box-shadow: 0 18px 48px rgba(60,40,20,.14);
+  box-shadow: 0 18px 48px rgba(0,0,0,.45);
 }
 .step-num {
   font-family: var(--font-d);
@@ -781,7 +781,7 @@ nav.scrolled { box-shadow: 0 4px 24px rgba(60,40,20,.1); }
   bottom: -45%;
   left: -12%;
   width: 520px; height: 520px;
-  background: radial-gradient(circle, rgba(60,40,20,.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0,0,0,.15) 0%, transparent 70%);
   pointer-events: none;
 }
 .cta-title {
@@ -821,7 +821,7 @@ nav.scrolled { box-shadow: 0 4px 24px rgba(60,40,20,.1); }
 }
 .btn-cta:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 38px rgba(60,40,20,.12);
+  box-shadow: 0 14px 38px rgba(0,0,0,.22);
 }
 .cta-note {
   font-size: .85rem;
@@ -922,7 +922,7 @@ footer {
       <ellipse cx="15" cy="17" rx="8.5" ry="11" fill="#E97030" opacity=".88"/>
       <ellipse cx="15" cy="15.5" rx="5" ry="7" fill="#F59A6A" opacity=".72"/>
       <path d="M15 6.5 Q17.5 2 21 2.8" stroke="#6A9960" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-      <circle cx="15" cy="17" r="3" fill="#3C2814" opacity=".18"/>
+      <circle cx="15" cy="17" r="3" fill="#09070A" opacity=".18"/>
     </svg>
     <span class="nav-logo-name">Papaia</span>
   </a>
@@ -1196,7 +1196,7 @@ footer {
   <div style="display:flex;justify-content:center;align-items:stretch;gap:1.25rem;flex-wrap:wrap;max-width:680px;margin:0 auto;">
     <div style="flex:1;min-width:240px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:2rem 2rem;display:flex;align-items:center;gap:1.125rem;transition:border-color .25s;" onmouseover="this.style.borderColor='var(--orange-ring)'" onmouseout="this.style.borderColor='var(--border)'">
       <div style="width:44px;height:44px;border-radius:12px;background:rgba(233,112,48,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E97030" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59A6A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       </div>
       <div style="text-align:left;">
         <div style="font-family:var(--font-d);font-size:1.25rem;font-weight:700;letter-spacing:-.01em;color:var(--cream);">Imobiliárias</div>
@@ -1205,7 +1205,7 @@ footer {
     </div>
     <div style="flex:1;min-width:240px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:2rem 2rem;display:flex;align-items:center;gap:1.125rem;transition:border-color .25s;" onmouseover="this.style.borderColor='var(--orange-ring)'" onmouseout="this.style.borderColor='var(--border)'">
       <div style="width:44px;height:44px;border-radius:12px;background:rgba(233,112,48,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E97030" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59A6A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       </div>
       <div style="text-align:left;">
         <div style="font-family:var(--font-d);font-size:1.25rem;font-weight:700;letter-spacing:-.01em;color:var(--cream);">Tabelionatos</div>
