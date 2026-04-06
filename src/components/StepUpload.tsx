@@ -312,7 +312,7 @@ export default function StepUpload({ docs, setDocs, form, setForm, onNext }: Pro
         body: JSON.stringify({ filename: file.name, imageBase64: b64, mimeType: file.type || 'image/jpeg', explicitRole: role, explicitDocType: docType, extractFields: EXTRACT_FIELDS[docType] || [] }),
       })
       const data = await res.json()
-      if (!res.ok || data.error) { setSlotState(cardId, docType, { file, status: 'error', error: data.error || 'Erro' }); return }
+      if (!res.ok || data.error) { setSlotState(cardId, docType, { file, status: 'error', error: data.error + (data.detail ? ` — ${JSON.stringify(data.detail).slice(0, 120)}` : '') }); return }
       const e = data.extracted || {}
       setSlotState(cardId, docType, { file, status: 'done', extracted: e })
       mergeIntoForm(cardId, role, cardIdx, e)

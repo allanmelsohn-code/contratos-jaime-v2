@@ -231,16 +231,16 @@ Extraia os seguintes campos e retorne como JSON:
   // Prepare image/document content
   let imageContent: any
 
-  function normalizeMime(mime: string): string {
-    if (mime.includes('pdf')) return 'application/pdf'
-    if (mime.includes('png')) return 'image/png'
-    if (mime.includes('webp')) return 'image/webp'
-    if (mime.includes('gif')) return 'image/gif'
-    return 'image/jpeg' // default
+  function normalizeMime(mime: string, name?: string): string {
+    if (mime.includes('pdf') || name?.toLowerCase().endsWith('.pdf')) return 'application/pdf'
+    if (mime.includes('png') || name?.toLowerCase().endsWith('.png')) return 'image/png'
+    if (mime.includes('webp') || name?.toLowerCase().endsWith('.webp')) return 'image/webp'
+    if (mime.includes('gif') || name?.toLowerCase().endsWith('.gif')) return 'image/gif'
+    return 'image/jpeg'
   }
 
-  function buildContent(data: string, rawMime: string) {
-    const mime = normalizeMime(rawMime)
+  function buildContent(data: string, rawMime: string, name?: string) {
+    const mime = normalizeMime(rawMime, name)
     const isPdf = mime === 'application/pdf'
     return isPdf
       ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data } }
@@ -248,13 +248,13 @@ Extraia os seguintes campos e retorne como JSON:
   }
 
   if (imageBase64 && mimeType) {
-    imageContent = buildContent(imageBase64, mimeType)
+    imageContent = buildContent(imageBase64, mimeType, filename)
   } else if (downloadUrl) {
     const imgRes = await fetch(downloadUrl)
     const imgBuffer = await imgRes.arrayBuffer()
     const imgBase64 = Buffer.from(imgBuffer).toString('base64')
     const imgMime = imgRes.headers.get('content-type') || 'image/jpeg'
-    imageContent = buildContent(imgBase64, imgMime)
+    imageContent = buildContent(imgBase64, imgMime, filename)
   } else {
     return Response.json({ error: 'Missing imageBase64+mimeType or downloadUrl' }, { status: 400 })
   }
@@ -264,18 +264,16 @@ Extraia os seguintes campos e retorne como JSON:
     return Response.json({ error: 'ANTHROPIC_API_KEY not configured' }, { status: 500 })
   }
 
-  const isPdfContent = imageContent.type === 'document'
-
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
-      ...(isPdfContent && { 'anthropic-beta': 'pdfs-2024-09-25' }),
+      'anthropic-beta': 'pdfs-2024-09-25',
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-6',
+      model: 'claude-opus-4-5-20250514',
       max_tokens: 1000,
       system: systemPrompt,
       messages: [
