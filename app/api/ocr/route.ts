@@ -259,14 +259,18 @@ Extraia os seguintes campos e retorne como JSON:
     return Response.json({ error: 'Missing imageBase64+mimeType or downloadUrl' }, { status: 400 })
   }
 
-  // ── Anthropic (primary) ──────────────────────────────────────────────────────
-  const anthropicKey = process.env.ANTHROPIC_API_KEY
-  if (anthropicKey) {
+  // ── Anthropic (primary + fallback conta 2) ───────────────────────────────────
+  const anthropicKeys = [
+    process.env.ANTHROPIC_API_KEY,
+    process.env.ANTHROPIC_API_KEY_2,
+  ].filter(Boolean) as string[]
+
+  for (const key of anthropicKeys) {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': anthropicKey,
+        'x-api-key': key,
         'anthropic-version': '2023-06-01',
         'anthropic-beta': 'pdfs-2024-09-25',
       },
@@ -286,9 +290,6 @@ Extraia os seguintes campos e retorne como JSON:
       catch { extracted = { _raw: rawText } }
       return Response.json({ filename, classification, extracted, tokensUsed: data.usage?.input_tokens + data.usage?.output_tokens, provider: 'anthropic' })
     }
-
-    // Fallback para qualquer erro — Gemini assume
-    console.error(`Anthropic error ${res.status}, falling back to Gemini`)
   }
 
   // ── Gemini (fallback) ─────────────────────────────────────────────────────────
