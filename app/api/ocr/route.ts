@@ -271,7 +271,7 @@ Extraia os seguintes campos e retorne como JSON:
         'anthropic-beta': 'pdfs-2024-09-25',
       },
       body: JSON.stringify({
-        model: 'claude-opus-4-5-20250514',
+        model: 'claude-sonnet-4-6',
         max_tokens: 1000,
         system: systemPrompt,
         messages: [{ role: 'user', content: [imageContent, { type: 'text', text: userPrompt }] }],
@@ -287,12 +287,8 @@ Extraia os seguintes campos e retorne como JSON:
       return Response.json({ filename, classification, extracted, tokensUsed: data.usage?.input_tokens + data.usage?.output_tokens, provider: 'anthropic' })
     }
 
-    // Só faz fallback em erros de crédito/auth (402, 401, 529) — outros erros retornam imediatamente
-    const status = res.status
-    if (status !== 401 && status !== 402 && status !== 429 && status !== 529) {
-      const err = await res.text()
-      return Response.json({ error: `Claude API error: ${status}`, detail: err }, { status: 500 })
-    }
+    // Fallback para qualquer erro — Gemini assume
+    console.error(`Anthropic error ${res.status}, falling back to Gemini`)
   }
 
   // ── Gemini (fallback) ─────────────────────────────────────────────────────────
