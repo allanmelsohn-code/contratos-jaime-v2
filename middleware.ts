@@ -73,7 +73,7 @@ export async function middleware(request: NextRequest) {
 
   // ── Rotas /[tenant] → usuário deve pertencer ao tenant ─
   const tenantSlug = pathname.split('/')[1]
-  if (tenantSlug && !['api', '_next', 'favicon.ico', 'logos', 'public'].includes(tenantSlug)) {
+  if (tenantSlug && !/^(api|_next|favicon\.ico|logos|public)$/.test(tenantSlug)) {
     const { data: papUser } = await supabase
       .from('papaia_users')
       .select('role, tenant:papaia_tenants(slug)')

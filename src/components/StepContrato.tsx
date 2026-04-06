@@ -12,6 +12,7 @@ interface Props {
   setForm: (v: FormState) => void
   onNext: () => void
   onPrev: () => void
+  tenantId?: string
 }
 
 function Field({ label, value, onChange, type = 'text', placeholder = '' }: any) {
@@ -62,7 +63,7 @@ function ChoiceCard({ id, selected, onSelect, icon, label, desc }: { id: any; se
   )
 }
 
-export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
+export default function StepContrato({ form, setForm, onNext, onPrev, tenantId }: Props) {
   const up = (key: keyof FormState, val: any) => setForm({ ...form, [key]: val })
   const upVal = (field: string, val: string) => up('valor', { ...form.valor, [field]: val })
   const upGnt = (field: string, val: string) => up('garantia', { ...form.garantia, [field]: val })
@@ -309,6 +310,7 @@ export default function StepContrato({ form, setForm, onNext, onPrev }: Props) {
                     onChange={v => upCorretor(i, 'nome', v)}
                     onSelect={corretor => preencherCorretor(i, corretor)}
                     placeholder="Digite o apelido ou nome..."
+                    tenantId={tenantId}
                   />
                 </div>
                 <div className="j-field">

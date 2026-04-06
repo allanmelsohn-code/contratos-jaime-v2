@@ -2,16 +2,21 @@
 // Creates a DocuSign envelope from the generated contract
 // Docs: https://developers.docusign.com/docs/esign-rest-api/reference/envelopes/envelopes/create/
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 export const maxDuration = 30
 
-export async function POST(request: Request) {
-  const body = await request.json()
-  const { signatarios, assunto, mensagem, contractBase64, accountId, accessToken } = body
+import { createClient } from '@/../../lib/supabase/server'
 
-  // Use env vars if not provided in body (production)
-  const dsAccountId = accountId || process.env.DOCUSIGN_ACCOUNT_ID
-  const dsToken = accessToken || process.env.DOCUSIGN_ACCESS_TOKEN
+export async function POST(request: Request) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const body = await request.json()
+  const { signatarios, assunto, mensagem, contractBase64 } = body
+
+  const dsAccountId = process.env.DOCUSIGN_ACCOUNT_ID
+  const dsToken = process.env.DOCUSIGN_ACCESS_TOKEN
   const dsBase = process.env.DOCUSIGN_BASE_URL || 'https://demo.docusign.net/restapi'
 
   if (!dsAccountId || !dsToken) {

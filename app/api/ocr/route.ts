@@ -2,7 +2,7 @@
 // Receives a file (base64 or download URL) + filename hint
 // Returns structured fields extracted by Claude Vision
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
 export const maxDuration = 30
 
 /**
@@ -187,7 +187,13 @@ function classifyDocument(filename: string): {
   }
 }
 
+import { createClient } from '@/../../lib/supabase/server'
+
 export async function POST(request: Request) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+
   const body = await request.json()
   const { filename, imageBase64, mimeType, downloadUrl, explicitRole, explicitDocType, extractFields } = body
 

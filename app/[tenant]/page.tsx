@@ -188,7 +188,7 @@ export default function TenantApp({ params }: { params: { tenant: string } }) {
                 <StepReview docs={docs} setDocs={setDocs} form={form} setForm={setForm} onNext={next} onPrev={prev} />
               </div>
               <div className={`j-page${step === 2 ? ' active' : ''}`}>
-                <StepContrato form={form} setForm={setForm} onNext={next} onPrev={prev} />
+                <StepContrato form={form} setForm={setForm} onNext={next} onPrev={prev} tenantId={tenant?.id} />
               </div>
               <div className={`j-page${step === 3 ? ' active' : ''}`}>
                 <StepGerar form={form} onPrev={prev} tenantId={tenant?.id} />

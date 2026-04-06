@@ -1,20 +1,22 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { AlertCircle } from 'lucide-react'
-import { buscarCorretor, type Corretor } from '@/lib/corretores'
+import type { Corretor } from '@/lib/corretores'
 
 interface Props {
   value: string
   onChange: (nome: string) => void
   onSelect: (c: Corretor) => void
   placeholder?: string
+  tenantId?: string
 }
 
-export default function CorretorSearch({ value, onChange, onSelect, placeholder }: Props) {
+export default function CorretorSearch({ value, onChange, onSelect, placeholder, tenantId }: Props) {
   const [open, setOpen] = useState(false)
   const [results, setResults] = useState<Corretor[]>([])
   const ref = useRef<HTMLDivElement>(null)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -24,11 +26,23 @@ export default function CorretorSearch({ value, onChange, onSelect, placeholder 
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
+  const buscar = useCallback(async (q: string) => {
+    if (!q || q.length < 2 || !tenantId) {
+      setResults([])
+      setOpen(false)
+      return
+    }
+    const res = await fetch(`/api/corretores?tenant_id=${encodeURIComponent(tenantId)}&q=${encodeURIComponent(q)}`)
+    if (!res.ok) { setResults([]); setOpen(false); return }
+    const data: Corretor[] = await res.json()
+    setResults(data)
+    setOpen(data.length > 0)
+  }, [tenantId])
+
   function handleInput(v: string) {
     onChange(v)
-    const r = buscarCorretor(v)
-    setResults(r)
-    setOpen(r.length > 0)
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => buscar(v), 250)
   }
 
   function pick(c: Corretor) {

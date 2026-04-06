@@ -2,7 +2,9 @@
 // Reads a public OneDrive/SharePoint share link and returns file list + base64 contents
 // No Azure app registration needed — uses the anonymous share token endpoint
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
+
+import { createClient } from '@/../../lib/supabase/server'
 
 /**
  * Converts a OneDrive/SharePoint public share URL into a Graph API URL
@@ -32,11 +34,19 @@ function shareUrlToRootGraphUrl(shareUrl: string): string {
 }
 
 export async function GET(request: Request) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+
   const { searchParams } = new URL(request.url)
   const shareUrl = searchParams.get('url')
 
   if (!shareUrl) {
     return Response.json({ error: 'Missing url parameter' }, { status: 400 })
+  }
+
+  try { new URL(shareUrl) } catch {
+    return Response.json({ error: 'Invalid url parameter' }, { status: 400 })
   }
 
   try {

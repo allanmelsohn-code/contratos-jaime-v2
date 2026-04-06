@@ -11,6 +11,8 @@ import {
 export const runtime = 'nodejs' // docx needs Node runtime
 export const maxDuration = 30
 
+import { createClient } from '@/../../lib/supabase/server'
+
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function p(text: string, opts: any = {}): Paragraph {
@@ -273,6 +275,10 @@ function signatureTable(signatarios: Array<{ nome: string; role: string }>): Tab
 // ── Main handler ─────────────────────────────────────────────────────────────
 
 export async function POST(request: Request) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+
   const data = await request.json()
   const { locadores, locatarios, fiadores = [], imovel, valor, garantia, gnt, comissao, clausulas, testemunhas, admJaime } = data
 
