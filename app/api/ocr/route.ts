@@ -287,8 +287,12 @@ Extraia os seguintes campos e retorne como JSON:
       const data = await res.json()
       const rawText = data.content?.[0]?.text || '{}'
       let extracted: Record<string, any> = {}
-      try { extracted = JSON.parse(rawText.replace(/```json|```/g, '').trim()) }
+      const jsonMatch = rawText.match(/\{[\s\S]*\}/)
+      try { extracted = JSON.parse(jsonMatch ? jsonMatch[0] : rawText.replace(/```json|```/g, '').trim()) }
       catch { extracted = { _raw: rawText } }
+      if (extracted._raw !== undefined && Object.keys(extracted).length === 1) {
+        return Response.json({ error: 'Não foi possível extrair os dados do documento. Tente preencher manualmente.' }, { status: 422 })
+      }
       return Response.json({ filename, classification, extracted, tokensUsed: data.usage?.input_tokens + data.usage?.output_tokens, provider: 'anthropic' })
     }
   }
@@ -361,9 +365,20 @@ Extraia os seguintes campos e retorne como JSON:
 
   const geminiData = await geminiRes.json()
   const rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '{}'
+
   let extracted: Record<string, any> = {}
-  try { extracted = JSON.parse(rawText.replace(/```json|```/g, '').trim()) }
-  catch { extracted = { _raw: rawText } }
+  // Tenta extrair JSON mesmo que venha com texto ao redor
+  const jsonMatch = rawText.match(/\{[\s\S]*\}/)
+  try {
+    extracted = JSON.parse(jsonMatch ? jsonMatch[0] : rawText.replace(/```json|```/g, '').trim())
+  } catch {
+    extracted = { _raw: rawText }
+  }
+
+  // Se só veio _raw, retorna erro para o cliente saber que não teve extração
+  if (extracted._raw !== undefined && Object.keys(extracted).length === 1) {
+    return Response.json({ error: 'Não foi possível extrair os dados do documento. Tente preencher manualmente.', raw: rawText }, { status: 422 })
+  }
 
   return Response.json({ filename, classification, extracted, provider: 'gemini' })
 
