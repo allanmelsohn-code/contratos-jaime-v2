@@ -266,6 +266,8 @@ Extraia os seguintes campos e retorne como JSON:
     process.env.ANTHROPIC_API_KEY_2,
   ].filter(Boolean) as string[]
 
+  const errors: string[] = []
+
   for (const key of anthropicKeys) {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -295,9 +297,12 @@ Extraia os seguintes campos e retorne como JSON:
       }
       return Response.json({ filename, classification, extracted, tokensUsed: data.usage?.input_tokens + data.usage?.output_tokens, provider: 'anthropic' })
     }
+
+    const errBody = await res.text()
+    errors.push(`key_${errors.length + 1}: HTTP ${res.status} — ${errBody.slice(0, 200)}`)
   }
 
-  return Response.json({ error: 'Sem créditos disponíveis. Adicione créditos na conta Anthropic ou configure uma segunda chave em ANTHROPIC_API_KEY_2.' }, { status: 402 })
+  return Response.json({ error: 'Todas as chaves Anthropic falharam', detail: errors }, { status: 402 })
 
   } catch (err: any) {
     return Response.json({ error: err.message || 'Erro interno no OCR' }, { status: 500 })
