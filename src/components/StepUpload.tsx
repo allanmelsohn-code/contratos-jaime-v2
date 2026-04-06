@@ -313,7 +313,7 @@ export default function StepUpload({ docs, setDocs, form, setForm, onNext }: Pro
       })
       let data: any = {}
       try { data = await res.json() } catch { data = { error: `Erro ${res.status}` } }
-      if (!res.ok || data.error) { setSlotState(cardId, docType, { file, status: 'error', error: data.error + (data.detail ? ` | ${JSON.stringify(data.detail).slice(0, 200)}` : '') }); return }
+      if (!res.ok || data.error) { setSlotState(cardId, docType, { file, status: 'error', error: data.error || 'Erro' }); return }
       const e = data.extracted || {}
       setSlotState(cardId, docType, { file, status: 'done', extracted: e })
       mergeIntoForm(cardId, role, cardIdx, e)

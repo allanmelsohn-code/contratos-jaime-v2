@@ -298,11 +298,9 @@ Extraia os seguintes campos e retorne como JSON:
       return Response.json({ filename, classification, extracted, tokensUsed: data.usage?.input_tokens + data.usage?.output_tokens, provider: 'anthropic' })
     }
 
-    const errBody = await res.text()
-    errors.push(`key_${errors.length + 1}: HTTP ${res.status} — ${errBody.slice(0, 200)}`)
   }
 
-  return Response.json({ error: 'Todas as chaves Anthropic falharam', detail: errors }, { status: 402 })
+  return Response.json({ error: 'Sem créditos disponíveis. Adicione créditos na conta Anthropic.' }, { status: 402 })
 
   } catch (err: any) {
     return Response.json({ error: err.message || 'Erro interno no OCR' }, { status: 500 })
