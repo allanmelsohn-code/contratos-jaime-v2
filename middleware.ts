@@ -56,7 +56,7 @@ export async function middleware(request: NextRequest) {
 
   // ── Rota raiz → landing ───────────────────────────────
   if (pathname === '/') {
-    return NextResponse.redirect(new URL('/landing.html', request.url))
+    return NextResponse.redirect(new URL('/home.html', request.url))
   }
 
   // ── Todas as outras rotas exigem autenticação ─────────
