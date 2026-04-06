@@ -346,12 +346,12 @@ Extraia os seguintes campos e retorne como JSON:
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${geminiKey}`,
       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: geminiBody }
     )
-    if (geminiRes.status !== 429) break
+    if (geminiRes.status !== 429 && geminiRes.status !== 503) break
   }
 
   if (!geminiRes || !geminiRes.ok) {
-    if (geminiRes?.status === 429) {
-      return Response.json({ error: 'Limite de requisições atingido. Aguarde alguns segundos e tente novamente.' }, { status: 429 })
+    if (geminiRes?.status === 429 || geminiRes?.status === 503) {
+      return Response.json({ error: 'Serviço temporariamente indisponível. Aguarde alguns segundos e tente novamente.' }, { status: 503 })
     }
     const err = await geminiRes?.text()
     return Response.json({ error: `Gemini API error: ${geminiRes?.status}`, detail: err }, { status: 500 })
