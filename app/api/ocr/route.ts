@@ -305,22 +305,25 @@ Extraia os seguintes campos e retorne como JSON:
     },
   }
 
-  const geminiRes = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: systemPrompt }] },
-        contents: [{ parts: [geminiPart, { text: userPrompt }] }],
-        generationConfig: { maxOutputTokens: 1000, temperature: 0 },
-      }),
-    }
-  )
+  const geminiBody = JSON.stringify({
+    system_instruction: { parts: [{ text: systemPrompt }] },
+    contents: [{ parts: [geminiPart, { text: userPrompt }] }],
+    generationConfig: { maxOutputTokens: 1000, temperature: 0 },
+  })
 
-  if (!geminiRes.ok) {
-    const err = await geminiRes.text()
-    return Response.json({ error: `Gemini API error: ${geminiRes.status}`, detail: err }, { status: 500 })
+  let geminiRes: Response | null = null
+  for (let attempt = 0; attempt < 3; attempt++) {
+    if (attempt > 0) await new Promise(r => setTimeout(r, attempt * 3000))
+    geminiRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
+      { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: geminiBody }
+    )
+    if (geminiRes.status !== 429) break
+  }
+
+  if (!geminiRes || !geminiRes.ok) {
+    const err = await geminiRes?.text()
+    return Response.json({ error: `Gemini API error: ${geminiRes?.status}`, detail: err }, { status: 500 })
   }
 
   const geminiData = await geminiRes.json()
