@@ -190,6 +190,7 @@ function classifyDocument(filename: string): {
 import { createClient } from '@/../../lib/supabase/server'
 
 export async function POST(request: Request) {
+  try {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
@@ -365,4 +366,8 @@ Extraia os seguintes campos e retorne como JSON:
   catch { extracted = { _raw: rawText } }
 
   return Response.json({ filename, classification, extracted, provider: 'gemini' })
+
+  } catch (err: any) {
+    return Response.json({ error: err.message || 'Erro interno no OCR' }, { status: 500 })
+  }
 }

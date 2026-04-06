@@ -311,7 +311,8 @@ export default function StepUpload({ docs, setDocs, form, setForm, onNext }: Pro
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ filename: file.name, imageBase64: b64, mimeType: file.type || 'image/jpeg', explicitRole: role, explicitDocType: docType, extractFields: EXTRACT_FIELDS[docType] || [] }),
       })
-      const data = await res.json()
+      let data: any = {}
+      try { data = await res.json() } catch { data = { error: `Erro ${res.status}` } }
       if (!res.ok || data.error) { setSlotState(cardId, docType, { file, status: 'error', error: data.error || 'Erro' }); return }
       const e = data.extracted || {}
       setSlotState(cardId, docType, { file, status: 'done', extracted: e })
