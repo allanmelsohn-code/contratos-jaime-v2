@@ -297,12 +297,39 @@ Extraia os seguintes campos e retorne como JSON:
     return Response.json({ error: 'OCR indisponível: sem créditos Anthropic e GEMINI_API_KEY não configurada' }, { status: 500 })
   }
 
-  // Gemini usa inlineData para imagens e PDFs
-  const geminiPart = {
-    inlineData: {
-      mimeType: imageContent.source.media_type,
-      data: imageContent.source.data,
-    },
+  const mime = imageContent.source.media_type
+  const b64data = imageContent.source.data
+  const isPdf = mime === 'application/pdf'
+
+  // Para PDFs: upload via File API primeiro, depois referencia por URI
+  // Para imagens: inline base64 direto
+  let geminiPart: any
+
+  if (isPdf) {
+    const fileBytes = Buffer.from(b64data, 'base64')
+    const uploadRes = await fetch(
+      `https://generativelanguage.googleapis.com/upload/v1beta/files?key=${geminiKey}`,
+      {
+        method: 'POST',
+        headers: {
+          'X-Goog-Upload-Command': 'start, upload, finalize',
+          'X-Goog-Upload-Header-Content-Type': 'application/pdf',
+          'X-Goog-Upload-Header-Content-Length': String(fileBytes.length),
+          'Content-Type': 'application/pdf',
+        },
+        body: fileBytes,
+      }
+    )
+    if (!uploadRes.ok) {
+      const err = await uploadRes.text()
+      return Response.json({ error: `Gemini File upload error: ${uploadRes.status}`, detail: err }, { status: 500 })
+    }
+    const uploadData = await uploadRes.json()
+    const fileUri = uploadData.file?.uri
+    if (!fileUri) return Response.json({ error: 'Gemini File API não retornou URI' }, { status: 500 })
+    geminiPart = { fileData: { mimeType: 'application/pdf', fileUri } }
+  } else {
+    geminiPart = { inlineData: { mimeType: mime, data: b64data } }
   }
 
   const geminiBody = JSON.stringify({
@@ -311,12 +338,12 @@ Extraia os seguintes campos e retorne como JSON:
     generationConfig: { maxOutputTokens: 1000, temperature: 0 },
   })
 
-  const GEMINI_DELAYS = [0, 8000, 20000] // 0s, 8s, 20s
+  const GEMINI_DELAYS = [0, 8000, 20000]
   let geminiRes: Response | null = null
   for (let attempt = 0; attempt < GEMINI_DELAYS.length; attempt++) {
     if (GEMINI_DELAYS[attempt] > 0) await new Promise(r => setTimeout(r, GEMINI_DELAYS[attempt]))
     geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${geminiKey}`,
       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: geminiBody }
     )
     if (geminiRes.status !== 429) break
