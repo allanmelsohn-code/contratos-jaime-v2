@@ -231,7 +231,16 @@ Extraia os seguintes campos e retorne como JSON:
   // Prepare image/document content
   let imageContent: any
 
-  function buildContent(data: string, mime: string) {
+  function normalizeMime(mime: string): string {
+    if (mime.includes('pdf')) return 'application/pdf'
+    if (mime.includes('png')) return 'image/png'
+    if (mime.includes('webp')) return 'image/webp'
+    if (mime.includes('gif')) return 'image/gif'
+    return 'image/jpeg' // default
+  }
+
+  function buildContent(data: string, rawMime: string) {
+    const mime = normalizeMime(rawMime)
     const isPdf = mime === 'application/pdf'
     return isPdf
       ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data } }
@@ -263,7 +272,7 @@ Extraia os seguintes campos e retorne como JSON:
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-5',
+      model: 'claude-sonnet-4-6',
       max_tokens: 1000,
       system: systemPrompt,
       messages: [
