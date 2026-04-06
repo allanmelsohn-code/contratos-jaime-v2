@@ -211,12 +211,13 @@ export async function POST(request: Request) {
     : classifyDocument(filename)
   const fieldsJson = classification.extractFields.join('", "')
 
-  const systemPrompt = `Você é um sistema OCR especializado em documentos brasileiros. 
+  const systemPrompt = `Você é um sistema OCR especializado em documentos brasileiros.
 Extraia APENAS os dados solicitados. Responda SOMENTE com JSON válido, sem markdown, sem explicações.
 Se um campo não estiver visível ou legível, retorne null para esse campo.
 Para CPF, retorne no formato 000.000.000-00.
 Para CNPJ, retorne no formato 00.000.000/0000-00.
-Para datas, retorne no formato DD/MM/AAAA.
+Para campos de data (data_nascimento, validade, data_emissao, data_abertura, vigencia_inicio, vigencia_fim, data_vistoria), retorne no formato DD/MM/AAAA.
+Para RG e número_registro, retorne EXATAMENTE como aparece no documento, sem reformatar.
 Para CEP, retorne no formato 00000-000.`
 
   const userPrompt = `Este é um documento do tipo: ${classification.type}
