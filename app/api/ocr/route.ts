@@ -264,12 +264,15 @@ Extraia os seguintes campos e retorne como JSON:
     return Response.json({ error: 'ANTHROPIC_API_KEY not configured' }, { status: 500 })
   }
 
+  const isPdfContent = imageContent.type === 'document'
+
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
+      ...(isPdfContent && { 'anthropic-beta': 'pdfs-2024-09-25' }),
     },
     body: JSON.stringify({
       model: 'claude-sonnet-4-6',
