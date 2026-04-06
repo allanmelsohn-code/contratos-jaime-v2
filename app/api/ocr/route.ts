@@ -227,33 +227,24 @@ Extraia os seguintes campos e retorne como JSON:
   "${fieldsJson.split('", "').join('": null,\n  "')}: null
 }`
 
-  // Prepare image content
+  // Prepare image/document content
   let imageContent: any
 
+  function buildContent(data: string, mime: string) {
+    const isPdf = mime === 'application/pdf'
+    return isPdf
+      ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data } }
+      : { type: 'image', source: { type: 'base64', media_type: mime, data } }
+  }
+
   if (imageBase64 && mimeType) {
-    imageContent = {
-      type: 'image',
-      source: {
-        type: 'base64',
-        media_type: mimeType,
-        data: imageBase64,
-      },
-    }
+    imageContent = buildContent(imageBase64, mimeType)
   } else if (downloadUrl) {
-    // Fetch the image from OneDrive and convert to base64
     const imgRes = await fetch(downloadUrl)
     const imgBuffer = await imgRes.arrayBuffer()
     const imgBase64 = Buffer.from(imgBuffer).toString('base64')
     const imgMime = imgRes.headers.get('content-type') || 'image/jpeg'
-
-    imageContent = {
-      type: 'image',
-      source: {
-        type: 'base64',
-        media_type: imgMime,
-        data: imgBase64,
-      },
-    }
+    imageContent = buildContent(imgBase64, imgMime)
   } else {
     return Response.json({ error: 'Missing imageBase64+mimeType or downloadUrl' }, { status: 400 })
   }
@@ -271,7 +262,7 @@ Extraia os seguintes campos e retorne como JSON:
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-4-5',
       max_tokens: 1000,
       system: systemPrompt,
       messages: [
