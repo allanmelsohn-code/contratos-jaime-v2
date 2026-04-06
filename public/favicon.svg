@@ -1,10 +1,12 @@
-<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Corpo da papaia -->
-  <ellipse cx="16" cy="19" rx="9" ry="11.5" fill="#E97030"/>
-  <!-- Brilho interno -->
-  <ellipse cx="16" cy="17.5" rx="5.5" ry="7.5" fill="#F59A6A" opacity="0.7"/>
-  <!-- Sombra interna (sementes) -->
-  <ellipse cx="16" cy="19" rx="3" ry="3.5" fill="#C05A1A" opacity="0.22"/>
-  <!-- Cabo/folha -->
-  <path d="M16 7.5 Q18.5 2.5 22.5 3.5" stroke="#5A8F4A" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+<svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="64" height="64" rx="14" fill="#F5EFE6"/>
+  <!-- Fruit body -->
+  <ellipse cx="32" cy="36" rx="17" ry="18" fill="#E8874A"/>
+  <!-- Highlight -->
+  <ellipse cx="26" cy="28" rx="6" ry="5" fill="#F0A96B" opacity="0.6"/>
+  <!-- Stem -->
+  <path d="M32 18 Q33 12 37 10" stroke="#5A8C3C" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <!-- Leaf -->
+  <path d="M33 15 Q38 10 42 13 Q38 16 33 15Z" fill="#6AAF42"/>
 </svg>
