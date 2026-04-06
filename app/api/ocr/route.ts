@@ -259,51 +259,79 @@ Extraia os seguintes campos e retorne como JSON:
     return Response.json({ error: 'Missing imageBase64+mimeType or downloadUrl' }, { status: 400 })
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY
-  if (!apiKey) {
-    return Response.json({ error: 'ANTHROPIC_API_KEY not configured' }, { status: 500 })
+  // ── Anthropic (primary) ──────────────────────────────────────────────────────
+  const anthropicKey = process.env.ANTHROPIC_API_KEY
+  if (anthropicKey) {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': anthropicKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-beta': 'pdfs-2024-09-25',
+      },
+      body: JSON.stringify({
+        model: 'claude-opus-4-5-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: [imageContent, { type: 'text', text: userPrompt }] }],
+      }),
+    })
+
+    if (res.ok) {
+      const data = await res.json()
+      const rawText = data.content?.[0]?.text || '{}'
+      let extracted: Record<string, any> = {}
+      try { extracted = JSON.parse(rawText.replace(/```json|```/g, '').trim()) }
+      catch { extracted = { _raw: rawText } }
+      return Response.json({ filename, classification, extracted, tokensUsed: data.usage?.input_tokens + data.usage?.output_tokens, provider: 'anthropic' })
+    }
+
+    // Só faz fallback em erros de crédito/auth (402, 401, 529) — outros erros retornam imediatamente
+    const status = res.status
+    if (status !== 401 && status !== 402 && status !== 429 && status !== 529) {
+      const err = await res.text()
+      return Response.json({ error: `Claude API error: ${status}`, detail: err }, { status: 500 })
+    }
   }
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-beta': 'pdfs-2024-09-25',
+  // ── Gemini (fallback) ─────────────────────────────────────────────────────────
+  const geminiKey = process.env.GEMINI_API_KEY
+  if (!geminiKey) {
+    return Response.json({ error: 'OCR indisponível: sem créditos Anthropic e GEMINI_API_KEY não configurada' }, { status: 500 })
+  }
+
+  // Gemini usa inlineData para imagens e PDFs
+  const geminiPart = {
+    inlineData: {
+      mimeType: imageContent.source.media_type,
+      data: imageContent.source.data,
     },
-    body: JSON.stringify({
-      model: 'claude-opus-4-5-20250514',
-      max_tokens: 1000,
-      system: systemPrompt,
-      messages: [
-        {
-          role: 'user',
-          content: [imageContent, { type: 'text', text: userPrompt }],
-        },
-      ],
-    }),
-  })
-
-  if (!response.ok) {
-    const err = await response.text()
-    return Response.json({ error: `Claude API error: ${response.status}`, detail: err }, { status: 500 })
   }
 
-  const data = await response.json()
-  const rawText = data.content?.[0]?.text || '{}'
+  const geminiRes = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: systemPrompt }] },
+        contents: [{ parts: [geminiPart, { text: userPrompt }] }],
+        generationConfig: { maxOutputTokens: 1000, temperature: 0 },
+      }),
+    }
+  )
 
+  if (!geminiRes.ok) {
+    const err = await geminiRes.text()
+    return Response.json({ error: `Gemini API error: ${geminiRes.status}`, detail: err }, { status: 500 })
+  }
+
+  const geminiData = await geminiRes.json()
+  const rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || '{}'
   let extracted: Record<string, any> = {}
-  try {
-    extracted = JSON.parse(rawText.replace(/```json|```/g, '').trim())
-  } catch {
-    extracted = { _raw: rawText }
-  }
+  try { extracted = JSON.parse(rawText.replace(/```json|```/g, '').trim()) }
+  catch { extracted = { _raw: rawText } }
 
-  return Response.json({
-    filename,
-    classification,
-    extracted,
-    tokensUsed: data.usage?.input_tokens + data.usage?.output_tokens,
-  })
+  return Response.json({ filename, classification, extracted, provider: 'gemini' })
 }
