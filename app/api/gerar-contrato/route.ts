@@ -18,16 +18,24 @@ import { createClient } from '@/../../lib/supabase/server'
 function p(text: string, opts: any = {}): Paragraph {
   return new Paragraph({
     alignment: AlignmentType.JUSTIFIED,
-    spacing: { before: 80, after: 80 },
+    spacing: { before: 120, after: 120, line: 360 }, // Better spacing
     children: [new TextRun({ text, font: 'Arial', size: 22, ...opts })],
   })
 }
 
 function heading(text: string): Paragraph {
   return new Paragraph({
-    spacing: { before: 200, after: 80 },
+    spacing: { before: 240, after: 120 },
     children: [new TextRun({ text: text.toUpperCase(), font: 'Arial', size: 22, bold: true })],
   })
+}
+
+function b(text: string, opts: any = {}): TextRun {
+  return new TextRun({ text, font: 'Arial', size: 22, bold: true, ...opts })
+}
+
+function r(text: string, opts: any = {}): TextRun {
+  return new TextRun({ text, font: 'Arial', size: 22, ...opts })
 }
 
 function qrRow(label: string, value: string): TableRow {
@@ -190,27 +198,35 @@ function garantiaClause(gnt: string, garantia: any, fiadores: any[]): Paragraph[
     const fNomes = fiadores.map((f: any) => f.nome || '###').join('; e, ')
     clauses.push(
       p(`O(s) FIADOR(ES) — ${fNomes} — assinam o presente contrato como principal(is) pagador(es) solidário(s) com o(a) LOCATÁRIO(A) pelas obrigações aqui assumidas, tanto pelos aluguéis e encargos locatícios, inclusive pela multa contratual e eventuais danos causados ao imóvel locado, como também pela majoração e revisão de aluguéis decorrentes inclusive de acordos judiciais e extrajudiciais e pela exatidão das qualificações deste constantes, cuja responsabilidade subsistirá até a entrega real e efetiva das chaves do imóvel, dando quitação plena, mesmo que isso venha a ocorrer após o término do prazo da locação.`),
-      p(`12.1 — O(s) FIADOR(ES) renuncia(m) expressamente ao direito de exoneração previsto nos artigos 835, 836, 837, 838 e seguintes do Código Civil Brasileiro (Lei 10.406/02), bem como, ao benefício de ordem previsto no artigo 827 e seguintes do mesmo diploma legal.`),
-      p(`12.2 — A garantia ora prestada pelo(s) FIADOR(ES) permanecerá válida e efetiva até a data em que o(a) LOCADOR(A), ou seu procurador(a) ou ainda seu representante legal, passar recibo das chaves, dando quitação plena ao(à) LOCATÁRIO(A), mesmo que isso venha a ocorrer após o término do prazo de locação.`)
+      p(`13.1 — O(s) FIADOR(ES) renuncia(m) expressamente ao direito de exoneração previsto nos artigos 835, 836, 837, 838 e seguintes do Código Civil Brasileiro (Lei 10.406/02), bem como, ao benefício de ordem previsto no artigo 827 e seguintes do mesmo diploma legal.`),
+      p(`13.2 — A garantia ora prestada pelo(s) FIADOR(ES) permanecerá válida e efetiva até a data em que o(a) LOCADOR(A), ou seu procurador(a) ou ainda seu representante legal, passar recibo das chaves, dando quitação plena ao(à) LOCATÁRIO(A), mesmo que isso venha a ocorrer após o término do prazo de locação.`),
+      p(`13.3 — O(A) LOCATÁRIO(A) e FIADOR(ES), devidamente qualificados nos itens II e III do quadro resumo deste contrato, neste ato, e por instrumento, outorgam reciprocamente, amplos e gerais poderes para, em seu nome, receberem individualmente ou conjuntamente, intimações, notificações, mediante correspondência com aviso de recebimento, interpelações e citações judiciais ou extrajudiciais referentes a eventuais lides decorrentes da locação ora contratada.`),
+      p(`13.4 — Quaisquer alterações de endereço no curso do contrato deverão ser comunicadas por escrito por uma parte a outra.`),
+      p(`13.5 — A imobiliária e Administradora do imóvel são meramente intermediadoras da relação locatícia, não havendo por parte destas nenhumas retenções de valores e, portanto, não tem responsabilidade sob os atos praticados pelo(a) LOCADOR(A), LOCATÁRIO(A) e ou FIADOR(ES).`),
+      heading('Morte, recuperação judicial, falência, insolvência e mudanças'),
+      p(`No caso de morte, recuperação judicial, falência, ou comprovada insolvência, mudança de Estado ou de País do(s) FIADOR(ES), ou em qualquer outra hipótese prevista no artigo 40, da Lei 8.245/91, com a nova redação dada pela Lei 12.112/09, o(a) LOCATÁRIO(A) obriga-se no prazo improrrogável de 30 (trinta) dias a contar do evento, a dar-lhes substitutos idôneos ou, a juízo da LOCADOR(A), oferecer uma das demais garantias estabelecidas no artigo 37, da Lei 8245/91, sob pena de incorrer na multa contratual e ensejando a rescisão contratual em razão da infração cometida.`)
     )
   } else if (gnt === 'caucao') {
     clauses.push(
-      p(`A garantia ora prestada pelo(a) LOCATÁRIO(A) é o valor constante no item IV do quadro resumo, para cobertura de aluguéis, encargos e/ou danos ao imóvel, depositado em conta corrente do(a) LOCADOR(A) e permanecerá válida e efetiva até a data em que o(a) LOCADOR(A) passar recibo das chaves, dando quitação plena ao(à) LOCATÁRIO(A), mesmo que isso venha a ocorrer após o término do prazo de locação.`),
-      p(`12.1 — A Lei do Inquilinato estabelece que o índice de correção da caução locatícia deve observar a caderneta de poupança; no entanto, as partes — por mera liberalidade — estabelecem que os valores da caução serão aplicados a 100% (cem por cento) do CDI.`)
+      p(`A garantia ora prestada pelo(a) LOCATÁRIO(A) é o valor constante no item IV do quadro resumo, para cobertura de aluguéis, encargos e/ou danos ao imóvel, depositado em conta corrente do(a) LOCADOR(A) e permanecerá válida e efetiva até a data em que o(a) LOCADOR(A) passar recibo das chaves, dando quitação plena ao(à) LOCATÁRIO(A), mesmo que isso venha a ocorrer após o término do prazo de locação. A responsabilidade de devolução da caução é exclusiva do(a) LOCADOR(A).`),
+      p(`13.1 — Uma vez efetuada vistoria no imóvel e respectivo recibo de entrega de chaves, portanto, não havendo por parte do(a) LOCADOR(A) nada a reclamar, fica este, obrigado(a) a proceder a imediata devolução do valor da caução, devidamente atualizado pelo índice da Caderneta de Poupança (ou 100% do CDI, se assim pactuado), mediante depósito em conta corrente do(a) LOCATÁRIO(A).`),
+      p(`13.2 — Após efetuada a vistoria, apontando eventuais danos e problemas correlacionados ao imóvel, o(a) LOCADOR(A) deverá notificar o(a) LOCATÁRIO(A) com cópia anexa da vistoria para que este no prazo de 5 (cinco) dias, inicie a correção dos danos, sob pena de não fazendo, o(a) LOCADOR(A) providenciará às suas expensas a devida correção. Até a solução dos problemas apontados, a caução ficará retida em poder do(a) LOCADOR(A).`),
+      p(`13.3 — A imobiliária e administradora do imóvel são meramente intermediadoras da relação locatícia, não havendo por parte destas nenhumas retenções de valores e, portanto, não tem responsabilidade sob os atos praticados pelo(a) LOCADOR(A) e ou LOCATÁRIO(A).`)
     )
   } else if (gnt === 'titulo') {
     const inst = garantia.instituicao === 'Outra' ? (garantia.outraInstituicao || '###') : (garantia.instituicao || 'Porto Seguro Capitalização S.A')
     clauses.push(
-      p(`Para garantir as obrigações assumidas neste contrato, o(a) LOCATÁRIO(A), por ser de seu interesse, dá neste ato, em Caução ao(à) LOCADOR(A), o(s) Título(s) de Capitalização no valor nominal de R$ ${garantia.valor || '###'} subscrito(s) pela ${inst}, representado pela proposta/formulário nº ${garantia.numero || '###'}.`),
-      p(`12.1 — Ao término do prazo de vigência do(s) Título(s), o(a) LOCATÁRIO(A) autoriza a ${inst} a reaplicar o valor de resgate, sempre em seu nome, dando origem a um novo Título com as mesmas Condições Gerais do Título inicialmente adquirido, sendo que este permanecerá como caução à locação até a efetiva desocupação do imóvel e entrega das chaves.`),
-      p(`12.2 — O(A) LOCATÁRIO(A) se responsabiliza em comunicar qualquer alteração cadastral ou então se manifestar contrariamente à reaplicação do título, com no mínimo 15 (quinze) dias de antecedência da data do vencimento do título.`),
-      p(`12.3 — Se o(a) LOCATÁRIO(A) não observar quaisquer das cláusulas do presente contrato, fica, desde já, o(a) LOCADOR(A) autorizado(a) a resgatar o(s) Título(s) caucionado(s), a qualquer momento, mesmo antes do prazo final de capitalização, a fim de quitar eventual importância devida em razão de débitos oriundos deste contrato.`)
+      p(`Para garantir as obrigações assumidas neste contrato, o(a) LOCATÁRIO(A) dá em Caução ao(à) LOCADOR(A), o(s) Título(s) de Capitalização no valor nominal de R$ ${garantia.valor || '###'} subscrito(s) pela ${inst}, representado pela proposta/formulário nº ${garantia.numero || '###'}.`),
+      p(`13.1 — Ao término do prazo de vigência do(s) Título(s), o(a) LOCATÁRIO(A) autoriza a reaplicação do valor de resgate, permanecendo como caução até a efetiva desocupação do imóvel e entrega das chaves.`),
+      p(`13.2 — Se o(a) LOCATÁRIO(A) não observar quaisquer das cláusulas do presente contrato, fica o(a) LOCADOR(A) autorizado(a) a resgatar o(s) Título(s) caucionado(s), a qualquer momento, mesmo antes do prazo final, a fim de quitar eventuais débitos.`),
+      p(`13.3 — A imobiliária e administradora do imóvel são meramente intermediadoras, não tendo responsabilidade sobre a liquidação ou resgate do título junto à seguradora.`)
     )
   } else if (gnt === 'seguro') {
     clauses.push(
-      p(`A garantia da presente locação é o SEGURO FIANÇA junto à seguradora ${garantia.seguradora || '###'}, Apólice nº ${garantia.apolice || '###'}${garantia.pac ? `, PAC: ${garantia.pac}` : ''}${garantia.cobertura ? `, com cobertura para ${garantia.cobertura}` : ''}, com vigência até ${garantia.vigencia ? formatDate(garantia.vigencia) : '###'}.`),
-      p(`12.1 — Os prêmios iniciais e renovações, calculados conforme normas vigentes, serão pagos pelo(a) LOCATÁRIO(A), de acordo com o inciso XI do artigo 23 da Lei do Inquilinato, sob pena de rescisão desta locação, com o consequente despejo e cancelamento da apólice.`),
-      p(`12.2 — Eventuais débitos decorrentes do presente contrato, não pagos pelo(a) LOCATÁRIO(A) após regularmente instado(a) a tanto, serão comunicados às entidades mantenedoras de bancos de dados de proteção ao crédito (Serasa, SPC, etc.), quer pelo(a) LOCADOR(A), quer pela Seguradora.`)
+      p(`O seguro de Fiança Locatícia contratado pelo(a) LOCATÁRIO(A) junto à seguradora ${garantia.seguradora || 'TOKIO MARINE'}, garantirá esta locação, nos termos do inciso III, do artigo 37 da Lei do Inquilinato.`),
+      p(`13.1 — Os prêmios iniciais e renovações serão pagos pelo(a) LOCATÁRIO(A), de acordo com o inciso XI do artigo 23 da Lei do Inquilinato, sob pena de rescisão desta locação.`),
+      p(`13.2 — Eventuais débitos decorrentes do presente contrato, não pagos pelo(a) LOCATÁRIO(A) após regularmente instado(a) a tanto, serão comunicados às entidades mantenedoras de bancos de dados de proteção ao crédito (Serasa, SPC, etc.), quer pelo(a) LOCADOR(A), quer pela Seguradora.`),
+      p(`13.3 — O(A) LOCATÁRIO(A) declara estar ciente de que, não devolvendo o imóvel pintado internamente, a Seguradora indenizará o(a) LOCADOR(A) pelo ônus da pintura, e terá direito de reaver o valor que tiver sido pago.`)
     )
   } else if (gnt === 'imovel-cau') {
     const caucionantes: any[] = garantia.caucionantes || []
@@ -218,14 +234,36 @@ function garantiaClause(gnt: string, garantia: any, fiadores: any[]): Paragraph[
       [c.nome, c.rg ? `RG nº ${c.rg}` : '', c.cpf ? `CPF nº ${c.cpf}` : ''].filter(Boolean).join(', ')
     )
     clauses.push(
-      p(`As partes têm entre si ajustada a caução do bem imóvel descrito na matrícula nº ${garantia.matricula || '###'} do ${garantia.cartorio || '###'}${garantia.comarca ? `, Comarca de ${garantia.comarca}` : ''}${garantia.descricao ? `, relativo a "${garantia.descricao}"` : ''}.`),
-      p(`12.1 — Os(As) CAUCIONANTE(S) — ${cqual.join('; e, ') || '###'} — oferecem ao(à) LOCADOR(A), que desde já aceita como garantia real de suas obrigações solidárias, o imóvel objeto da matrícula supra, AUTORIZANDO EXPRESSAMENTE O REGISTRO DE GRAVAME EM SEUS ASSENTAMENTOS, na modalidade de caução locatícia complementar e extraordinária, em virtude do valor considerável do aluguel, nos termos do art. 38 §1º da Lei 8.245/91.`),
-      p(`12.2 — A caução imobiliária ora prestada permanecerá válida e efetiva até a data em que o(a) LOCADOR(A) passar recibo das chaves, dando quitação plena ao(à) LOCATÁRIO(A), mesmo que isso venha a ocorrer após o término do prazo de locação.`),
-      p(`12.3 — A averbação da caução e seu cancelamento, após a quitação de todas as obrigações contratuais, são de responsabilidade e custo do(a) LOCATÁRIO(A), devendo ser providenciados no prazo de 30 (trinta) dias após a entrega das chaves.`)
+      p(`As partes têm entre si ajustada a caução do bem imóvel descrito na matrícula nº ${garantia.matricula || '###'} do ${garantia.cartorio || '###'}.`),
+      p(`13.1 — Os(As) CAUCIONANTE(S) — ${cqual.join('; e, ') || '###'} — oferecem ao(à) LOCADOR(A), que desde já aceita como garantia real de suas obrigações solidárias, o imóvel objeto da matrícula supra, AUTORIZANDO EXPRESSAMENTE O REGISTRO DE GRAVAME EM SEUS ASSENTAMENTOS, na modalidade de caução locatícia complementar e extraordinária, nos termos do art. 38 §1º da Lei 8.245/91.`),
+      p(`13.2 — A caução imobiliária ora prestada permanecerá válida e efetiva até a data em que o(a) LOCADOR(A) passar recibo das chaves, dando quitação plena ao(à) LOCATÁRIO(A), mesmo que isso venha a ocorrer após o término do prazo de locação.`),
+      p(`13.3 — A averbação da caução e seu cancelamento, após a quitação de todas as obrigações contratuais, são de responsabilidade e custo do(a) LOCATÁRIO(A).`)
     )
   }
 
   return clauses
+}
+
+function anexoI(data: any): Paragraph[] {
+  const { locatarios } = data
+  const ltNomes = locatarios.map((l: any) => l.nome || '###').join('; e, ')
+  return [
+    heading('ANEXO I'),
+    heading('PROTEÇÃO DE DADOS PESSOAIS'),
+    p(`Para os fins deste contrato, são considerados, conforme a LGPD – Lei Geral de Proteção de Dados Pessoais (Lei 13.709/18):`),
+    p(`DADOS PESSOAIS | qualquer dado ou informação relativa a uma pessoa natural identificada ou identificável (TITULAR ou TITULAR DOS DADOS);`),
+    p(`CONTROLADOR | agente de tratamento, parte que determina as finalidades e os meios de tratamento de dados pessoais. No caso do presente contrato, o CONTROLADOR é o LOCADOR e a Administradora da Locação;`),
+    p(`TITULAR | é o dono dos dados pessoais, LOCATÁRIO ou representante legal da empresa LOCATÁRIA;`),
+    p(`TRATAMENTO | toda e qualquer operação ou conjunto de operações efetuadas sobre dados pessoais, tais como a coleta, o registro, a organização, a estruturação, a conservação, a adaptação ou alteração, a recuperação, a consulta, a utilização, a divulgação por transmissão, difusão ou qualquer outra forma de disponibilização, a comparação ou interconexão, a limitação, a eliminação ou a destruição (LGPD, art. 5º, X);`),
+    p(`2. Em decorrência do presente contrato, o(a) LOCADOR(A) tratará os dados envolvidos para a consecução do presente contrato, os eventuais dados de titulares do(a) LOCATÁRIO(A) serão tratados pelo(a) LOCADOR(A) com a finalidade de locação de imóveis e sua administração, por relação contratual, nos limites legais.`),
+    p(`3. Ao final do presente contrato, o(a) LOCADOR(A) eliminará todos os dados pessoais recebidos do(a) LOCATÁRIO(A) para a realização do presente contrato, exceto os que se fizerem necessários para cumprimento de deveres legais, bem como, exercício regular de direito.`),
+    p(`4. O(A) LOCADOR(A) somente realizará os tratamentos de dados pessoais, sempre nos limites expressamente autorizados pela lei e pelo titular de dados pessoais que é o(a) LOCATÁRIO(A), nos limites do objeto do contrato.`),
+    p(`5. AS PARTES declaram, por este instrumento, que cumprem toda a legislação aplicável sobre privacidade e proteção de dados pessoais, inclusive a Constituição Federal, o Código de Defesa do Consumidor, o Código Civil, o Marco Civil da Internet e a Lei Geral de Proteção de Dados Pessoais (Lei 13.709/18).`),
+    p(`6. O(A) LOCADOR(A) se compromete a tratar os dados pessoais que possam estar relacionados ao objeto do presente contrato somente nos estritos limites aqui previstos, não devendo praticar qualquer tipo de ato que envolva os dados pessoais transmitidos sem a prévia e expressa autorização do(a) LOCATÁRIO(A).`),
+    p(`7. Durante o armazenamento de dados pessoais os agentes de tratamento respeitarão os padrões de segurança, como controle estrito sobre o acesso, mecanismos de autenticação e inventário de acesso aos registros.`),
+    p(`8. Os agentes de tratamento deverão manter sigilo em relação os dados pessoais tratados em virtude deste contrato, assegurando confidencialidade.`),
+    p(`9. Os agentes de tratamento atenderão os direitos dos TITULARES DE DADOS Pessoais (confirmação, acesso, correção, anonimização, bloqueio, eliminação, portabilidade, revogação do consentimento, etc.), conforme os artigos 17 a 22 da LGPD.`),
+  ]
 }
 
 function signatureTable(signatarios: Array<{ nome: string; role: string }>): Table {
@@ -308,8 +346,6 @@ export async function POST(request: Request) {
     ...testemunhas.map((t: any, i: number) => ({ nome: t.nome || `TESTEMUNHA ${i + 1}`, role: 'TESTEMUNHA' })),
     { nome: 'JAIMERX IMOBILIÁRIA LTDA', role: 'CNPJ 63.271.809/0001-78 · Intermediadora' },
   ]
-
-  // ── Document ──
   const doc = new Document({
     styles: {
       default: {
@@ -350,97 +386,112 @@ export async function POST(request: Request) {
 
         new Paragraph({ spacing: { before: 200, after: 120 }, children: [new TextRun('')] }),
 
-        // Intro
-        p(`Os signatários devidamente qualificados nos itens I${gnt === 'fiador' ? ', II e III' : ' e II'} do quadro resumo contido neste instrumento têm entre si justo e contratado a locação do imóvel constante no item III do quadro resumo, conforme cláusulas abaixo.`),
-        p(`CONSIDERANDO que as PARTES, ou são os titulares de dados pessoais ou são empresas, obrigadas a cumprir as exigências da Lei 13.709/18 – Lei Geral de Proteção de Dados Pessoais – LGPD, como agentes de tratamento de Dados Pessoais, especialmente pelos princípios institucionais contemplam a privacidade de dados pessoais como um de seus valores, para tanto traz no presente contrato a expressa atenção ao princípio da boa-fé objetiva.`),
+        // Main Text Start
+        heading('CONTRATO DE LOCAÇÃO'),
+        p(`Os signatários devidamente qualificados nos itens I e II do quadro resumo contido neste instrumento têm entre si justo e contratado a locação do imóvel constante no item III do quadro resumo, conforme cláusulas abaixo.`),
+        p(`CONSIDERANDO que as PARTES, ou são os titulares de dados pessoais ou são empresas, obrigadas a cumprir as exigências da Lei 13.709/18 – Lei Geral de Proteção de Dados Pessoais – LGPD, como agentes de tratamento de Dados Pessoais, especialmente pelos princípios institucionais que contemplam a privacidade de dados pessoais como um de seus valores, para tanto trazem no presente contrato a expressa atenção ao princípio da boa-fé objetiva, atendem a privacidade como padrão e agem com transparência quanto às finalidades do tratamento dos dados pessoais.`),
 
-        heading('Do Prazo da Locação'),
+        heading('Cláusula 1ª — Do Prazo da Locação'),
         p(`O prazo da locação é o estipulado no item VI do quadro resumo, onde, ao término do presente contrato o(a) LOCATÁRIO(A) se obriga a restituir as chaves do aludido imóvel ao(à) LOCADOR(A), ou a seu procurador ou ainda a seu representante legal, no estado em que o recebeu, independentemente de Notificação ou Interpelação Judicial, deixando-o livre, vago e desembaraçado de pessoas e coisas.`),
-        p(`O(A) LOCADOR(A) declara expressamente ser o(a) legítimo(a) proprietário(a) do imóvel objeto do presente instrumento, assumindo a responsabilidade civil e criminal por esta declaração, isentando a empresa intermediadora de toda e qualquer responsabilidade.`),
-
+        p(`1.1 — O(A) LOCADOR(A) declara expressamente ser o(a) legítimo(a) proprietário(a) do imóvel objeto do presente instrumento, assumindo a responsabilidade civil e criminal por esta declaração, isentando a imobiliária intermediadora de toda e qualquer responsabilidade.`),
+        p(`1.2 — Caso o(a) LOCATÁRIO(A) não restitua o imóvel no fim do prazo contratual, pagará enquanto estiver na posse do mesmo, o aluguel mensal reajustado nos termos da Cláusula Segunda, até a efetiva desocupação.`),
         ...(valor.carencia && valor.carenciaPrazo ? [
-          p(`1.3 — Fica pactuado entre as partes um período de carência de ${valor.carenciaPrazo} (${valor.carenciaPrazo}) ${parseInt(valor.carenciaPrazo) === 1 ? 'mês' : 'meses'} a contar do início da locação${valor.carenciaMotivo ? `, destinado a: ${valor.carenciaMotivo}` : ''}, durante o qual fica isento o pagamento do aluguel mensal.`),
+          p(`1.3 — Fica pactuado um período de carência de ${valor.carenciaPrazo} meses a contar do início da locação${valor.carenciaMotivo ? `, destinado a: ${valor.carenciaMotivo}` : ''}, durante o qual fica isento o pagamento do aluguel mensal.`),
         ] : []),
 
-        heading('Do Pagamento'),
-        p(`O(A) LOCATÁRIO(A) se compromete a pagar, pontualmente até a data do vencimento especificada no item VIII do quadro resumo de cada mês subsequente ao vencido, o valor do aluguel mencionado no item VII do quadro resumo, na conta bancária indicada: ${bkStr}.`),
-        p(`Tendo em vista a intermediação realizada pela JAIMERX IMOBILIÁRIA LTDA, CNPJ 63.271.809/0001-78, o(a) LOCADOR(A) desde já reconhece e autoriza o(a) LOCATÁRIO(A) a pagar o valor correspondente ao primeiro aluguel integral, no valor de R$ ${valor.aluguel}, no vencimento de ${formatDate(comissao.vencimento)}, observando as proporções descritas abaixo:`),
+        heading('Cláusula 2ª — Do Pagamento'),
+        p(`O(A) LOCATÁRIO(A) se compromete a pagar, pontualmente até a data do vencimento especificada no item VIII do quadro resumo, o valor do aluguel mencionado no item VII, por meio de boleto bancário emitido pela administradora ou depósito na conta: ${bkStr}.`),
+        p(`2.1 — O valor do aluguel mensal será reajustado a cada 12 meses, mediante aplicação da variação positiva do índice ${valor.indice || 'IGP-M da FGV'}. Caso este seja negativo, o contrato permanecerá com o valor atual ou será aplicado o IPCA, conforme legislação vigente.`),
+        p(`2.2 — Na hipótese do índice acima eleito vier a ser extinto, suprimido ou congelado, as PARTES convencionam que os reajustes serão calculados pelo IPC (FIPE) ou pelo índice legalmente determinado para reajuste das locações.`),
+        p(`2.3 — Se em virtude de Lei subsequente vier a ser admitida a correção em periodicidade inferior, concordam as PARTES que o reajuste será feito no menor prazo permitido, independente de aviso prévio.`),
+        
+        heading('Cláusula 3ª — Da Comissão e Intermediação'),
+        p(`Tendo em vista a intermediação realizada pela JAIMERX IMOBILIÁRIA LTDA, CNPJ 63.271.809/0001-78, o(a) LOCADOR(A) desde já reconhece e autoriza o(a) LOCATÁRIO(A) a pagar o valor correspondente ao primeiro aluguel integral, no valor de R$ ${valor.aluguel}, no vencimento de ${formatDate(comissao.vencimento)}, conforme as proporções descritas abaixo:`),
         p(comLinhas.join('\n')),
-        p(`A falta de pagamento dos aluguéis e encargos dentro do prazo avençado acarretará ao(à) LOCATÁRIO(A) a multa moratória de ${valor.multa || '10% (dez por cento)'} sobre o valor devido e, se o atraso for superior a 30 (trinta) dias, acrescer-se-á de atualização monetária e juros de mora de 1% (um por cento) ao mês.`),
+        p(`3.1 — A falta de pagamento dos aluguéis e encargos acarretará ao(à) LOCATÁRIO(A) a multa moratória de ${valor.multa || '10% (dez por cento)'} sobre o valor devido e, se o atraso for superior a 30 dias, juros de mora de 1% ao mês e atualização monetária.`),
 
-        heading('Do Reajuste do Aluguel'),
-        p(`O valor do aluguel mensal será reajustado ${valor.reajuste || 'a cada 12 meses'}, mediante aplicação da variação positiva do índice ${valor.indice || 'IGP-M da FGV'}. Caso este seja negativo, o contrato permanecerá com o valor atual. Na hipótese do índice acima eleito vier a ser extinto, suprimido, substituído, congelado ou por qualquer forma deixar de refletir a inflação, as PARTES convencionam que os reajustes serão calculados pelo IPC (FIPE) ou pelo índice legalmente determinado.`),
-
-        heading('Da Finalidade da Locação'),
-        p(`O imóvel, objeto deste contrato, destina-se exclusivamente para o fim descrito no item V do quadro resumo do(a) LOCATÁRIO(A), o que não ocorrendo ficará configurado como infração contratual, operando-se automaticamente a rescisão do presente contrato.`),
+        heading('Cláusula 4ª — Da Finalidade da Locação'),
+        p(`O imóvel destina-se exclusivamente para o fim descrito no item V do quadro resumo, o que não ocorrendo ficará configurado como infração contratual, operando-se automaticamente a rescisão.`),
+        p(`4.1 — O(A) LOCATÁRIO(A) declara ter conhecimento da Convenção e Regulamento Interno do Condomínio, obrigando-se a respeitá-lo e responder por eventuais multas impostas.`),
 
         ...(clausulas.moradores?.trim() ? [
-          heading('Dos Moradores'),
-          p(`Além do(a) LOCATÁRIO(A), residirão no imóvel: ${clausulas.moradores.trim()}. Qualquer alteração nesta relação de moradores deverá ser comunicada ao(à) LOCADOR(A) por escrito, no prazo de 30 (trinta) dias.`),
+          heading('Cláusula 5ª — Dos Moradores'),
+          p(`Além do(a) LOCATÁRIO(A), residirão no imóvel: ${clausulas.moradores.trim()}. Qualquer alteração deverá ser comunicada por escrito no prazo de 30 dias.`),
         ] : []),
 
-        heading('Do Imóvel, Conservação, Manutenção e Vistorias'),
-        p(`O(A) LOCATÁRIO(A) declara receber o imóvel no estado de conservação conforme vistoria em anexo, obrigando-se a: (a) manter o imóvel no mais perfeito estado de higiene, conservação e limpeza, restituindo-o pintado na cor original, limpo e livre de pessoas e coisas; (b) efetuar todas as obras e reparos necessários, excetuados os estruturais; (c) não ceder, sublocar ou emprestar o imóvel sem prévia autorização escrita do(a) LOCADOR(A); (d) atender às exigências dos Poderes Públicos; (e) transferir as ligações de energia elétrica, água e gás para seu nome no prazo de 30 (trinta) dias.`),
+        heading('Cláusula 6ª — Do Imóvel, Conservação, Manutenção e Vistorias'),
+        p(`O(A) LOCATÁRIO(A) declara receber o imóvel no estado de conservação conforme vistoria, obrigando-se a mantê-lo em perfeito estado de higiene e limpeza, restituindo-o pintado na cor original.`),
+        p(`6.1 — Efetuar todas as obras e reparos necessários (exceto estruturais), trazendo em perfeito estado as instalações elétricas, hidráulicas, sanitários e acessórios em geral.`),
+        p(`6.2 — Não ceder, sublocar ou emprestar o imóvel sem prévia autorização escrita do(a) LOCADOR(A).`),
         ...((imovel.consEnergia || imovel.consGas || imovel.consAgua) ? [
-          p(`5.1 — Códigos das contas de consumo do imóvel:${imovel.consEnergia ? ` Energia elétrica: ${imovel.consEnergia}.` : ''}${imovel.consGas ? ` Gás: ${imovel.consGas}.` : ''}${imovel.consAgua ? ` Água: ${imovel.consAgua}.` : ''}`),
+          p(`6.3 — Códigos de consumo: Energia: ${imovel.consEnergia || '—'} | Gás: ${imovel.consGas || '—'} | Água: ${imovel.consAgua || '—'}.`),
         ] : []),
 
-        heading('Dos Encargos e Obrigações em Relação ao Imóvel'),
+        heading('Cláusula 7ª — Dos Encargos e Obrigações'),
         p(clausulas.iptuLocador
-          ? `De mútuo e comum acordo, as PARTES convencionam que o IPTU (Imposto Predial e Territorial Urbano) e as taxas condominiais ordinárias serão pagos pelo(a) LOCADOR(A) durante a vigência deste contrato, permanecendo a obrigação do(a) LOCATÁRIO(A) quanto às despesas de luz, gás, água, tarifas bancárias e demais encargos incidentes sobre o imóvel.`
-          : `De mútuo e comum acordo, as PARTES convencionam que todos os impostos, especialmente o IPTU (Imposto Predial e Territorial Urbano), taxas condominiais ordinárias, despesas de luz, gás, água, tarifas bancárias e demais encargos incidentes sobre o imóvel serão de responsabilidade integral do(a) LOCATÁRIO(A), devendo efetuar o pagamento até a respectiva data de vencimento.`
+          ? `O IPTU e taxas condominiais ordinárias serão pagos pelo(a) LOCADOR(A), permanecendo a obrigação do(a) LOCATÁRIO(A) quanto às despesas de luz, gás, água e demais encargos.`
+          : `Todos os impostos (IPTU), taxas condominiais, despesas de luz, gás, água e demais encargos serão de responsabilidade integral do(a) LOCATÁRIO(A).`
         ),
-        ...(clausulas.iptuProporcional ? [
-          p(`6.1 — No mês de início da presente locação, o IPTU (Imposto Predial e Territorial Urbano), as taxas condominiais ordinárias e demais encargos mensais incidentes sobre o imóvel serão rateados proporcionalmente entre o(a) LOCADOR(A) e o(a) LOCATÁRIO(A), conforme os dias de efetiva ocupação no respectivo mês.`),
-        ] : []),
-        p(`O(A) LOCADOR(A) efetuará um seguro do imóvel contra riscos de incêndio, cujo pagamento deverá ser efetuado pelo(a) LOCATÁRIO(A), com seguradora de livre escolha do(a) LOCADOR(A), com base no valor real do imóvel.`),
+        p(`7.1 — O(A) LOCATÁRIO(A) obriga-se a transferir as contas de consumo para seu nome no prazo de 30 dias após o início da locação.`),
+        p(`7.2 — O(A) LOCADOR(A) efetuará um seguro do imóvel contra riscos de incêndio, cujo pagamento deverá ser efetuado pelo(a) LOCATÁRIO(A).`),
 
-        // Garantia clause (dynamic)
-        ...garantiaClause(gnt, garantia, fiadores),
+        heading('Cláusula 8ª — Modificações e Reformas'),
+        p(`O(A) LOCATÁRIO(A) não poderá fazer modificações ou transformações que alterem a estrutura do imóvel sem consentimento prévio por escrito do(a) LOCADOR(A).`),
+        p(`8.1 — Toda e qualquer benfeitoria feita no imóvel ficará incorporada ao mesmo, sem direito à indenização ou retenção.`),
 
-        // Cláusulas especiais
+        heading('Cláusula 9ª — Do Direito de Preferência'),
+        p(`O(A) LOCADOR(A) deverá notificar o(a) LOCATÁRIO(A) para que este possa exercer seu direito de preferência na aquisição do imóvel, no prazo de 30 dias.`),
+
+        heading('Cláusula 10ª — Das Comunicações'),
+        p(`O(A) LOCATÁRIO(A) obriga-se a fazer chegar às mãos do(a) LOCADOR(A) os avisos e comunicações oficiais ou não, que digam respeito à coisa locada, sob pena de responder pelos prejuízos e danos que causar sua desídia, independentemente de qualquer outra compensação que neste se estipula, para fins gerais ou especiais.`),
+
+        heading('Cláusula 11ª — Da Desapropriação, do Abandono e da Desocupação'),
+        p(`Em caso de desapropriação, parcial ou total, do imóvel, a locação será considerada rescindida, não cabendo ao(à) LOCADOR(A), ressarcir os prejuízos daí decorrentes ou que porventura venham a ser alegados.`),
+        p(`11.1 — Na hipótese do(a) LOCATÁRIO(A) abandonar o imóvel, fica o(a) LOCADOR(A) autorizado(a) a se imitir na posse imediatamente sem aviso prévio, a fim de evitar a depredação ou invasão do mesmo.`),
+        p(`11.2 — O termo de entrega das chaves será substituído por uma Declaração De Imissão De Posse, firmado pelo(a) LOCADOR(A) e 02 (duas) testemunhas idôneas, sem que o(a) LOCATÁRIO(A) possa reclamar qualquer tipo de indenização.`),
+        p(`11.3 — Na vigência da locação, ou após o vencimento do Contrato de Locação e prorrogado por prazo indeterminado, o(a) LOCATÁRIO(A) deverá, em qualquer destas hipóteses, comunicar por escrito o(a) LOCADOR(A), ou representante legal, com mínimo de 30 dias de antecedência a sua intenção de desocupar e entregar as chaves do imóvel.`),
+        p(`11.4 — Em caso de danos ao imóvel, não haverá ônus de produção de prova pericial às PARTES, valendo o conjunto de fotos, vistorias, orçamentos de 3 empresas idôneas e demonstrativo de pagamento de conserto como prova suficiente à indenização, que poderá ser inclusive objeto de execução de título extrajudicial.`),
+        p(`11.5 — Durante o prazo necessário ao conserto dos danos, ainda que o imóvel já tenha sido entregue pelo(a) LOCATÁRIO(A), permanecerá o mesmo obrigado ao pagamento dos aluguéis e encargos no período.`),
+
         ...(clausulas.isencaoMeses ? [
-          heading('Da Isenção de Multa por Desocupação Antecipada'),
-          p(`As PARTES concordam antecipadamente que, após o período locatício de ${clausulas.isencaoMeses} (${clausulas.isencaoMeses}) meses o(a) LOCATÁRIO(A) poderá desocupar o imóvel isento da multa rescisória, bastando para tanto notificar o(a) LOCADOR(A) com ${clausulas.isencaoAviso || 30} (${clausulas.isencaoAviso || 'trinta'}) dias de antecedência, por escrito.`),
+          heading('Cláusula 12ª — Isenção de Multa Rescisória'),
+          p(`As PARTES concordam que, após ${clausulas.isencaoMeses} meses de locação, o(a) LOCATÁRIO(A) poderá desocupar o imóvel isento da multa rescisória, com aviso prévio de ${clausulas.isencaoAviso || 30} dias.`),
         ] : []),
 
-        ...(clausulas.abono ? [
-          heading('Do Abono para Obras'),
-          p(`Fica pactuado que o(a) LOCADOR(A) concederá um abono no valor total de R$ ${clausulas.abono.valor}${clausulas.abono.parcelas && parseInt(clausulas.abono.parcelas) > 1 ? `, dividido em ${clausulas.abono.parcelas} parcelas` : ''}, em benefício do(a) LOCATÁRIO(A), aplicado a partir do ${clausulas.abono.mes}º mês de locação${clausulas.abono.prazo ? ` pelo prazo de ${clausulas.abono.prazo} meses` : ''}, para que este(a) efetue ${clausulas.abono.obs || 'obras de adequação do imóvel'}.`),
-        ] : []),
+        // Garantia (Clause 13 in this version)
+        ...garantiaClause(gnt, garantia, fiadores).map(par => {
+          // Adjust heading for Garantia
+          if (par.root[1]?.children?.[0]?.text === 'DA GARANTIA LOCATÍCIA') {
+             return heading('Cláusula 13ª — Da Garantia Locatícia');
+          }
+          return par;
+        }),
 
-        ...(clausulas.livre ? [
-          heading('Disposições Especiais'),
-          p(clausulas.livre),
-        ] : []),
+        heading('Cláusula 14ª — Das Multas'),
+        p(`A parte que infringir qualquer cláusula pagará à outra a multa de 3 (três) vezes o valor locativo mensal, proporcionalmente ao período de cumprimento do contrato no caso de devolução antecipada.`),
 
-        heading('Das Multas'),
-        p(`A parte que infringir qualquer das cláusulas deste contrato, pagará a outra a multa de 3 (três) vezes o valor locativo mensal devido à época em que se verificar a infração, com a faculdade, para a parte inocente, de exigir o cumprimento do contrato ou de considerá-lo rescindido.`),
-        p(`Durante o prazo estipulado para a duração do contrato, não poderá o(a) LOCADOR(A) reaver o imóvel alugado. O(A) LOCATÁRIO(A), todavia, poderá devolvê-lo, pagando a multa acima pactuada, proporcionalmente ao período de cumprimento do contrato.`),
+        heading('Cláusula 15ª — Das Ações de Despejo'),
+        p(`Se o(a) LOCATÁRIO(A) der causa ao ajuizamento de 3 ações de despejo por falta de pagamento em 24 meses, ficará caracterizado o abuso de direito, acarretando rescisão imediata.`),
 
-        heading('Do Direito de Preferência'),
-        p(`O(A) LOCADOR(A) deverá notificar o(a) LOCATÁRIO(A) para que este possa exercer seu direito de preferência na aquisição do imóvel, nas mesmas condições em que for oferecido a terceiros, no prazo de 30 (trinta) dias.`),
-        ...(admJaime ? [p(`Fica pactuado que, exercido o direito de preferência pelo(a) LOCATÁRIO(A), o(a) LOCADOR(A) pagará a título de comissão de 6% (seis por cento) sobre o valor da venda que se concretizar à JAIME ADMINISTRAÇÃO DE BENS E CONDOMÍNIOS LTDA., inscrita no CNPJ sob o número 65.082.380/0001-04, pela intermediação.`)] : []),
+        heading('Cláusula 16ª — Das Assinaturas Digitais'),
+        p(`As PARTES ajustam que o contrato e aditivos poderão ser assinados digital ou eletronicamente, produzindo todos os efeitos legais nos termos da MP 2.200-2/01 e Decreto 8.539/15.`),
 
-        ...(clausulas.comunicacaoEmail ? [
-          heading('Das Comunicações'),
-          p(`As comunicações entre as PARTES referentes ao presente contrato deverão ser realizadas por escrito.`),
-          p(`9.1 — As PARTES elegem o correio eletrônico (e-mail) como meio preferencial de comunicação para notificações, avisos e demais comunicações relativas ao presente contrato, sem exclusividade de outros meios admitidos em lei. As mensagens enviadas por e-mail com confirmação de leitura ou entrega terão plena validade legal entre as partes.`),
-        ] : []),
+        heading('Cláusula 17ª — Proteção de Dados (LGPD)'),
+        p(`Durante a vigência deste contrato, as PARTES observarão as disposições do Anexo I de Proteção de Dados Pessoais, assegurando o cumprimento da Lei 13.709/2018.`),
 
-        heading('Das Assinaturas Digitais e Eletrônicas'),
-        p(`As PARTES ajustam que o Contrato, anexos e os documentos correlatos, bem como eventuais aditivos poderão ser assinados digital ou eletronicamente, produzindo todos os efeitos legais. Nos termos do art. 10, § 2º, da Medida Provisória nº 2.200-2, as PARTES expressamente concordam em utilizar e reconhecem como válida qualquer forma de comprovação de anuência aos termos ora acordados em formato eletrônico.`),
+        heading('Cláusula 18ª — Obrigações das Partes'),
+        p(`A eventual prorrogação tácita, expressa ou legal da locação abrangerá todas as obrigações neste constante.`),
+        p(`18.1 — As PARTES convencionam que o presente contrato tem como condição essencial a observância do princípio pacta sunt servanda, visando preservar o valor real monetário do locativo, livre de medidas governamentais que impeçam a forma de correção pactuada.`),
+        p(`18.2 — Em qualquer ação decorrente deste contrato, todos os atos de citação, intimação ou notificação encaminhados aos endereços das partes constantes do contrato serão tidos como válidos.`),
 
-        heading('Da Proteção dos Dados Pessoais'),
-        p(`Durante a vigência deste Contrato, as PARTES observarão as disposições do Anexo I de Proteção de Dados Pessoais, parte integrante deste instrumento, assegurando o cumprimento da LGPD (Lei nº 13.709/2018) e demais normas vigentes sobre a matéria.`),
+        heading('Cláusula 19ª — Das Normas de Segurança e Ética'),
+        p(`As PARTES se obrigam a observar as disposições da legislação anticorrupção em vigor (Lei nº 12.846/2013) e se comprometem a não utilizar trabalho infantil ou irregular perante a legislação.`),
 
-        heading('Das Disposições Gerais'),
-        p(`O presente contrato é celebrado com fundamento no princípio da boa-fé objetiva, nos termos dos artigos 113 e 422 do Código Civil, obrigando as PARTES a agir com lealdade, cooperação, transparência e probidade durante toda a vigência da relação contratual. O presente Contrato de Locação rege-se pela Lei 8.245/91, inclusive com as alterações previstas na Lei 12.112/09, e nos casos omissos pelo Código Civil Brasileiro (Lei 10.406/02).`),
+        heading('Cláusula 20ª — Disposições Gerais'),
+        p(`O presente contrato é celebrado com fundamento no princípio da boa-fé objetiva (Art. 422 CC), regendo-se pela Lei 8.245/91 e Código Civil.`),
 
-        heading('Do Foro'),
-        p(`Com expressa renúncia de qualquer outro, por mais especial que seja, fica eleito o Foro Central da Capital de São Paulo, para dirimir eventuais dúvidas ou controvérsias que deste instrumento possam advir, ficando por conta da parte vencida, em qualquer caso, o pagamento de honorários advocatícios, na base de 20% (vinte por cento), custas e despesas judiciais e extrajudiciais, bem como atualização monetária e juros de mora dos débitos existentes entre as PARTES. As PARTES, independente de comum acordo, poderão utilizar-se do juízo arbitral, em conformidade com a Lei 9.307/96.`),
-
-        p(`E, por estarem assim, justos e contratados, firmam o presente contrato digital que será assinado pelas PARTES digital ou eletronicamente, assim como as 2 (duas) testemunhas para todos os fins de direito.`),
+        heading('Cláusula 21ª — Do Foro'),
+        p(`Fica eleito o Foro Central da Capital de São Paulo para dirimir dúvidas, com renúncia a qualquer outro. As partes poderão utilizar-se de juízo arbitral conforme Lei 9.307/96.`),
 
         new Paragraph({
           alignment: AlignmentType.RIGHT,
@@ -449,8 +500,11 @@ export async function POST(request: Request) {
         }),
 
         // Signatures
-        new Paragraph({ spacing: { before: 200, after: 120 }, children: [new TextRun({ text: 'ASSINATURAS', font: 'Arial', size: 22, bold: true })] }),
+        heading('ASSINATURAS'),
         signatureTable(signatarios),
+
+        // Anexo I
+        ...anexoI({ locatarios }),
       ],
     }],
   })

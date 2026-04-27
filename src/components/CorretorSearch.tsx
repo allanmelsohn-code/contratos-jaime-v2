@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, ChevronDown, Search } from 'lucide-react'
 import type { Corretor } from '@/lib/corretores'
 
 interface Props {
@@ -27,7 +27,7 @@ export default function CorretorSearch({ value, onChange, onSelect, placeholder,
   }, [])
 
   const buscar = useCallback(async (q: string) => {
-    if (!q || q.length < 2 || !tenantId) {
+    if (!tenantId) {
       setResults([])
       setOpen(false)
       return
@@ -53,14 +53,27 @@ export default function CorretorSearch({ value, onChange, onSelect, placeholder,
 
   return (
     <div ref={ref} style={{ position: 'relative' }}>
-      <input
-        type="text"
-        value={value}
-        onChange={e => handleInput(e.target.value)}
-        placeholder={placeholder || 'Digite o nome ou apelido do corretor'}
-        className="j-input"
-        autoComplete="off"
-      />
+      <div style={{ position: 'relative' }}>
+        <input
+          type="text"
+          value={value}
+          onChange={e => handleInput(e.target.value)}
+          onFocus={() => {
+            setOpen(true)
+            buscar(value)
+          }}
+          placeholder={placeholder || 'Selecione ou busque um corretor'}
+          className="j-input"
+          style={{ paddingRight: 35 }}
+          autoComplete="off"
+        />
+        <div style={{
+          position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+          pointerEvents: 'none', color: 'var(--ink-f)', opacity: 0.6
+        }}>
+          {value ? <Search size={14} /> : <ChevronDown size={16} />}
+        </div>
+      </div>
       {open && results.length > 0 && (
         <div style={{
           position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 100,

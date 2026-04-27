@@ -45,7 +45,7 @@ export async function GET(request: Request) {
     query = query.or(`nome.ilike.%${q}%,apelido.ilike.%${q}%,cpf.ilike.%${q}%,cnpj.ilike.%${q}%`)
   }
 
-  const { data, error } = await query.limit(10)
+  const { data, error } = await query.limit(50)
   if (error) return Response.json({ error: error.message }, { status: 500 })
 
   return Response.json(data)

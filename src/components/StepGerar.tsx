@@ -6,11 +6,12 @@ import type { FormState } from '@/lib/types'
 
 interface Props {
   form: FormState
+  setForm: (v: FormState) => void
   onPrev: () => void
   tenantId?: string
 }
 
-export default function StepGerar({ form, onPrev, tenantId }: Props) {
+export default function StepGerar({ form, setForm, onPrev, tenantId }: Props) {
   const [dsStatus, setDsStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle')
   const [dsResult, setDsResult] = useState<any>(null)
   const [generating, setGenerating] = useState(false)
@@ -18,20 +19,20 @@ export default function StepGerar({ form, onPrev, tenantId }: Props) {
   const [dsAccount, setDsAccount] = useState('')
   const [dsMsg, setDsMsg] = useState('Prezado(a), encaminhamos para sua assinatura o Contrato de Locação intermediado pela Jaime Imobiliária. Por gentileza, assine digitalmente dentro do prazo estipulado.')
 
-  // Build signatarios list from form
+  // Build signatarios list from form (Aligned with API)
   const signatarios = [
     ...form.locadores.map(l => ({ nome: l.nome || 'LOCADOR', email: l.email || '', role: 'LOCADOR(A)' })),
     ...form.locatarios.map(l => ({ nome: l.nome || 'LOCATÁRIO', email: l.email || '', role: 'LOCATÁRIO(A)' })),
     ...(form.gnt === 'fiador' ? form.fiadores.flatMap(f => {
       const s = [{ nome: f.nome || 'FIADOR', email: f.email || '', role: 'FIADOR(A)' }]
-      if (f.conjuge?.nome) s.push({ nome: f.conjuge.nome, email: f.conjuge.email || '', role: 'CÔNJUGE/OUTORGANTE' })
+      if (f.conjuge?.nome) s.push({ nome: f.conjuge.nome, email: f.conjuge.email || '', role: 'CÔNJUGE / OUTORGANTE' })
       return s
     }) : []),
     ...(form.gnt === 'imovel-cau' ? (form.garantia?.caucionantes || []).map((c: any) => ({
       nome: c.nome || 'CAUCIONANTE', email: c.email || '', role: 'CAUCIONANTE'
     })) : []),
-    ...form.testemunhas.map(t => ({ nome: t.nome || 'TESTEMUNHA', email: t.email || '', role: 'TESTEMUNHA' })),
-    { nome: 'JAIMERX IMOBILIÁRIA LTDA', email: 'juridico@jaimeimobiliaria.com.br', role: 'Intermediadora' },
+    ...form.testemunhas.map((t, i) => ({ nome: t.nome || `TESTEMUNHA ${i + 1}`, email: t.email || '', role: 'TESTEMUNHA' })),
+    { nome: 'JAIMERX IMOBILIÁRIA LTDA', email: 'juridico@jaimeimobiliaria.com.br', role: 'CNPJ 63.271.809/0001-78 · Intermediadora' },
   ]
 
   function gerarPdf() {
@@ -178,12 +179,14 @@ export default function StepGerar({ form, onPrev, tenantId }: Props) {
                 <input type="text" value={t.nome || ''} onChange={e => {
                   const arr = [...form.testemunhas]
                   arr[i] = { ...arr[i], nome: e.target.value }
+                  setForm({ ...form, testemunhas: arr })
                 }}
                   className="px-2.5 py-1.5 border border-black/15 rounded-lg text-sm bg-[#F5F0E8] focus:outline-none focus:border-[#B8860B]"
                   placeholder="Nome completo" />
                 <input type="text" value={t.cpf || ''} onChange={e => {
                   const arr = [...form.testemunhas]
                   arr[i] = { ...arr[i], cpf: e.target.value }
+                  setForm({ ...form, testemunhas: arr })
                 }}
                   className="px-2.5 py-1.5 border border-black/15 rounded-lg text-sm bg-[#F5F0E8] focus:outline-none focus:border-[#B8860B]"
                   placeholder="CPF" />
