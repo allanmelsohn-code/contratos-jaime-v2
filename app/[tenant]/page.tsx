@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClient } from '@/../../lib/supabase/client'
+import { createClient } from '@lib/supabase/client'
 import StepUpload from '@/components/StepUpload'
 import StepReview from '@/components/StepReview'
 import StepContrato from '@/components/StepContrato'

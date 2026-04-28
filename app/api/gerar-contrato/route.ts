@@ -11,7 +11,7 @@ import {
 export const runtime = 'nodejs' // docx needs Node runtime
 export const maxDuration = 30
 
-import { createClient } from '@/../../lib/supabase/server'
+import { createClient } from '@lib/supabase/server'
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -248,7 +248,11 @@ function anexoI(data: any): Paragraph[] {
   const { locatarios } = data
   const ltNomes = locatarios.map((l: any) => l.nome || '###').join('; e, ')
   return [
-    heading('ANEXO I'),
+    new Paragraph({
+      pageBreakBefore: true,
+      spacing: { before: 240, after: 120 },
+      children: [new TextRun({ text: 'ANEXO I', font: 'Arial', size: 22, bold: true })],
+    }),
     heading('PROTEÇÃO DE DADOS PESSOAIS'),
     p(`Para os fins deste contrato, são considerados, conforme a LGPD – Lei Geral de Proteção de Dados Pessoais (Lei 13.709/18):`),
     p(`DADOS PESSOAIS | qualquer dado ou informação relativa a uma pessoa natural identificada ou identificável (TITULAR ou TITULAR DOS DADOS);`),

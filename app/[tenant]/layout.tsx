@@ -1,4 +1,4 @@
-import { createClient } from '@/../../lib/supabase/server'
+import { createClient } from '@lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { Lock, Clock } from 'lucide-react'
 import type { TenantConfig } from '@/lib/types'

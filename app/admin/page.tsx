@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useTransition } from 'react'
-import { createClient } from '@/../../lib/supabase/client'
+import { createClient } from '@lib/supabase/client'
 import {
   liberarTrial, ativarTenant, suspenderTenant,
   editarContador, resetarContador, criarTenant, criarUsuario

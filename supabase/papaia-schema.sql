@@ -75,13 +75,17 @@ CREATE TABLE IF NOT EXISTS papaia_tenant_clauses (
 CREATE TABLE IF NOT EXISTS papaia_corretores (
   id        UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   tenant_id UUID REFERENCES papaia_tenants(id) ON DELETE CASCADE,
+  apelido   TEXT NOT NULL,
   nome      TEXT NOT NULL,
   cpf       TEXT,
+  cnpj      TEXT,
   creci     TEXT,
   banco     TEXT,
   agencia   TEXT,
   conta     TEXT,
   pix       TEXT,
+  "pixTipo" TEXT,
+  obs       TEXT,
   ativo     BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );

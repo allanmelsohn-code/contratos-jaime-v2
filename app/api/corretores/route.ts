@@ -1,7 +1,7 @@
 // GET /api/corretores?tenant_id=xxx&q=busca
 // Retorna corretores do tenant filtrados por query
 
-import { createClient } from '@/../../lib/supabase/server'
+import { createClient } from '@lib/supabase/server'
 
 export const runtime = 'nodejs'
 

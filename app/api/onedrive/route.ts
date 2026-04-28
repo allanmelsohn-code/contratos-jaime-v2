@@ -4,7 +4,7 @@
 
 export const runtime = 'nodejs'
 
-import { createClient } from '@/../../lib/supabase/server'
+import { createClient } from '@lib/supabase/server'
 
 /**
  * Converts a OneDrive/SharePoint public share URL into a Graph API URL

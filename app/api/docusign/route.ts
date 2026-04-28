@@ -5,7 +5,7 @@
 export const runtime = 'nodejs'
 export const maxDuration = 30
 
-import { createClient } from '@/../../lib/supabase/server'
+import { createClient } from '@lib/supabase/server'
 
 export async function POST(request: Request) {
   const supabase = createClient()

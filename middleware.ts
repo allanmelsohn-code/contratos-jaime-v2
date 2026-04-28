@@ -5,8 +5,11 @@ import type { NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Força HTTPS — impede o aviso "Não seguro" no Chrome
-  if (request.headers.get('x-forwarded-proto') === 'http') {
+  // Força HTTPS apenas em produção
+  if (
+    process.env.NODE_ENV === 'production' &&
+    request.headers.get('x-forwarded-proto') === 'http'
+  ) {
     const url = request.nextUrl.clone()
     url.protocol = 'https:'
     return NextResponse.redirect(url, { status: 301 })
