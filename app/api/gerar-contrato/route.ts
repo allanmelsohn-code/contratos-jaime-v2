@@ -191,8 +191,8 @@ function calcTermino(iso: string, meses: number): string {
   return d.toLocaleDateString('pt-BR')
 }
 
-function garantiaClause(gnt: string, garantia: any, fiadores: any[]): Paragraph[] {
-  const clauses: Paragraph[] = [heading('Da Garantia Locatícia')]
+function garantiaClause(gnt: string, garantia: any, fiadores: any[], headingText = 'Da Garantia Locatícia'): Paragraph[] {
+  const clauses: Paragraph[] = [heading(headingText)]
 
   if (gnt === 'fiador') {
     const fNomes = fiadores.map((f: any) => f.nome || '###').join('; e, ')
@@ -462,14 +462,7 @@ export async function POST(request: Request) {
           p(`As PARTES concordam que, após ${clausulas.isencaoMeses} meses de locação, o(a) LOCATÁRIO(A) poderá desocupar o imóvel isento da multa rescisória, com aviso prévio de ${clausulas.isencaoAviso || 30} dias.`),
         ] : []),
 
-        // Garantia (Clause 13 in this version)
-        ...garantiaClause(gnt, garantia, fiadores).map(par => {
-          // Adjust heading for Garantia
-          if (par.root[1]?.children?.[0]?.text === 'DA GARANTIA LOCATÍCIA') {
-             return heading('Cláusula 13ª — Da Garantia Locatícia');
-          }
-          return par;
-        }),
+        ...garantiaClause(gnt, garantia, fiadores, 'Cláusula 13ª — Da Garantia Locatícia'),
 
         heading('Cláusula 14ª — Das Multas'),
         p(`A parte que infringir qualquer cláusula pagará à outra a multa de 3 (três) vezes o valor locativo mensal, proporcionalmente ao período de cumprimento do contrato no caso de devolução antecipada.`),
